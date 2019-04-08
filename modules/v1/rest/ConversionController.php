@@ -24,7 +24,7 @@ use app\modules\v1\utils\RequestUtils;
  * @property RequestUtils $requestUtils
  * @property ConversionInfo $conversionInfo
  * @property StaticUrlService $staticUrlService
- * @property StaticConversionService $StaticConversion
+ * @property StaticConversionService $staticConversion
  * @package app\modules\v1\rest
  * @author: lirong
  */
@@ -45,7 +45,7 @@ class ConversionController extends RestController
     /* @var StaticUrlService */
     private $staticUrlService = StaticUrlImpl::class;
     /* @var StaticConversionService */
-    private $StaticConversion = StaticConversionImpl::class;
+    private $staticConversion = StaticConversionImpl::class;
 
     /**
      * Declares the allowed HTTP verbs.
@@ -75,7 +75,7 @@ class ConversionController extends RestController
                 $this->transaction->rollBack();
                 return [false, 'Token不存在', 500];
             }
-            if ($this->StaticConversion::findOne([
+            if ($this->staticConversion::findOne([
                 'ip'   => $this->responseUtils::ipToInt($this->request->getUserIP()),
                 'date' => strtotime(date('Y-m-d')),
                 'u_id' => $staticUrl->id
@@ -84,25 +84,26 @@ class ConversionController extends RestController
                 return [false, 'Ip已经被记录', 500];
             }
 
-            /* @var $StaticConversion StaticConversion */
-            $StaticConversion = new $this->StaticConversion;
-            $StaticConversion->wxh = $conversionInfo->wxh;
-            $StaticConversion->referer = $_SERVER['HTTP_REFERER'];
-            $StaticConversion->agent = $_SERVER['HTTP_USER_AGENT'];
-            $StaticConversion->createtime = $_SERVER['REQUEST_TIME'];
+            $staticConversion = new StaticConversion;
+            $staticConversion->wxh = $conversionInfo->wxh;
+            $staticConversion->referer = $_SERVER['HTTP_REFERER'] ?? '';
+            $staticConversion->agent = $_SERVER['HTTP_USER_AGENT'];
+            $staticConversion->createtime = $_SERVER['REQUEST_TIME'];
             /* @var $ipLocationUtils IpLocationUtils */
             $ipLocationUtils = new $this->ipLocationUtils;
             $ipLocationUtils = $ipLocationUtils->getlocation(long2ip($this->responseUtils::ipToInt($this->request->getUserIP())));
-            $StaticConversion->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
-            $StaticConversion->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
-            $StaticConversion->date = strtotime(date('Y-m-d'));
-            $StaticConversion->page = $staticUrl->url;
+            $staticConversion->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
+            $staticConversion->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
+            $staticConversion->date = strtotime(date('Y-m-d'));
+            $staticConversion->page = $staticUrl->url;
             if ($staticUrl->pcurl && !$this->requestUtils::requestFromMobile()) {
-                $StaticConversion->page = $staticUrl->pcurl;
+                $staticConversion->page = $staticUrl->pcurl;
             }
-            $StaticConversion->ip = $this->responseUtils::ipToInt($this->request->getUserIP());
-            $StaticConversion->u_id = $staticUrl->id;
-            $this->StaticConversion::insert($StaticConversion);
+            $staticConversion->ip = $this->responseUtils::ipToInt($this->request->getUserIP());
+            $staticConversion->u_id = $staticUrl->id;
+            $this->staticConversion::insert($staticConversion);
+
+
             return [true, '操作成功!', 200];
         } catch (ValidateException $e) {
             $this->transaction->rollBack();

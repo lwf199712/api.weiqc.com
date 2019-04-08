@@ -48,7 +48,7 @@ class IpLocationUtils
     public function __construct($filename = 'UTFWry.dat')
     {
         $this->fp = 0;
-        if (($this->fp = fopen(__DIR__ . '/' . $filename, 'rb')) !== false) {
+        if (($this->fp = fopen(__DIR__ . '/resource/' . $filename, 'rb')) !== false) {
             $this->firstIp = $this->getLong();
             $this->lastIp = $this->getLong();
             $this->totalIp = ($this->lastIp - $this->firstIp) / 7;
