@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\conversion\domain\vo;
+namespace app\modules\v1\conversion\domain\vo;
 
 use yii\base\Model;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\conversion\rest;
+namespace app\common\rest;
 
 use Yii;
 use yii\base\Action;
@@ -14,7 +14,7 @@ use yii\rest\Serializer;
 use yii\web\BadRequestHttpException;
 
 /**
- * rest controller
+ * rest base controller
  * Class RestController
  *
  * @property Request $request The request component. This property is read-only.
@@ -23,7 +23,7 @@ use yii\web\BadRequestHttpException;
  * @package app\modules\v1\rest
  * @author: lirong
  */
-abstract class RestController extends ActiveController
+abstract class RestBaseController extends ActiveController
 {
     /**
      * the configuration for creating the serializer that formats the response data.

@@ -1,17 +1,18 @@
 <?php
 
-namespace app\modules\conversion\rest;
+namespace app\modules\v1\conversion\rest;
 
+use app\common\rest\RestBaseController;
 use app\exception\ValidateException;
-use app\modules\conversion\domain\StaticConversion;
-use app\modules\conversion\domain\StaticUrl;
-use app\modules\conversion\domain\vo\ConversionInfo;
-use app\modules\conversion\service\impl\StaticConversionImpl;
-use app\modules\conversion\service\impl\StaticServiceConversionsImpl;
-use app\modules\conversion\service\impl\StaticUrlImpl;
-use app\modules\conversion\service\StaticConversionService;
-use app\modules\conversion\service\StaticServiceConversionsService;
-use app\modules\conversion\service\StaticUrlService;
+use app\modules\v1\conversion\domain\StaticConversion;
+use app\modules\v1\conversion\domain\StaticUrl;
+use app\modules\v1\conversion\domain\vo\ConversionInfo;
+use app\modules\v1\conversion\service\impl\StaticConversionImpl;
+use app\modules\v1\conversion\service\impl\StaticServiceConversionsImpl;
+use app\modules\v1\conversion\service\impl\StaticUrlImpl;
+use app\modules\v1\conversion\service\StaticConversionService;
+use app\modules\v1\conversion\service\StaticServiceConversionsService;
+use app\modules\v1\conversion\service\StaticUrlService;
 use app\utils\IpLocationUtils;
 use app\utils\ResponseUtils;
 use app\utils\SourceDetectionUtil;
@@ -32,7 +33,7 @@ use yii\db\Exception;
  * @package app\modules\v1\rest
  * @author: lirong
  */
-class ConversionController extends RestController
+class RestController extends RestBaseController
 {
     /* @var ResponseUtils */
     public $responseUtils = ResponseUtils::class;

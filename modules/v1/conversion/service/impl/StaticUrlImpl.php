@@ -1,9 +1,9 @@
 <?php
 
-namespace app\modules\conversion\service\impl;
+namespace app\modules\v1\conversion\service\impl;
 
-use app\modules\conversion\domain\StaticUrl;
-use app\modules\conversion\service\StaticUrlService;
+use app\modules\v1\conversion\domain\StaticUrl;
+use app\modules\v1\conversion\service\StaticUrlService;
 
 /**
  * Interface ConversionService

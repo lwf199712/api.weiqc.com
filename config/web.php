@@ -1,7 +1,6 @@
 <?php
 
-use app\modules\conversion\Module as ConversionModule;
-use yii\gii\Module;
+use app\modules\v1\Module;
 use yii\web\Response;
 use yii\log\FileTarget;
 use yii\swiftmailer\Mailer;
@@ -22,7 +21,7 @@ $config = [
     'modules'    => [
         //load conversion modules
         'v1' => [
-            'class' => ConversionModule::class,
+            'class' => Module::class,
         ]
     ],
     'components' => [
