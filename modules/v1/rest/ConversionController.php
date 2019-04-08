@@ -4,16 +4,20 @@ namespace app\modules\v1\rest;
 
 use app\modules\v1\common\exception\ValidateException;
 use app\modules\v1\domain\StaticConversion;
+use app\modules\v1\domain\StaticServiceConversions;
 use app\modules\v1\domain\StaticUrl;
 use app\modules\v1\domain\vo\ConversionInfo;
 use app\modules\v1\service\impl\StaticConversionImpl;
+use app\modules\v1\service\impl\StaticServiceConversionsImpl;
 use app\modules\v1\service\impl\StaticUrlImpl;
 use app\modules\v1\service\StaticConversionService;
+use app\modules\v1\service\StaticServiceConversionsService;
 use app\modules\v1\service\StaticUrlService;
 use app\modules\v1\utils\IpLocationUtils;
 use app\modules\v1\utils\ResponseUtils;
 use app\modules\v1\utils\SourceDetectionUtil;
 use app\modules\v1\utils\RequestUtils;
+use yii\db\Exception;
 
 /**
  * Landing page conversions（copy WeChat）.
@@ -25,6 +29,7 @@ use app\modules\v1\utils\RequestUtils;
  * @property ConversionInfo $conversionInfo
  * @property StaticUrlService $staticUrlService
  * @property StaticConversionService $staticConversion
+ * @property StaticServiceConversionsImpl $staticServiceConversionsService
  * @package app\modules\v1\rest
  * @author: lirong
  */
@@ -46,6 +51,8 @@ class ConversionController extends RestController
     private $staticUrlService = StaticUrlImpl::class;
     /* @var StaticConversionService */
     private $staticConversion = StaticConversionImpl::class;
+    /* @var StaticServiceConversionsService */
+    private $staticServiceConversionsService = StaticServiceConversionsImpl::class;
 
     /**
      * Declares the allowed HTTP verbs.
@@ -102,10 +109,9 @@ class ConversionController extends RestController
             $staticConversion->ip = $this->responseUtils::ipToInt($this->request->getUserIP());
             $staticConversion->u_id = $staticUrl->id;
             $this->staticConversion::insert($staticConversion);
-
-
+            $this->staticServiceConversionsService::increasedConversions($staticUrl);
             return [true, '操作成功!', 200];
-        } catch (ValidateException $e) {
+        } catch (ValidateException|Exception $e) {
             $this->transaction->rollBack();
             return [false, $e->getMessage(), $e->getCode()];
         }
