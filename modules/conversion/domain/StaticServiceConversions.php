@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\v1\domain;
+namespace app\modules\conversion\domain;
 
 use yii\db\ActiveRecord;
 

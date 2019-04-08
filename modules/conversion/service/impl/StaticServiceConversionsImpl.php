@@ -1,11 +1,11 @@
 <?php
 
-namespace app\modules\v1\service\impl;
+namespace app\modules\conversion\service\impl;
 
-use app\modules\v1\common\exception\ValidateException;
-use app\modules\v1\domain\StaticServiceConversions;
-use app\modules\v1\domain\StaticUrl;
-use app\modules\v1\service\StaticServiceConversionsService;
+use app\modules\conversion\common\exception\ValidateException;
+use app\modules\conversion\domain\StaticServiceConversions;
+use app\modules\conversion\domain\StaticUrl;
+use app\modules\conversion\service\StaticServiceConversionsService;
 use yii\db\Exception;
 
 /**

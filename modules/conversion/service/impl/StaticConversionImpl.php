@@ -1,10 +1,10 @@
 <?php
 
-namespace app\modules\v1\service\impl;
+namespace app\modules\conversion\service\impl;
 
-use app\modules\v1\common\exception\ValidateException;
-use app\modules\v1\domain\StaticConversion;
-use app\modules\v1\service\StaticConversionService;
+use app\modules\conversion\common\exception\ValidateException;
+use app\modules\conversion\domain\StaticConversion;
+use app\modules\conversion\service\StaticConversionService;
 
 /**
  * Interface ConversionService

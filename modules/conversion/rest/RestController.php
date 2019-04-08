@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\v1\rest;
+namespace app\modules\conversion\rest;
 
 use Yii;
 use yii\base\Action;

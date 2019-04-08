@@ -1,22 +1,21 @@
 <?php
 
-namespace app\modules\v1\rest;
+namespace app\modules\conversion\rest;
 
-use app\modules\v1\common\exception\ValidateException;
-use app\modules\v1\domain\StaticConversion;
-use app\modules\v1\domain\StaticServiceConversions;
-use app\modules\v1\domain\StaticUrl;
-use app\modules\v1\domain\vo\ConversionInfo;
-use app\modules\v1\service\impl\StaticConversionImpl;
-use app\modules\v1\service\impl\StaticServiceConversionsImpl;
-use app\modules\v1\service\impl\StaticUrlImpl;
-use app\modules\v1\service\StaticConversionService;
-use app\modules\v1\service\StaticServiceConversionsService;
-use app\modules\v1\service\StaticUrlService;
-use app\modules\v1\utils\IpLocationUtils;
-use app\modules\v1\utils\ResponseUtils;
-use app\modules\v1\utils\SourceDetectionUtil;
-use app\modules\v1\utils\RequestUtils;
+use app\modules\conversion\common\exception\ValidateException;
+use app\modules\conversion\domain\StaticConversion;
+use app\modules\conversion\domain\StaticUrl;
+use app\modules\conversion\domain\vo\ConversionInfo;
+use app\modules\conversion\service\impl\StaticConversionImpl;
+use app\modules\conversion\service\impl\StaticServiceConversionsImpl;
+use app\modules\conversion\service\impl\StaticUrlImpl;
+use app\modules\conversion\service\StaticConversionService;
+use app\modules\conversion\service\StaticServiceConversionsService;
+use app\modules\conversion\service\StaticUrlService;
+use app\utils\IpLocationUtils;
+use app\utils\ResponseUtils;
+use app\utils\SourceDetectionUtil;
+use app\utils\RequestUtils;
 use yii\db\Exception;
 
 /**

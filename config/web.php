@@ -1,7 +1,8 @@
 <?php
 
+use app\modules\conversion\Module as ConversionModule;
+use yii\gii\Module;
 use yii\web\Response;
-use app\modules\v1\Module;
 use yii\log\FileTarget;
 use yii\swiftmailer\Mailer;
 use app\models\User;
@@ -19,9 +20,9 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
     ],
     'modules'    => [
-        //加载v1版本api接口数据
+        //load conversion modules
         'v1' => [
-            'class' => Module::class,
+            'class' => ConversionModule::class,
         ]
     ],
     'components' => [
@@ -103,7 +104,7 @@ if (YII_ENV_DEV) {
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
-        'class' => \yii\gii\Module::class,
+        'class' => Module::class,
         // uncomment the following to add your IP if you are not connecting from localhost.
         //'allowedIPs' => ['127.0.0.1', '::1'],
     ];
