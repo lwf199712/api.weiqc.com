@@ -110,6 +110,8 @@ class ConversionController extends RestController
             $staticConversion->u_id = $staticUrl->id;
             $this->staticConversion::insert($staticConversion);
             $this->staticServiceConversionsService::increasedConversions($staticUrl);
+            //TODO 腾讯api
+
             return [true, '操作成功!', 200];
         } catch (ValidateException|Exception $e) {
             $this->transaction->rollBack();
