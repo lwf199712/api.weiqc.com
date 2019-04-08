@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\conversion\common\exception;
+namespace app\exception;
 
 use Exception;
 use yii\base\UserException;

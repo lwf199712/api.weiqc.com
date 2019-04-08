@@ -2,7 +2,7 @@
 
 namespace app\modules\conversion\rest;
 
-use app\modules\conversion\common\exception\ValidateException;
+use app\exception\ValidateException;
 use app\modules\conversion\domain\StaticConversion;
 use app\modules\conversion\domain\StaticUrl;
 use app\modules\conversion\domain\vo\ConversionInfo;
