@@ -1,8 +1,8 @@
 <?php
 $crossDomain = require __DIR__ . '/cross_domain.php';
-$tencentMarketingApi = require __DIR__ . '/tencent_marketing_api.php';
+$api = require __DIR__ . '/api.php';
 return [
-    'adminEmail'            => 'admin@example.com',
-    'cross_domain'          => $crossDomain,
-    'tencent_marketing_api' => $tencentMarketingApi
+    'adminEmail'   => 'admin@example.com',
+    'cross_domain' => $crossDomain,
+    'api'          => $api
 ];

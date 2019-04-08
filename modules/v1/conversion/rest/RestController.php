@@ -90,7 +90,7 @@ class RestController extends RestBaseController
                 $this->transaction->rollBack();
                 return [false, 'Ip已经被记录', 500];
             }
-
+            //访问记录
             $staticConversion = new StaticConversion;
             $staticConversion->wxh = $conversionInfo->wxh;
             $staticConversion->referer = $_SERVER['HTTP_REFERER'] ?? '';
@@ -109,6 +109,7 @@ class RestController extends RestBaseController
             $staticConversion->ip = $this->responseUtils::ipToInt($this->request->getUserIP());
             $staticConversion->u_id = $staticUrl->id;
             $this->staticConversion::insert($staticConversion);
+            //转化数增加
             $this->staticServiceConversionsService::increasedConversions($staticUrl);
             //TODO 腾讯api
 
