@@ -2,6 +2,8 @@
 
 namespace app\api\tencentMarketingApi\userActions\api;
 
+use app\api\tencentMarketingApi\userActions\domain\dto\ActionsDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\TraceDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
 use app\api\tencentMarketingAPI\userActions\service\impl\UserActionsImpl;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
@@ -21,8 +23,6 @@ class UserActionsAip extends ApiBaseController
 {
     /* @var UserActionsService */
     private $userActionsService = UserActionsImpl::class;
-    /* @var UserActionsDto */
-    private $userActionsDto = UserActionsDto::class;
 
     /**
      * 上传用户行为数据
@@ -32,8 +32,17 @@ class UserActionsAip extends ApiBaseController
      */
     public function add(): void
     {
-        /* @var $userActionsDto */
-        $userActionsDto = new $this->userActionsDto;
+        $userActionsDto = new UserActionsDto;
+        $userActionsDto->attributes = $this->request->post('account_id', -1);
+        $userActionsDto->actions = new ActionsDto;
+        $userActionsDto->actions->url = $this->request->post('url');
+        $userActionsDto->actions->action_time = time();
+        $userActionsDto->actions->action_type = ActionsDto::COMPLETE_ORDER;
+        $userActionsDto->actions->trace = new TraceDto;
+        $userActionsDto->actions->trace->click_id = '???';
+        $userActionsDto->actions->action_param = $this->request->post('action_param', []);
+        $userActionsDto->actions->outer_action_id = $this->request->post('outer_action_id', uniqid('', true) . time());
+        $userActionsDto->actions = [$userActionsDto->actions];
         /* @var $userActionsService UserActionsService */
         $userActionsService = new $this->userActionsService;
         $userActionsService->add($userActionsDto);

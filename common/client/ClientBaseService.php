@@ -3,7 +3,6 @@
 namespace app\common\client;
 
 use GuzzleHttp\Client;
-use Yii;
 
 /**
  * Class ClientBaseService
