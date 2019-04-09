@@ -2,7 +2,9 @@
 
 namespace app\modules\v1\conversion\rest;
 
+use app\api\tencentMarketingApi\userActions\api\UserActionsController;
 use app\common\rest\RestBaseController;
+use app\exception\TencentMarketingApiException;
 use app\exception\ValidateException;
 use app\modules\v1\conversion\domain\StaticConversion;
 use app\modules\v1\conversion\domain\StaticUrl;
@@ -30,6 +32,7 @@ use yii\db\Exception;
  * @property StaticUrlService $staticUrlService
  * @property StaticConversionService $staticConversion
  * @property StaticServiceConversionsImpl $staticServiceConversionsService
+ * @property UserActionsController $userActionsController
  * @package app\modules\v1\rest
  * @author: lirong
  */
@@ -53,6 +56,8 @@ class RestController extends RestBaseController
     private $staticConversion = StaticConversionImpl::class;
     /* @var StaticServiceConversionsService */
     private $staticServiceConversionsService = StaticServiceConversionsImpl::class;
+    /* @var UserActionsController */
+    private $userActionsController = UserActionsController::class;
 
     /**
      * Declares the allowed HTTP verbs.
@@ -111,10 +116,10 @@ class RestController extends RestBaseController
             $this->staticConversion::insert($staticConversion);
             //转化数增加
             $this->staticServiceConversionsService::increasedConversions($staticUrl);
-            //TODO 腾讯api
-
+            //用户行为统计接口
+            $this->userActionsController::add();
             return [true, '操作成功!', 200];
-        } catch (ValidateException|Exception $e) {
+        } catch (ValidateException|Exception|TencentMarketingApiException $e) {
             $this->transaction->rollBack();
             return [false, $e->getMessage(), $e->getCode()];
         }
