@@ -3,8 +3,8 @@
 namespace app\modules\v1\conversion\service;
 
 use app\exception\ValidateException;
-use app\modules\v1\conversion\domain\StaticServiceConversions;
-use app\modules\v1\conversion\domain\StaticUrl;
+use app\modules\v1\conversion\domain\po\StaticServiceConversions;
+use app\modules\v1\conversion\domain\po\StaticUrl;
 
 /**
  * Interface StaticServiceConversionsService

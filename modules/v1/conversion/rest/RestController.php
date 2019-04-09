@@ -2,12 +2,12 @@
 
 namespace app\modules\v1\conversion\rest;
 
-use app\api\tencentMarketingApi\userActions\api\UserActionsController;
+use app\api\tencentMarketingApi\userActions\api\UserActionsAip;
 use app\common\rest\RestBaseController;
 use app\exception\TencentMarketingApiException;
 use app\exception\ValidateException;
-use app\modules\v1\conversion\domain\StaticConversion;
-use app\modules\v1\conversion\domain\StaticUrl;
+use app\modules\v1\conversion\domain\po\StaticConversion;
+use app\modules\v1\conversion\domain\po\StaticUrl;
 use app\modules\v1\conversion\domain\vo\ConversionInfo;
 use app\modules\v1\conversion\service\impl\StaticConversionImpl;
 use app\modules\v1\conversion\service\impl\StaticServiceConversionsImpl;
@@ -32,7 +32,7 @@ use yii\db\Exception;
  * @property StaticUrlService $staticUrlService
  * @property StaticConversionService $staticConversion
  * @property StaticServiceConversionsImpl $staticServiceConversionsService
- * @property UserActionsController $userActionsController
+ * @property UserActionsAip $userActionsController
  * @package app\modules\v1\rest
  * @author: lirong
  */
@@ -56,8 +56,8 @@ class RestController extends RestBaseController
     private $staticConversion = StaticConversionImpl::class;
     /* @var StaticServiceConversionsService */
     private $staticServiceConversionsService = StaticServiceConversionsImpl::class;
-    /* @var UserActionsController */
-    private $userActionsController = UserActionsController::class;
+    /* @var UserActionsAip */
+    private $userActionsController = UserActionsAip::class;
 
     /**
      * Declares the allowed HTTP verbs.
@@ -117,7 +117,9 @@ class RestController extends RestBaseController
             //转化数增加
             $this->staticServiceConversionsService::increasedConversions($staticUrl);
             //用户行为统计接口
-            $this->userActionsController::add();
+            /* @var $userActionsAip UserActionsAip */
+            $userActionsAip = new $this->userActionsController;
+            $userActionsAip->add();
             return [true, '操作成功!', 200];
         } catch (ValidateException|Exception|TencentMarketingApiException $e) {
             $this->transaction->rollBack();

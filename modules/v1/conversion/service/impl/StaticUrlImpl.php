@@ -2,7 +2,7 @@
 
 namespace app\modules\v1\conversion\service\impl;
 
-use app\modules\v1\conversion\domain\StaticUrl;
+use app\modules\v1\conversion\domain\po\StaticUrl;
 use app\modules\v1\conversion\service\StaticUrlService;
 
 /**

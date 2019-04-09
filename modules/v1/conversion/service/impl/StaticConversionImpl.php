@@ -3,7 +3,7 @@
 namespace app\modules\v1\conversion\service\impl;
 
 use app\exception\ValidateException;
-use app\modules\v1\conversion\domain\StaticConversion;
+use app\modules\v1\conversion\domain\po\StaticConversion;
 use app\modules\v1\conversion\service\StaticConversionService;
 
 /**

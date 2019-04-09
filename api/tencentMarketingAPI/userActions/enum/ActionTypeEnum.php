@@ -3,12 +3,12 @@
 namespace app\api\tencentMarketingApi\userActions\enum;
 
 /**
- * Class ActionType
+ * Interface ActionType
  *
  * @package app\api\tencentMarketingApi\userActions\enum
  * @author: lirong
  */
-abstract class ActionType
+interface ActionTypeEnum
 {
     /* @var string 自定义 */
     public const CUSTOM = 'CUSTOM';

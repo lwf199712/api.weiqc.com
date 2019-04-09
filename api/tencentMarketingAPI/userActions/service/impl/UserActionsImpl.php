@@ -7,6 +7,7 @@ use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
 use app\common\client\ClientBaseService;
 use app\exception\TencentMarketingApiException;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Yii;
 
 /**
@@ -38,6 +39,15 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
      */
     public function add(UserActionsDto $userActionsDto): void
     {
-        throw new TencentMarketingApiException('错误');
+        try {
+            $this->client->request('POST', Yii::$app->params['api']['tencent_marketing_api']['base_url'] . Yii::$app->params['api']['tencent_marketing_api']['api']['user_actions']['add'], [
+                'query' => [
+                    'token' => Yii::$app->params['api']['tencent_marketing_api']['access_token'],
+                ],
+                'json'  => $userActionsDto->attributes
+            ]);
+        } catch (GuzzleException $e) {
+            throw new TencentMarketingApiException($e->getMessage(), $e->getCode());
+        }
     }
 }
