@@ -4,8 +4,8 @@ namespace app\modules\v1\conversion\rest;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsAip;
 use app\common\rest\RestBaseController;
-use app\exception\TencentMarketingApiException;
-use app\exception\ValidateException;
+use app\common\exception\TencentMarketingApiException;
+use app\common\exception\ValidateException;
 use app\modules\v1\conversion\domain\po\StaticConversion;
 use app\modules\v1\conversion\domain\po\StaticUrl;
 use app\modules\v1\conversion\domain\vo\ConversionInfo;
@@ -19,7 +19,7 @@ use app\utils\IpLocationUtils;
 use app\utils\ResponseUtils;
 use app\utils\SourceDetectionUtil;
 use app\utils\RequestUtils;
-use yii\db\Exception;
+use Exception;
 
 /**
  * Landing page conversions（copy WeChat）.

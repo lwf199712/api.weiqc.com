@@ -2,7 +2,7 @@
 
 namespace app\modules\v1\conversion\service;
 
-use app\exception\ValidateException;
+use app\common\exception\ValidateException;
 use app\modules\v1\conversion\domain\po\StaticConversion;
 
 /**

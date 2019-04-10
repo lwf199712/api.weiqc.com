@@ -5,7 +5,7 @@ namespace app\api\tencentMarketingAPI\userActions\service\impl;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
 use app\common\client\ClientBaseService;
-use app\exception\TencentMarketingApiException;
+use app\common\exception\TencentMarketingApiException;
 use app\utils\ArrayUtils;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -43,15 +43,15 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
         try {
             $response = $this->client->request('POST', Yii::$app->params['api']['tencent_marketing_api']['base_url'] . Yii::$app->params['api']['tencent_marketing_api']['api']['user_actions']['add'], [
                 'query' => [
-                    'token'     => Yii::$app->params['api']['tencent_marketing_api']['access_token'],
+                    'access_token'     => Yii::$app->params['api']['tencent_marketing_api']['access_token'],
                     'timestamp' => time(),
-                    'nonce'     => uniqid('', true) . time(),
+                    'nonce'     => uniqid('', false) . time(),
                 ],
                 'json'  => ArrayUtils::attributesAsMap($userActionsDto)
             ]);
             $response = json_decode($response->getBody()->getContents());
             if (($response->code ?? true) && (int)$response->code !== 0) {
-                throw new TencentMarketingApiException('上传用户行为数据失败', $response->message ?? 500);
+                throw new TencentMarketingApiException('上传用户行为数据失败,接口返回错误:' . $response->message, $response->code ?? 500);
             }
         } catch (GuzzleException $e) {
             throw new TencentMarketingApiException($e->getMessage(), $e->getCode());

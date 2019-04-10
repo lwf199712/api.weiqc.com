@@ -1,13 +1,13 @@
 <?php
 
-namespace app\exception;
+namespace app\common\exception;
 
 use yii\base\Exception;
 
 /**
  * Class TencentMarketingApiException
  *
- * @package app\exception
+ * @package app\common\exception
  * @author: lirong
  */
 class TencentMarketingApiException extends Exception

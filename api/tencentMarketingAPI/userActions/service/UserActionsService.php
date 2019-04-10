@@ -3,7 +3,7 @@
 namespace app\api\tencentMarketingAPI\userActions\service;
 
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
-use app\exception\TencentMarketingApiException;
+use app\common\exception\TencentMarketingApiException;
 
 /**
  * Interface UserActionsService
