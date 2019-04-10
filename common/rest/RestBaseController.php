@@ -89,8 +89,11 @@ abstract class RestBaseController extends ActiveController
      */
     public function afterAction($action, $result)
     {
+        if (current($result) === false && $this->transaction->getIsActive()) {
+            $this->transaction->rollBack();
+        }
         //indicating whether this transaction is active
-        if ($this->transaction->getIsActive()) {
+        if (current($result) === true && $this->transaction->getIsActive()) {
             $this->transaction->commit();
         }
         return parent::afterAction($action, $result);

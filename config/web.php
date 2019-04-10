@@ -1,5 +1,6 @@
 <?php
 
+use yii\web\JsonParser;
 use app\modules\v1\Module;
 use yii\web\Response;
 use yii\log\FileTarget;
@@ -28,6 +29,10 @@ $config = [
         'request'      => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'cQVUlOD_Ex9tcIfnLkdCloLB8CjRLDodLDOd',
+            'parsers'             => [
+                //receive form-data to receive json data
+                'application/json' => JsonParser::class,
+            ]
         ],
         'response'     => [
             'class'         => Response::class,

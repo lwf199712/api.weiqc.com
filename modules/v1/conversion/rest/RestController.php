@@ -84,7 +84,6 @@ class RestController extends RestBaseController
             $this->sourceDetectionUtil::crossDomainDetection();
             $staticUrl = $this->staticUrlService::findOne(['ident' => $conversionInfo->token]);
             if (!$staticUrl) {
-                $this->transaction->rollBack();
                 return [false, 'Token不存在', 500];
             }
             if ($this->staticConversion::findOne([
@@ -92,7 +91,6 @@ class RestController extends RestBaseController
                 'date' => strtotime(date('Y-m-d')),
                 'u_id' => $staticUrl->id
             ])) {
-                $this->transaction->rollBack();
                 return [false, 'Ip已经被记录', 500];
             }
             //访问记录
@@ -122,7 +120,6 @@ class RestController extends RestBaseController
             $userActionsAip->add();
             return [true, '操作成功!', 200];
         } catch (ValidateException|Exception|TencentMarketingApiException $e) {
-            $this->transaction->rollBack();
             return [false, $e->getMessage(), $e->getCode()];
         }
     }

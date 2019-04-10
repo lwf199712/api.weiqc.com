@@ -43,7 +43,9 @@ class UserActionsAip extends ApiBaseController
         $userActionsDto->actions->action_type = ActionsDto::COMPLETE_ORDER;
         $userActionsDto->actions->trace = new TraceDto;
         $userActionsDto->actions->trace->click_id = $this->request->post('click_id', -1);
-        $userActionsDto->actions->action_param = $this->request->post('action_param');
+        if ($this->request->post('action_param')) {
+            $userActionsDto->actions->action_param = $this->request->post('action_param');
+        }
         $userActionsDto->actions->outer_action_id = $this->request->post('outer_action_id', random_int(1, 9999) . time());
         $userActionsDto->actions = [$userActionsDto->actions];
         /* @var $userActionsService UserActionsService */

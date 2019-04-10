@@ -7,8 +7,8 @@ use yii\base\Model;
 /**
  * Class ConversionInfo
  *
- * @property string $wxh
- * @property string $token
+ * @property string $wxh 微信服务号
+ * @property string $token token
  * @package app\modules\v1\domain\vo
  * @author: lirong
  */
@@ -41,7 +41,7 @@ class ConversionInfo extends Model
     public function attributeLabels(): array
     {
         return [
-            'wxh'   => 'wxh',
+            'wxh'   => '微信服务号',
             'token' => 'token',
         ];
     }
