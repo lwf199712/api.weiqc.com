@@ -3,6 +3,9 @@
 namespace app\modules\v1\conversion\rest;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsAip;
+use app\api\tencentMarketingApi\userActions\domain\dto\ActionsDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\TraceDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
 use app\common\rest\RestBaseController;
 use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
@@ -72,6 +75,8 @@ class RestController extends RestBaseController
 
     /**
      * Landing page conversions - add conversions
+     * action_type COMPLETE_ORDER
+     * complete order
      *
      * @author: lirong
      */
@@ -111,13 +116,27 @@ class RestController extends RestBaseController
             }
             $staticConversionPo->ip = $this->responseUtils::ipToInt($this->request->getUserIP());
             $staticConversionPo->u_id = $staticUrl->id;
-            $this->staticConversion::insert($staticConversionPo);
+            $staticConversionId = $this->staticConversion::insert($staticConversionPo);
             //转化数增加
             $this->staticServiceConversionsService::increasedConversions($staticUrl);
             //用户行为统计接口
             /* @var $userActionsAip UserActionsAip */
+            $userActionsDto = new UserActionsDto;
+            $userActionsDto->account_id = $this->request->post('account_id', -1);
+            $userActionsDto->actions = new ActionsDto;
+            $userActionsDto->actions->user_action_set_id = $this->request->post('user_action_set_id');
+            $userActionsDto->actions->url = $this->request->post('url');
+            $userActionsDto->actions->action_time = time();
+            $userActionsDto->actions->action_type = ActionsDto::COMPLETE_ORDER;
+            $userActionsDto->actions->trace = new TraceDto;
+            $userActionsDto->actions->trace->click_id = $this->request->post('click_id', -1);
+            if ($this->request->post('action_param')) {
+                $userActionsDto->actions->action_param = $this->request->post('action_param');
+            }
+            $userActionsDto->actions->outer_action_id = $staticConversionId;
+            $userActionsDto->actions = [$userActionsDto->actions];
             $userActionsAip = new $this->userActionsController;
-            $userActionsAip->add();
+            $userActionsAip->add($userActionsDto);
             return [true, '操作成功!', 200];
         } catch (ValidateException|Exception|TencentMarketingApiException $e) {
             return [false, $e->getMessage(), $e->getCode()];

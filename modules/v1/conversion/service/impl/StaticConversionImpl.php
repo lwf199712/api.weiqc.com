@@ -28,11 +28,11 @@ class StaticConversionImpl implements StaticConversionService
 
     /**
      * @param StaticConversionPo $staticConversionPo
-     * @return void
+     * @return int
      * @throws ValidateException
      * @author: lirong
      */
-    public static function insert($staticConversionPo): void
+    public static function insert($staticConversionPo): int
     {
         /* @var $staticConversion StaticConversionPo */
         $staticConversion = new self::$staticConversion;
@@ -40,5 +40,6 @@ class StaticConversionImpl implements StaticConversionService
         if (!$staticConversion->save()) {
             throw new ValidateException($staticConversion, '表单参数校验异常！', 302);
         }
+        return (int)$staticConversion->id;
     }
 }

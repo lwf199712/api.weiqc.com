@@ -22,9 +22,9 @@ interface StaticConversionService
 
     /**
      * @param StaticConversionPo $staticConversionPo
-     * @return void
+     * @return int
      * @throws ValidateException
      * @author: lirong
      */
-    public static function insert($staticConversionPo):void;
+    public static function insert($staticConversionPo):int;
 }
