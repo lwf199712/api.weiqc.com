@@ -6,7 +6,7 @@ use app\api\tencentMarketingApi\userActions\api\UserActionsAip;
 use app\common\rest\RestBaseController;
 use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
-use app\modules\v1\conversion\domain\po\StaticConversion;
+use app\modules\v1\conversion\domain\po\StaticConversionPo;
 use app\modules\v1\conversion\domain\po\StaticUrl;
 use app\modules\v1\conversion\domain\vo\ConversionInfo;
 use app\modules\v1\conversion\service\impl\StaticConversionImpl;
@@ -94,24 +94,24 @@ class RestController extends RestBaseController
                 return [false, 'Ip已经被记录', 500];
             }
             //访问记录
-            $staticConversion = new StaticConversion;
-            $staticConversion->wxh = $conversionInfo->wxh;
-            $staticConversion->referer = $_SERVER['HTTP_REFERER'] ?? '';
-            $staticConversion->agent = $_SERVER['HTTP_USER_AGENT'];
-            $staticConversion->createtime = $_SERVER['REQUEST_TIME'];
+            $staticConversionPo = new StaticConversionPo;
+            $staticConversionPo->wxh = $conversionInfo->wxh;
+            $staticConversionPo->referer = $_SERVER['HTTP_REFERER'] ?? '';
+            $staticConversionPo->agent = $_SERVER['HTTP_USER_AGENT'];
+            $staticConversionPo->createtime = $_SERVER['REQUEST_TIME'];
             /* @var $ipLocationUtils IpLocationUtils */
             $ipLocationUtils = new $this->ipLocationUtils;
             $ipLocationUtils = $ipLocationUtils->getlocation(long2ip($this->responseUtils::ipToInt($this->request->getUserIP())));
-            $staticConversion->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
-            $staticConversion->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
-            $staticConversion->date = strtotime(date('Y-m-d'));
-            $staticConversion->page = $staticUrl->url;
+            $staticConversionPo->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
+            $staticConversionPo->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
+            $staticConversionPo->date = strtotime(date('Y-m-d'));
+            $staticConversionPo->page = $staticUrl->url;
             if ($staticUrl->pcurl && !$this->requestUtils::requestFromMobile()) {
-                $staticConversion->page = $staticUrl->pcurl;
+                $staticConversionPo->page = $staticUrl->pcurl;
             }
-            $staticConversion->ip = $this->responseUtils::ipToInt($this->request->getUserIP());
-            $staticConversion->u_id = $staticUrl->id;
-            $this->staticConversion::insert($staticConversion);
+            $staticConversionPo->ip = $this->responseUtils::ipToInt($this->request->getUserIP());
+            $staticConversionPo->u_id = $staticUrl->id;
+            $this->staticConversion::insert($staticConversionPo);
             //转化数增加
             $this->staticServiceConversionsService::increasedConversions($staticUrl);
             //用户行为统计接口

@@ -20,7 +20,7 @@ use yii\db\ActiveRecord;
  * @property int $createtime
  * @property string $wxh 微信服务号
  */
-class StaticConversion extends ActiveRecord
+class StaticConversionPo extends ActiveRecord
 {
     /**
      * {@inheritdoc}

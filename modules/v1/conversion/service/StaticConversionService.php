@@ -3,7 +3,7 @@
 namespace app\modules\v1\conversion\service;
 
 use app\common\exception\ValidateException;
-use app\modules\v1\conversion\domain\po\StaticConversion;
+use app\modules\v1\conversion\domain\po\StaticConversionPo;
 
 /**
  * Interface StaticConversionService
@@ -15,16 +15,16 @@ interface StaticConversionService
 {
     /**
      * @param mixed $condition
-     * @return StaticConversion|null|mixed
+     * @return StaticConversionPo|null|mixed
      * @author: lirong
      */
     public static function findOne($condition);
 
     /**
-     * @param StaticConversion $staticConversion
+     * @param StaticConversionPo $staticConversionPo
      * @return void
      * @throws ValidateException
      * @author: lirong
      */
-    public static function insert($staticConversion):void;
+    public static function insert($staticConversionPo):void;
 }
