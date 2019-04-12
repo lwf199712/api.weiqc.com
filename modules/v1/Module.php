@@ -3,7 +3,7 @@
 namespace app\modules\v1;
 
 use yii\base\Module as BaseModule;
-use app\modules\v1\conversion\Module as ConversionModule;
+use app\modules\v1\userAction\Module as ConversionModule;
 use Yii;
 
 /**
@@ -29,7 +29,7 @@ class Module extends BaseModule
         Yii::$app->user->loginUrl = null;
 
         $this->modules = [
-            'conversion' => [
+            'user-action' => [
                 // Consider using a shorter namespace here
                 'class' => ConversionModule::class,
             ],

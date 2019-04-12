@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\v1\conversion;
+namespace app\modules\v1\userAction;
 
 use yii\base\Module as BaseModule;
 
@@ -19,5 +19,5 @@ class Module extends BaseModule
      * @var string $controllerNamespace
      * @author: lirong
      */
-    public $controllerNamespace = 'app\modules\v1\conversion\rest';
+    public $controllerNamespace = 'app\modules\v1\userAction\rest';
 }

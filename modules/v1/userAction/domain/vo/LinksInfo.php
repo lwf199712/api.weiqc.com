@@ -1,22 +1,19 @@
 <?php
 
-namespace app\modules\v1\conversion\domain\vo;
+namespace app\modules\v1\userAction\domain\vo;
 
 use yii\base\Model;
 
 /**
  * Class ConversionInfo
  *
- * @property string $wxh 微信服务号
- * @property string $token token
- * @package app\modules\v1\domain\vo
+ * @property string $token
+ * @package app\modules\v1\conversion\domain\vo
  * @author: lirong
  */
-class ConversionInfo extends Model
+class LinksInfo extends Model
 {
-    /* @var string wxh */
-    public $wxh;
-    /* @var string token code */
+    /* @var string $token */
     public $token;
 
     /**
@@ -28,7 +25,7 @@ class ConversionInfo extends Model
     public function rules(): array
     {
         return [
-            [['wxh', 'token'], 'string', 'max' => 128],
+            [['token'], 'string', 'max' => 128],
         ];
     }
 
@@ -41,8 +38,7 @@ class ConversionInfo extends Model
     public function attributeLabels(): array
     {
         return [
-            'wxh'   => '微信服务号',
-            'token' => 'token',
+            'token'   => 'token',
         ];
     }
 }

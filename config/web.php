@@ -1,7 +1,9 @@
 <?php
 
+use yii\debug\Module as DebugModule;
+use yii\gii\Module as GiiModule;
 use yii\web\JsonParser;
-use app\modules\v1\Module;
+use app\modules\v1\Module as V1Module;
 use yii\web\Response;
 use yii\log\FileTarget;
 use yii\swiftmailer\Mailer;
@@ -22,7 +24,7 @@ $config = [
     'modules'    => [
         //load conversion modules
         'v1' => [
-            'class' => Module::class,
+            'class' => V1Module::class,
         ]
     ],
     'components' => [
@@ -101,14 +103,14 @@ if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
-        'class' => Module::class,
+        'class' => DebugModule::class,
         // uncomment the following to add your IP if you are not connecting from localhost.
         //'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
-        'class' => Module::class,
+        'class' => GiiModule::class,
         // uncomment the following to add your IP if you are not connecting from localhost.
         //'allowedIPs' => ['127.0.0.1', '::1'],
     ];

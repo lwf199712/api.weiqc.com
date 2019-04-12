@@ -13,7 +13,7 @@ return [
     [
         'class'         => UrlRule::class,
         'controller'    => [
-            'v1/conversion/rest',
+            'v1/userAction/rest',
         ],
         //统一处理OPTIONS请求
         'extraPatterns' => [

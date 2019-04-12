@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\v1\conversion\rest;
+namespace app\modules\v1\userAction\rest;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsAip;
 use app\api\tencentMarketingApi\userActions\domain\dto\ActionsDto;
@@ -9,15 +9,17 @@ use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
 use app\common\rest\RestBaseController;
 use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
-use app\modules\v1\conversion\domain\po\StaticConversionPo;
-use app\modules\v1\conversion\domain\po\StaticUrl;
-use app\modules\v1\conversion\domain\vo\ConversionInfo;
-use app\modules\v1\conversion\service\impl\StaticConversionImpl;
-use app\modules\v1\conversion\service\impl\StaticServiceConversionsImpl;
-use app\modules\v1\conversion\service\impl\StaticUrlImpl;
-use app\modules\v1\conversion\service\StaticConversionService;
-use app\modules\v1\conversion\service\StaticServiceConversionsService;
-use app\modules\v1\conversion\service\StaticUrlService;
+use app\modules\v1\userAction\domain\po\StaticConversionPo;
+use app\modules\v1\userAction\domain\po\StaticHits;
+use app\modules\v1\userAction\domain\po\StaticUrl;
+use app\modules\v1\userAction\domain\vo\ConversionInfo;
+use app\modules\v1\userAction\domain\vo\LinksInfo;
+use app\modules\v1\userAction\service\impl\StaticConversionImpl;
+use app\modules\v1\userAction\service\impl\StaticServiceConversionsImpl;
+use app\modules\v1\userAction\service\impl\StaticUrlImpl;
+use app\modules\v1\userAction\service\StaticConversionService;
+use app\modules\v1\userAction\service\StaticServiceConversionsService;
+use app\modules\v1\userAction\service\StaticUrlService;
 use app\utils\IpLocationUtils;
 use app\utils\ResponseUtils;
 use app\utils\SourceDetectionUtil;
@@ -35,15 +37,18 @@ use Exception;
  * @property StaticConversionService $staticConversion
  * @property StaticServiceConversionsImpl $staticServiceConversionsService
  * @property UserActionsAip $userActionsController
+ * @property StaticHits $staticHits
  * @package app\modules\v1\rest
  * @author: lirong
  */
-class RestController extends RestBaseController
+class ConversionController extends RestBaseController
 {
-    /* @var ResponseUtils */
-    public $responseUtils = ResponseUtils::class;
     /* @var StaticUrl */
     public $modelClass = StaticUrl::class;
+    /* @var ResponseUtils */
+    public $responseUtils = ResponseUtils::class;
+    /* @var StaticHits */
+    public $staticHits = StaticHits::class;
     /* @var SourceDetectionUtil */
     private $sourceDetectionUtil = SourceDetectionUtil::class;
     /* @var IpLocationUtils */
@@ -80,9 +85,9 @@ class RestController extends RestBaseController
     public function actionAddConversion(): array
     {
         try {
+            $this->sourceDetectionUtil::crossDomainDetection();
             $conversionInfo = new ConversionInfo;
             $conversionInfo->setAttributes($this->request->post());
-            $this->sourceDetectionUtil::crossDomainDetection();
             $staticUrl = $this->staticUrlService::findOne(['ident' => $conversionInfo->token]);
             if (!$staticUrl) {
                 return [false, 'Token不存在', 500];
@@ -101,7 +106,7 @@ class RestController extends RestBaseController
             $staticConversionPo->agent = $_SERVER['HTTP_USER_AGENT'];
             $staticConversionPo->createtime = $_SERVER['REQUEST_TIME'];
             /* @var $ipLocationUtils IpLocationUtils */
-            $ipLocationUtils = new $this->ipLocationUtils;
+            $ipLocationUtils = $this->ipLocationUtils::getIpLocationUtils();
             $ipLocationUtils = $ipLocationUtils->getlocation(long2ip($this->responseUtils::ipToInt($this->request->getUserIP())));
             $staticConversionPo->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
             $staticConversionPo->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
@@ -140,6 +145,7 @@ class RestController extends RestBaseController
     }
 
     /**
+     *
      * Landing page conversions - add views
      * action_type VIEW_CONTENT
      *
@@ -149,6 +155,20 @@ class RestController extends RestBaseController
     public function actionAddViews(): array
     {
         try {
+            $linksInfo = new LinksInfo;
+            $linksInfo->setAttributes($this->request->post());
+            $staticUrl = $this->staticUrlService::findOne(['ident' => $linksInfo->token]);
+            if (!$staticUrl) {
+                return [false, 'Token不存在', 500];
+            }
+
+            //检查客户端类型
+            if ($staticUrl->pcurl && !$this->requestUtils::requestFromMobile()) {
+                $pcurl = $staticUrl->pcurl;
+            }
+
+            $this->staticHits;
+
 
             return [true, '操作成功!', 200];
         } catch (ValidateException|Exception|TencentMarketingApiException $e) {

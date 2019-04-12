@@ -10,7 +10,7 @@ use yii\web\BadRequestHttpException;
 
 /**
  * rest base controller
- * Class RestController
+ * Class ConversionController
  *
  * @property Request $request The request component. This property is read-only.
  * @property Response $response The response component. This property is read-only.

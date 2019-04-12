@@ -1,10 +1,10 @@
 <?php
 
-namespace app\modules\v1\conversion\service;
+namespace app\modules\v1\userAction\service;
 
 use app\common\exception\ValidateException;
-use app\modules\v1\conversion\domain\po\StaticServiceConversions;
-use app\modules\v1\conversion\domain\po\StaticUrl;
+use app\modules\v1\userAction\domain\po\StaticServiceConversions;
+use app\modules\v1\userAction\domain\po\StaticUrl;
 
 /**
  * Interface StaticServiceConversionsService
