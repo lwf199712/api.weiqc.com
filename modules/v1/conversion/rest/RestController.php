@@ -31,7 +31,6 @@ use Exception;
  * @property SourceDetectionUtil $sourceDetectionUtil
  * @property IpLocationUtils $ipLocationUtils
  * @property RequestUtils $requestUtils
- * @property ConversionInfo $conversionInfo
  * @property StaticUrlService $staticUrlService
  * @property StaticConversionService $staticConversion
  * @property StaticServiceConversionsImpl $staticServiceConversionsService
@@ -51,8 +50,6 @@ class RestController extends RestBaseController
     private $ipLocationUtils = IpLocationUtils::class;
     /* @var RequestUtils */
     private $requestUtils = RequestUtils::class;
-    /* @var ConversionInfo */
-    private $conversionInfo = ConversionInfo::class;
     /* @var StaticUrlService */
     private $staticUrlService = StaticUrlImpl::class;
     /* @var StaticConversionService */
@@ -83,8 +80,7 @@ class RestController extends RestBaseController
     public function actionAddConversion(): array
     {
         try {
-            /* @var $conversionInfo ConversionInfo */
-            $conversionInfo = new $this->conversionInfo;
+            $conversionInfo = new ConversionInfo;
             $conversionInfo->setAttributes($this->request->post());
             $this->sourceDetectionUtil::crossDomainDetection();
             $staticUrl = $this->staticUrlService::findOne(['ident' => $conversionInfo->token]);
@@ -117,10 +113,9 @@ class RestController extends RestBaseController
             $staticConversionPo->ip = $this->responseUtils::ipToInt($this->request->getUserIP());
             $staticConversionPo->u_id = $staticUrl->id;
             $staticConversionId = $this->staticConversion::insert($staticConversionPo);
-            //转化数增加
+            //系统转化数增加
             $this->staticServiceConversionsService::increasedConversions($staticUrl);
-            //用户行为统计接口
-            /* @var $userActionsAip UserActionsAip */
+            //广点通用户行为统计接口转化数增加
             $userActionsDto = new UserActionsDto;
             $userActionsDto->account_id = $this->request->post('account_id', -1);
             $userActionsDto->actions = new ActionsDto;
@@ -135,8 +130,26 @@ class RestController extends RestBaseController
             }
             $userActionsDto->actions->outer_action_id = $staticConversionId;
             $userActionsDto->actions = [$userActionsDto->actions];
+            /* @var $userActionsAip UserActionsAip */
             $userActionsAip = new $this->userActionsController;
             $userActionsAip->add($userActionsDto);
+            return [true, '操作成功!', 200];
+        } catch (ValidateException|Exception|TencentMarketingApiException $e) {
+            return [false, $e->getMessage(), $e->getCode()];
+        }
+    }
+
+    /**
+     * Landing page conversions - add views
+     * action_type VIEW_CONTENT
+     *
+     * @return array
+     * @author: lirong
+     */
+    public function actionAddViews(): array
+    {
+        try {
+
             return [true, '操作成功!', 200];
         } catch (ValidateException|Exception|TencentMarketingApiException $e) {
             return [false, $e->getMessage(), $e->getCode()];
