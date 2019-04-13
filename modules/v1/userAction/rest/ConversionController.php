@@ -11,13 +11,8 @@ use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
 use app\modules\v1\userAction\domain\po\StaticConversionPo;
 use app\modules\v1\userAction\domain\po\StaticHitsPo;
-use app\modules\v1\userAction\domain\po\StaticUrlPo;
 use app\modules\v1\userAction\domain\vo\ConversionInfo;
 use app\modules\v1\userAction\domain\vo\LinksInfo;
-use app\modules\v1\userAction\service\impl\StaticConversionImpl;
-use app\modules\v1\userAction\service\impl\StaticHitsImpl;
-use app\modules\v1\userAction\service\impl\StaticServiceConversionsImpl;
-use app\modules\v1\userAction\service\impl\StaticUrlImpl;
 use app\modules\v1\userAction\service\StaticConversionService;
 use app\modules\v1\userAction\service\StaticHitsService;
 use app\modules\v1\userAction\service\StaticServiceConversionsService;
@@ -36,8 +31,8 @@ use Exception;
  * @property IpLocationUtils $ipLocationUtils
  * @property RequestUtils $requestUtils
  * @property StaticUrlService $staticUrlService
- * @property StaticConversionService $staticConversion
- * @property StaticServiceConversionsImpl $staticServiceConversionsService
+ * @property StaticConversionService $staticConversionService
+ * @property StaticServiceConversionsService $staticServiceConversionsService
  * @property UserActionsAip $userActionsController
  * @property StaticHitsService $staticHitsService
  * @package app\modules\v1\rest
@@ -45,27 +40,38 @@ use Exception;
  */
 class ConversionController extends RestBaseController
 {
-    //TODO 替换为容器
-    /* @var StaticUrlPo */
-    public $modelClass = StaticUrlPo::class;
-    /* @var ResponseUtils */
-    public $responseUtils = ResponseUtils::class;
     /* @var StaticHitsService */
-    public $staticHitsService = StaticHitsImpl::class;
-    /* @var SourceDetectionUtil */
-    private $sourceDetectionUtil = SourceDetectionUtil::class;
-    /* @var IpLocationUtils */
-    private $ipLocationUtils = IpLocationUtils::class;
-    /* @var RequestUtils */
-    private $requestUtils = RequestUtils::class;
+    protected $staticHitsService;
     /* @var StaticUrlService */
-    private $staticUrlService = StaticUrlImpl::class;
+    protected $staticUrlService;
     /* @var StaticConversionService */
-    private $staticConversion = StaticConversionImpl::class;
+    protected $staticConversionService;
     /* @var StaticServiceConversionsService */
-    private $staticServiceConversionsService = StaticServiceConversionsImpl::class;
+    protected $staticServiceConversionsService;
+    /* @var ResponseUtils */
+    protected $responseUtils = ResponseUtils::class;
+    /* @var SourceDetectionUtil */
+    protected $sourceDetectionUtil = SourceDetectionUtil::class;
+    /* @var IpLocationUtils */
+    protected $ipLocationUtils = IpLocationUtils::class;
+    /* @var RequestUtils */
+    protected $requestUtils = RequestUtils::class;
     /* @var UserActionsAip */
-    private $userActionsController = UserActionsAip::class;
+    protected $userActionsController = UserActionsAip::class;
+
+    public function __construct($id, $module,
+                                StaticUrlService $staticHitsService,
+                                StaticUrlService $staticUrlService,
+                                StaticConversionService $staticConversionService,
+                                StaticServiceConversionsService $staticServiceConversionsService,
+                                $config = [])
+    {
+        $this->staticHitsService = $staticHitsService;
+        $this->staticUrlService = $staticUrlService;
+        $this->staticConversionService = $staticConversionService;
+        $this->staticServiceConversionsService = $staticServiceConversionsService;
+        parent::__construct($id, $module, $config);
+    }
 
     /**
      * Declares the allowed HTTP verbs.
@@ -96,7 +102,7 @@ class ConversionController extends RestBaseController
             if (!$staticUrl) {
                 return [false, 'Token不存在', 500];
             }
-            if ($this->staticConversion::findOne([
+            if ($this->staticConversionService->findOne([
                 'ip'   => $this->responseUtils::ipToInt($this->request->getUserIP()),
                 'date' => strtotime(date('Y-m-d')),
                 'u_id' => $staticUrl->id
@@ -121,7 +127,7 @@ class ConversionController extends RestBaseController
             }
             $staticConversionPo->ip = $this->responseUtils::ipToInt($this->request->getUserIP());
             $staticConversionPo->u_id = $staticUrl->id;
-            $staticConversionId = $this->staticConversion::insert($staticConversionPo);
+            $staticConversionId = $this->staticConversionService->insert($staticConversionPo);
             //系统转化数增加
             $this->staticServiceConversionsService::increasedConversions($staticUrl);
             //广点通用户行为统计接口转化数增加

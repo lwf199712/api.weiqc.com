@@ -26,6 +26,14 @@ use yii\web\BadRequestHttpException;
 abstract class RestBaseController extends ActiveController
 {
     /**
+     * the model class name. This property must be set.
+     * All are not set
+     *
+     * @var string
+     * @author: lirong
+     */
+    public $modelClass = '';
+    /**
      * the configuration for creating the serializer that formats the response data.
      *
      * @var array
@@ -90,10 +98,10 @@ abstract class RestBaseController extends ActiveController
     public function afterAction($action, $result)
     {
         //indicating whether this transaction is active
-        if (current($result) === false && $this->transaction->getIsActive()) {
+        if ($result && current($result) === false && $this->transaction->getIsActive()) {
             $this->transaction->rollBack();
         }
-        if (current($result) === true && $this->transaction->getIsActive()) {
+        if ($result && current($result) === true && $this->transaction->getIsActive()) {
             $this->transaction->commit();
         }
         return parent::afterAction($action, $result);

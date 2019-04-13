@@ -74,12 +74,12 @@ class IpLocationUtils
      * new self
      *
      * @param string $filename
-     * @return IpLocationUtils
+     * @return IpLocationUtils|mixed
      * @author: lirong
      */
-    public static function getIpLocationUtils($filename = 'UTFWry.dat'): IpLocationUtils
+    public static function getIpLocationUtils($filename = 'UTFWry.dat')
     {
-        if (self::$ipLocationUtils) {
+        if (!self::$ipLocationUtils) {
             self::$ipLocationUtils = new self($filename);
         }
         return self::$ipLocationUtils;

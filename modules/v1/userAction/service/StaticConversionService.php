@@ -18,7 +18,7 @@ interface StaticConversionService
      * @return StaticConversionPo|null|mixed
      * @author: lirong
      */
-    public static function findOne($condition);
+    public function findOne($condition);
 
     /**
      * @param StaticConversionPo $staticConversionPo
@@ -26,5 +26,5 @@ interface StaticConversionService
      * @throws ValidateException
      * @author: lirong
      */
-    public static function insert($staticConversionPo):int;
+    public function insert($staticConversionPo):int;
 }
