@@ -6,17 +6,31 @@ use app\common\exception\ValidateException;
 use app\modules\v1\userAction\domain\po\StaticServiceConversionsPo;
 use app\modules\v1\userAction\domain\po\StaticUrlPo;
 use app\modules\v1\userAction\service\StaticServiceConversionsService;
+use yii\base\BaseObject;
 use yii\db\Exception;
 
 /**
  * Interface ConversionService
  *
+ * @property StaticServiceConversionsPo $staticServiceConversions
  * @author: lirong
  */
-class StaticServiceConversionsImpl implements StaticServiceConversionsService
+class StaticServiceConversionsImpl extends BaseObject implements StaticServiceConversionsService
 {
     /* @var StaticServiceConversionsPo */
-    private static $staticServiceConversions = StaticServiceConversionsPo::class;
+    private $staticServiceConversions;
+
+    /**
+     * StaticServiceConversionsImpl constructor.
+     *
+     * @param StaticServiceConversionsPo $staticServiceConversions
+     * @param array $config
+     */
+    public function __construct(StaticServiceConversionsPo $staticServiceConversions, $config = [])
+    {
+        $this->staticServiceConversions = $staticServiceConversions;
+        parent::__construct($config);
+    }
 
     /**
      * increased conversions
@@ -27,9 +41,9 @@ class StaticServiceConversionsImpl implements StaticServiceConversionsService
      * @throws ValidateException
      * @author: lirong
      */
-    public static function increasedConversions($staticUrl): void
+    public function increasedConversions($staticUrl): void
     {
-        $staticServiceConversions = self::findOne(['u_id' => $staticUrl->id]);
+        $staticServiceConversions = $this->staticServiceConversions::findOne(['u_id' => $staticUrl->id]);
         if (!$staticServiceConversions) {
             throw new Exception('找不到转化信息!');
         }
@@ -48,8 +62,8 @@ class StaticServiceConversionsImpl implements StaticServiceConversionsService
      * @return StaticServiceConversionsPo|null|mixed
      * @author: lirong
      */
-    public static function findOne($condition)
+    public function findOne($condition)
     {
-        return self::$staticServiceConversions::findOne($condition);
+        return $this->staticServiceConversions::findOne($condition);
     }
 }

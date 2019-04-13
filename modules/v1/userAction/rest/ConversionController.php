@@ -3,9 +3,6 @@
 namespace app\modules\v1\userAction\rest;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsAip;
-use app\api\tencentMarketingApi\userActions\domain\dto\ActionsDto;
-use app\api\tencentMarketingApi\userActions\domain\dto\TraceDto;
-use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
 use app\common\rest\RestBaseController;
 use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
@@ -27,14 +24,16 @@ use Exception;
  * Landing page conversions（copy WeChat）.
  * Class ConversionController
  *
- * @property SourceDetectionUtil $sourceDetectionUtil
- * @property IpLocationUtils $ipLocationUtils
- * @property RequestUtils $requestUtils
  * @property StaticUrlService $staticUrlService
  * @property StaticConversionService $staticConversionService
  * @property StaticServiceConversionsService $staticServiceConversionsService
- * @property UserActionsAip $userActionsController
  * @property StaticHitsService $staticHitsService
+ * @property UserActionsAip $userActionsApi
+ * @property ResponseUtils $responseUtils
+ * @property SourceDetectionUtil $sourceDetectionUtil
+ * @property IpLocationUtils $ipLocationUtils
+ * @property RequestUtils $requestUtils
+ *
  * @package app\modules\v1\rest
  * @author: lirong
  */
@@ -49,27 +48,39 @@ class ConversionController extends RestBaseController
     /* @var StaticServiceConversionsService */
     protected $staticServiceConversionsService;
     /* @var ResponseUtils */
-    protected $responseUtils = ResponseUtils::class;
+    protected $responseUtils;
     /* @var SourceDetectionUtil */
-    protected $sourceDetectionUtil = SourceDetectionUtil::class;
+    protected $sourceDetectionUtil;
     /* @var IpLocationUtils */
-    protected $ipLocationUtils = IpLocationUtils::class;
+    protected $ipLocationUtils;
     /* @var RequestUtils */
-    protected $requestUtils = RequestUtils::class;
+    protected $requestUtils;
     /* @var UserActionsAip */
-    protected $userActionsController = UserActionsAip::class;
+    protected $userActionsApi;
 
     public function __construct($id, $module,
                                 StaticUrlService $staticHitsService,
                                 StaticUrlService $staticUrlService,
                                 StaticConversionService $staticConversionService,
                                 StaticServiceConversionsService $staticServiceConversionsService,
+                                SourceDetectionUtil $sourceDetectionUtil,
+                                ResponseUtils $responseUtils,
+                                IpLocationUtils $ipLocationUtils,
+                                RequestUtils $requestUtils,
+                                UserActionsAip $userActionsApi,
                                 $config = [])
     {
         $this->staticHitsService = $staticHitsService;
         $this->staticUrlService = $staticUrlService;
         $this->staticConversionService = $staticConversionService;
         $this->staticServiceConversionsService = $staticServiceConversionsService;
+        $this->userActionsApi = $userActionsApi;
+        //工具类
+        $this->responseUtils = $responseUtils;
+        $this->sourceDetectionUtil = $sourceDetectionUtil;
+        $this->ipLocationUtils = $ipLocationUtils;
+        $this->requestUtils = $requestUtils;
+        $this->responseUtils = $responseUtils;
         parent::__construct($id, $module, $config);
     }
 
@@ -94,16 +105,16 @@ class ConversionController extends RestBaseController
     public function actionAddConversion(): array
     {
         try {
-            $this->sourceDetectionUtil::crossDomainDetection();
+            $this->sourceDetectionUtil->crossDomainDetection();
             $conversionInfo = new ConversionInfo();
             $conversionInfo->setAttributes($this->request->post());
             //检查落地页是否存在
-            $staticUrl = $this->staticUrlService::findOne(['ident' => $conversionInfo->token]);
+            $staticUrl = $this->staticUrlService->findOne(['ident' => $conversionInfo->token]);
             if (!$staticUrl) {
                 return [false, 'Token不存在', 500];
             }
             if ($this->staticConversionService->findOne([
-                'ip'   => $this->responseUtils::ipToInt($this->request->getUserIP()),
+                'ip'   => $this->responseUtils->ipToInt($this->request->getUserIP()),
                 'date' => strtotime(date('Y-m-d')),
                 'u_id' => $staticUrl->id
             ])) {
@@ -112,42 +123,24 @@ class ConversionController extends RestBaseController
             //访问记录
             $staticConversionPo = new StaticConversionPo();
             $staticConversionPo->wxh = $conversionInfo->wxh;
-            $staticConversionPo->referer = $_SERVER['HTTP_REFERER'] ?? '';
+            $staticConversionPo->referer = $_SERVER['HTTP_REFERER']??'';
             $staticConversionPo->agent = $_SERVER['HTTP_USER_AGENT'];
             $staticConversionPo->createtime = $_SERVER['REQUEST_TIME'];
-            /* @var $ipLocationUtils IpLocationUtils */
-            $ipLocationUtils = $this->ipLocationUtils::getIpLocationUtils();
-            $ipLocationUtils = $ipLocationUtils->getlocation(long2ip($this->responseUtils::ipToInt($this->request->getUserIP())));
+            $ipLocationUtils = $this->ipLocationUtils->getlocation(long2ip($this->responseUtils->ipToInt($this->request->getUserIP())));
             $staticConversionPo->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
             $staticConversionPo->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
             $staticConversionPo->date = strtotime(date('Y-m-d'));
             $staticConversionPo->page = $staticUrl->url;
-            if ($staticUrl->pcurl && !$this->requestUtils::requestFromMobile()) {
+            if ($staticUrl->pcurl && !$this->requestUtils->requestFromMobile()) {
                 $staticConversionPo->page = $staticUrl->pcurl;
             }
-            $staticConversionPo->ip = $this->responseUtils::ipToInt($this->request->getUserIP());
+            $staticConversionPo->ip = $this->responseUtils->ipToInt($this->request->getUserIP());
             $staticConversionPo->u_id = $staticUrl->id;
             $staticConversionId = $this->staticConversionService->insert($staticConversionPo);
             //系统转化数增加
-            $this->staticServiceConversionsService::increasedConversions($staticUrl);
+            $this->staticServiceConversionsService->increasedConversions($staticUrl);
             //广点通用户行为统计接口转化数增加
-            $userActionsDto = new UserActionsDto();
-            $userActionsDto->account_id = $this->request->post('account_id', -1);
-            $userActionsDto->actions = new ActionsDto();
-            $userActionsDto->actions->user_action_set_id = $this->request->post('user_action_set_id');
-            $userActionsDto->actions->url = $this->request->post('url');
-            $userActionsDto->actions->action_time = time();
-            $userActionsDto->actions->action_type = ActionsDto::COMPLETE_ORDER;
-            $userActionsDto->actions->trace = new TraceDto();
-            $userActionsDto->actions->trace->click_id = $this->request->post('click_id', -1);
-            if ($this->request->post('action_param')) {
-                $userActionsDto->actions->action_param = $this->request->post('action_param');
-            }
-            $userActionsDto->actions->outer_action_id = $staticConversionId;
-            $userActionsDto->actions = [$userActionsDto->actions];
-            /* @var $userActionsAip UserActionsAip */
-            $userActionsAip = new $this->userActionsController;
-            $userActionsAip->add($userActionsDto);
+            $this->userActionsApi->add($staticConversionId);
             return [true, '操作成功!', 200];
         } catch (ValidateException|Exception|TencentMarketingApiException $e) {
             return [false, $e->getMessage(), $e->getCode()];
@@ -168,18 +161,18 @@ class ConversionController extends RestBaseController
             $linksInfo = new LinksInfo();
             $linksInfo->setAttributes($this->request->post());
             //检查落地页是否存在
-            $staticUrl = $this->staticUrlService::findOne(['ident' => $linksInfo->token]);
+            $staticUrl = $this->staticUrlService->findOne(['ident' => $linksInfo->token]);
             if (!$staticUrl) {
                 return [false, 'Token不存在', 500];
             }
             //检查客户端类型
             $page = $staticUrl->url;
-            if ($staticUrl->pcurl && !$this->requestUtils::requestFromMobile()) {
+            if ($staticUrl->pcurl && !$this->requestUtils->requestFromMobile()) {
                 $page = $staticUrl->pcurl;
             }
             //检查点击数是否存在
-            if ($this->staticHitsService::exists([
-                'ip'   => long2ip($this->responseUtils::ipToInt($this->request->getUserIP())),
+            if ($this->staticHitsService->exists([
+                'ip'   => long2ip($this->responseUtils->ipToInt($this->request->getUserIP())),
                 'date' => strtotime(date('Y-m-d')),
                 'u_id' => $staticUrl->id,
             ])) {
@@ -189,12 +182,10 @@ class ConversionController extends RestBaseController
             $staticHitsPo = new StaticHitsPo();
             $staticHitsPo->u_id = $staticUrl->id;
             $staticHitsPo->referer = $_SERVER['HTTP_REFERER'];
-            $staticHitsPo->ip = long2ip($this->responseUtils::ipToInt($this->request->getUserIP()));
+            $staticHitsPo->ip = long2ip($this->responseUtils->ipToInt($this->request->getUserIP()));
             $staticHitsPo->agent = addslashes($_SERVER['HTTP_USER_AGENT']);
             $staticHitsPo->createtime = $_SERVER['REQUEST_TIME'];
-            /* @var $ipLocationUtils IpLocationUtils */
-            $ipLocationUtils = $this->ipLocationUtils::getIpLocationUtils();
-            $ipLocationUtils = $ipLocationUtils->getlocation(long2ip($this->responseUtils::ipToInt($this->request->getUserIP())));
+            $ipLocationUtils = $this->ipLocationUtils->getlocation(long2ip($this->responseUtils->ipToInt($this->request->getUserIP())));
             $staticHitsPo->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
             $staticHitsPo->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
             $staticHitsPo->date = strtotime(date('Y-m-d'));

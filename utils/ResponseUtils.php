@@ -17,7 +17,7 @@ class ResponseUtils
      * @return int
      * @author: lirong
      */
-    public static function ipToInt(string $ip): int
+    public function ipToInt(string $ip): int
     {
         [$ip1, $ip2, $ip3, $ip4] = explode('.', $ip);
         return ($ip1 << 24) | ($ip2 << 16) | ($ip3 << 8) | $ip4;
@@ -33,7 +33,7 @@ class ResponseUtils
      * @return array
      * @author lirong
      */
-    public static function UnifyResponse(bool $status, string $message, int $code, array $data = []): array
+    public function UnifyResponse(bool $status, string $message, int $code, array $data = []): array
     {
         return [
             'status'  => $status,

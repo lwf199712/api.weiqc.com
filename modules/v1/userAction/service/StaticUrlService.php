@@ -16,5 +16,5 @@ interface StaticUrlService
      * @return StaticUrlPo|null|mixed
      * @author: lirong
      */
-    public static function findOne($condition);
+    public function findOne($condition);
 }

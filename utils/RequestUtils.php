@@ -28,7 +28,7 @@ class RequestUtils
      * @return bool
      * @author: lirong
      */
-    public static function requestFromMobile(): bool
+    public function requestFromMobile(): bool
     {
         $useragent = strtolower($_SERVER['HTTP_USER_AGENT']);
         if (in_array($useragent, self::MOBILE_LIST, false)) {
@@ -43,7 +43,7 @@ class RequestUtils
      * @return bool
      * @author: lirong
      */
-    public static function requestFromPc(): bool
+    public function requestFromPc(): bool
     {
         $useragent = strtolower($_SERVER['HTTP_USER_AGENT']);
         if (in_array($useragent, self::PC_LIST, false)) {

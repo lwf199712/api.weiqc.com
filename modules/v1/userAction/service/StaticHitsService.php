@@ -18,12 +18,12 @@ interface StaticHitsService
      * @return StaticConversionPo|null|mixed
      * @author: lirong
      */
-    public static function findOne($condition);
+    public function findOne($condition);
 
     /**
      * @param mixed $condition
      * @return StaticConversionPo|null|mixed
      * @author: lirong
      */
-    public static function exists($condition);
+    public function exists($condition);
 }

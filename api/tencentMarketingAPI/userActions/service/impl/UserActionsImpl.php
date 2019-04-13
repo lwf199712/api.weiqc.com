@@ -49,7 +49,7 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
                 ],
                 'json'  => ArrayUtils::attributesAsMap($userActionsDto)
             ]);
-            $response = json_decode($response->getBody()->getContents());
+            $response = json_decode($response->getBody()->getContents(), false);
             if (($response->code ?? true) && (int)$response->code !== 0) {
                 throw new TencentMarketingApiException('上传用户行为数据失败,接口返回错误:' . $response->message, $response->code ?? 500);
             }

@@ -19,7 +19,7 @@ interface StaticServiceConversionsService
      * @return StaticServiceConversionsPo|null|mixed
      * @author: lirong
      */
-    public static function findOne($condition);
+    public function findOne($condition);
 
     /**
      * @param StaticUrlPo $staticUrl
@@ -27,5 +27,5 @@ interface StaticServiceConversionsService
      * @throws ValidateException
      * @author: lirong
      */
-    public static function increasedConversions($staticUrl): void;
+    public function increasedConversions($staticUrl): void;
 }

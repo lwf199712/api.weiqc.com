@@ -11,11 +11,6 @@ namespace app\utils;
 class IpLocationUtils
 {
     /**
-     * @var IpLocationUtils $ipLocationUtils
-     * @author: lirong
-     */
-    private static $ipLocationUtils;
-    /**
      * QQWry. Dat file pointer
      *
      * @var bool|resource
@@ -68,21 +63,6 @@ class IpLocationUtils
         //将读取的little-endian编码的4个字节转化为长整型数
         $result = unpack('Vlong', fread($this->fp, 4));
         return $result['long'];
-    }
-
-    /**
-     * new self
-     *
-     * @param string $filename
-     * @return IpLocationUtils|mixed
-     * @author: lirong
-     */
-    public static function getIpLocationUtils($filename = 'UTFWry.dat')
-    {
-        if (!self::$ipLocationUtils) {
-            self::$ipLocationUtils = new self($filename);
-        }
-        return self::$ipLocationUtils;
     }
 
     /**
