@@ -19,4 +19,11 @@ interface StaticHitsService
      * @author: lirong
      */
     public static function findOne($condition);
+
+    /**
+     * @param mixed $condition
+     * @return StaticConversionPo|null|mixed
+     * @author: lirong
+     */
+    public static function exists($condition);
 }

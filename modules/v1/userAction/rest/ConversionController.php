@@ -10,6 +10,7 @@ use app\common\rest\RestBaseController;
 use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
 use app\modules\v1\userAction\domain\po\StaticConversionPo;
+use app\modules\v1\userAction\domain\po\StaticHitsPo;
 use app\modules\v1\userAction\domain\po\StaticUrlPo;
 use app\modules\v1\userAction\domain\vo\ConversionInfo;
 use app\modules\v1\userAction\domain\vo\LinksInfo;
@@ -44,6 +45,7 @@ use Exception;
  */
 class ConversionController extends RestBaseController
 {
+    //TODO 替换为容器
     /* @var StaticUrlPo */
     public $modelClass = StaticUrlPo::class;
     /* @var ResponseUtils */
@@ -87,8 +89,9 @@ class ConversionController extends RestBaseController
     {
         try {
             $this->sourceDetectionUtil::crossDomainDetection();
-            $conversionInfo = new ConversionInfo;
+            $conversionInfo = new ConversionInfo();
             $conversionInfo->setAttributes($this->request->post());
+            //检查落地页是否存在
             $staticUrl = $this->staticUrlService::findOne(['ident' => $conversionInfo->token]);
             if (!$staticUrl) {
                 return [false, 'Token不存在', 500];
@@ -101,7 +104,7 @@ class ConversionController extends RestBaseController
                 return [false, 'Ip已经被记录', 500];
             }
             //访问记录
-            $staticConversionPo = new StaticConversionPo;
+            $staticConversionPo = new StaticConversionPo();
             $staticConversionPo->wxh = $conversionInfo->wxh;
             $staticConversionPo->referer = $_SERVER['HTTP_REFERER'] ?? '';
             $staticConversionPo->agent = $_SERVER['HTTP_USER_AGENT'];
@@ -122,14 +125,14 @@ class ConversionController extends RestBaseController
             //系统转化数增加
             $this->staticServiceConversionsService::increasedConversions($staticUrl);
             //广点通用户行为统计接口转化数增加
-            $userActionsDto = new UserActionsDto;
+            $userActionsDto = new UserActionsDto();
             $userActionsDto->account_id = $this->request->post('account_id', -1);
-            $userActionsDto->actions = new ActionsDto;
+            $userActionsDto->actions = new ActionsDto();
             $userActionsDto->actions->user_action_set_id = $this->request->post('user_action_set_id');
             $userActionsDto->actions->url = $this->request->post('url');
             $userActionsDto->actions->action_time = time();
             $userActionsDto->actions->action_type = ActionsDto::COMPLETE_ORDER;
-            $userActionsDto->actions->trace = new TraceDto;
+            $userActionsDto->actions->trace = new TraceDto();
             $userActionsDto->actions->trace->click_id = $this->request->post('click_id', -1);
             if ($this->request->post('action_param')) {
                 $userActionsDto->actions->action_param = $this->request->post('action_param');
@@ -156,26 +159,43 @@ class ConversionController extends RestBaseController
     public function actionAddViews(): array
     {
         try {
-            $linksInfo = new LinksInfo;
+            $linksInfo = new LinksInfo();
             $linksInfo->setAttributes($this->request->post());
+            //检查落地页是否存在
             $staticUrl = $this->staticUrlService::findOne(['ident' => $linksInfo->token]);
             if (!$staticUrl) {
                 return [false, 'Token不存在', 500];
             }
-
             //检查客户端类型
+            $page = $staticUrl->url;
             if ($staticUrl->pcurl && !$this->requestUtils::requestFromMobile()) {
-                $pcurl = $staticUrl->pcurl;
+                $page = $staticUrl->pcurl;
             }
-            $staticHitsService = $this->staticHitsService::findOne([
+            //检查点击数是否存在
+            if ($this->staticHitsService::exists([
                 'ip'   => long2ip($this->responseUtils::ipToInt($this->request->getUserIP())),
                 'date' => strtotime(date('Y-m-d')),
                 'u_id' => $staticUrl->id,
-            ]);
-
-
+            ])) {
+                return [false, 'IP点击数已存在!'];
+            }
+            //点击数
+            $staticHitsPo = new StaticHitsPo();
+            $staticHitsPo->u_id = $staticUrl->id;
+            $staticHitsPo->referer = $_SERVER['HTTP_REFERER'];
+            $staticHitsPo->ip = long2ip($this->responseUtils::ipToInt($this->request->getUserIP()));
+            $staticHitsPo->agent = addslashes($_SERVER['HTTP_USER_AGENT']);
+            $staticHitsPo->createtime = $_SERVER['REQUEST_TIME'];
+            /* @var $ipLocationUtils IpLocationUtils */
+            $ipLocationUtils = $this->ipLocationUtils::getIpLocationUtils();
+            $ipLocationUtils = $ipLocationUtils->getlocation(long2ip($this->responseUtils::ipToInt($this->request->getUserIP())));
+            $staticHitsPo->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
+            $staticHitsPo->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
+            $staticHitsPo->date = strtotime(date('Y-m-d'));
+            $staticHitsPo->page = $page;
+            //TODO redis暂存
             return [true, '操作成功!', 200];
-        } catch (ValidateException|Exception|TencentMarketingApiException $e) {
+        } catch (Exception $e) {
             return [false, $e->getMessage(), $e->getCode()];
         }
     }
