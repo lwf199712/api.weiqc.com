@@ -2,7 +2,7 @@
 
 namespace app\modules\v1\userAction\service\impl;
 
-use app\modules\v1\userAction\domain\po\StaticUrl;
+use app\modules\v1\userAction\domain\po\StaticUrlPo;
 use app\modules\v1\userAction\service\StaticUrlService;
 
 /**
@@ -12,12 +12,12 @@ use app\modules\v1\userAction\service\StaticUrlService;
  */
 class StaticUrlImpl implements StaticUrlService
 {
-    /* @var StaticUrl */
-    private static $staticUrl = StaticUrl::class;
+    /* @var StaticUrlPo */
+    private static $staticUrl = StaticUrlPo::class;
 
     /**
      * @param mixed $condition
-     * @return StaticUrl|mixed|null
+     * @return StaticUrlPo|mixed|null
      * @author: lirong
      */
     public static function findOne($condition)

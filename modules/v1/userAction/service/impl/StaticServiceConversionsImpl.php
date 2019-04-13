@@ -3,8 +3,8 @@
 namespace app\modules\v1\userAction\service\impl;
 
 use app\common\exception\ValidateException;
-use app\modules\v1\userAction\domain\po\StaticServiceConversions;
-use app\modules\v1\userAction\domain\po\StaticUrl;
+use app\modules\v1\userAction\domain\po\StaticServiceConversionsPo;
+use app\modules\v1\userAction\domain\po\StaticUrlPo;
 use app\modules\v1\userAction\service\StaticServiceConversionsService;
 use yii\db\Exception;
 
@@ -15,13 +15,13 @@ use yii\db\Exception;
  */
 class StaticServiceConversionsImpl implements StaticServiceConversionsService
 {
-    /* @var StaticServiceConversions */
-    private static $staticServiceConversions = StaticServiceConversions::class;
+    /* @var StaticServiceConversionsPo */
+    private static $staticServiceConversions = StaticServiceConversionsPo::class;
 
     /**
      * increased conversions
      *
-     * @param StaticUrl $staticUrl
+     * @param StaticUrlPo $staticUrl
      * @return void
      * @throws Exception
      * @throws ValidateException
@@ -45,7 +45,7 @@ class StaticServiceConversionsImpl implements StaticServiceConversionsService
      * find one
      *
      * @param mixed $condition
-     * @return StaticServiceConversions|null|mixed
+     * @return StaticServiceConversionsPo|null|mixed
      * @author: lirong
      */
     public static function findOne($condition)

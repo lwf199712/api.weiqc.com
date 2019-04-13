@@ -22,7 +22,7 @@ use yii\db\ActiveRecord;
  * @property string $pcurl pc链接
  * @property int $group_id 组别id
  */
-class StaticUrl extends ActiveRecord
+class StaticUrlPo extends ActiveRecord
 {
     /**
      * Declares the name of the database table associated with this AR class.

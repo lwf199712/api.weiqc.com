@@ -10,14 +10,15 @@ use app\common\rest\RestBaseController;
 use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
 use app\modules\v1\userAction\domain\po\StaticConversionPo;
-use app\modules\v1\userAction\domain\po\StaticHits;
-use app\modules\v1\userAction\domain\po\StaticUrl;
+use app\modules\v1\userAction\domain\po\StaticUrlPo;
 use app\modules\v1\userAction\domain\vo\ConversionInfo;
 use app\modules\v1\userAction\domain\vo\LinksInfo;
 use app\modules\v1\userAction\service\impl\StaticConversionImpl;
+use app\modules\v1\userAction\service\impl\StaticHitsImpl;
 use app\modules\v1\userAction\service\impl\StaticServiceConversionsImpl;
 use app\modules\v1\userAction\service\impl\StaticUrlImpl;
 use app\modules\v1\userAction\service\StaticConversionService;
+use app\modules\v1\userAction\service\StaticHitsService;
 use app\modules\v1\userAction\service\StaticServiceConversionsService;
 use app\modules\v1\userAction\service\StaticUrlService;
 use app\utils\IpLocationUtils;
@@ -37,18 +38,18 @@ use Exception;
  * @property StaticConversionService $staticConversion
  * @property StaticServiceConversionsImpl $staticServiceConversionsService
  * @property UserActionsAip $userActionsController
- * @property StaticHits $staticHits
+ * @property StaticHitsService $staticHitsService
  * @package app\modules\v1\rest
  * @author: lirong
  */
 class ConversionController extends RestBaseController
 {
-    /* @var StaticUrl */
-    public $modelClass = StaticUrl::class;
+    /* @var StaticUrlPo */
+    public $modelClass = StaticUrlPo::class;
     /* @var ResponseUtils */
     public $responseUtils = ResponseUtils::class;
-    /* @var StaticHits */
-    public $staticHits = StaticHits::class;
+    /* @var StaticHitsService */
+    public $staticHitsService = StaticHitsImpl::class;
     /* @var SourceDetectionUtil */
     private $sourceDetectionUtil = SourceDetectionUtil::class;
     /* @var IpLocationUtils */
@@ -166,8 +167,11 @@ class ConversionController extends RestBaseController
             if ($staticUrl->pcurl && !$this->requestUtils::requestFromMobile()) {
                 $pcurl = $staticUrl->pcurl;
             }
-
-            $this->staticHits;
+            $staticHitsService = $this->staticHitsService::findOne([
+                'ip'   => long2ip($this->responseUtils::ipToInt($this->request->getUserIP())),
+                'date' => strtotime(date('Y-m-d')),
+                'u_id' => $staticUrl->id,
+            ]);
 
 
             return [true, '操作成功!', 200];

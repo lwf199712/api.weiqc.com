@@ -3,8 +3,8 @@
 namespace app\modules\v1\userAction\service;
 
 use app\common\exception\ValidateException;
-use app\modules\v1\userAction\domain\po\StaticServiceConversions;
-use app\modules\v1\userAction\domain\po\StaticUrl;
+use app\modules\v1\userAction\domain\po\StaticServiceConversionsPo;
+use app\modules\v1\userAction\domain\po\StaticUrlPo;
 
 /**
  * Interface StaticServiceConversionsService
@@ -16,13 +16,13 @@ interface StaticServiceConversionsService
 {
     /**
      * @param mixed $condition
-     * @return StaticServiceConversions|null|mixed
+     * @return StaticServiceConversionsPo|null|mixed
      * @author: lirong
      */
     public static function findOne($condition);
 
     /**
-     * @param StaticUrl $staticUrl
+     * @param StaticUrlPo $staticUrl
      * @return void
      * @throws ValidateException
      * @author: lirong

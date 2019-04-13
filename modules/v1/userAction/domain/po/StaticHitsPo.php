@@ -19,7 +19,7 @@ use yii\db\ActiveRecord;
  * @property string $agent
  * @property int $createtime
  */
-class StaticHits extends ActiveRecord
+class StaticHitsPo extends ActiveRecord
 {
     /**
      * {@inheritdoc}
