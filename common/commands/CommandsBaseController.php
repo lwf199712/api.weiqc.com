@@ -1,6 +1,6 @@
 <?php
 
-namespace app\common\rest;
+namespace app\common\commands;
 
 use Yii;
 use yii\base\Action;
@@ -9,7 +9,6 @@ use yii\db\Transaction;
 use yii\console\Controller;
 use yii\web\Request;
 use yii\web\Response;
-use yii\web\BadRequestHttpException;
 
 /**
  * commands base controller

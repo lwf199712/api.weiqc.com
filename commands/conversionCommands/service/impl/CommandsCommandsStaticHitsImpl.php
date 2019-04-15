@@ -2,8 +2,8 @@
 
 namespace app\commands\conversionCommands\service\impl;
 
-use app\commands\conversionCommands\po\CommandsStaticHitsPo;
 use app\commands\conversionCommands\service\CommandsStaticHitsService;
+use app\models\po\StaticHitsPo;
 use app\utils\BatchInsertUtils;
 use yii\base\BaseObject;
 use yii\db\Exception;
@@ -11,25 +11,25 @@ use yii\db\Exception;
 /**
  * Interface ConversionService
  *
- * @property CommandsStaticHitsPo $staticHits
+ * @property StaticHitsPo $staticHits
  * @property BatchInsertUtils $batchInsertUtils
  * @author: lirong
  */
 class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStaticHitsService
 {
-    /* @var CommandsStaticHitsPo */
+    /* @var StaticHitsPo */
     private $staticHits;
     /* @var BatchInsertUtils */
     private $batchInsertUtils;
 
     /**
-     * StaticServiceConversionsImpl constructor.
+     * UserActionUserActionStaticServiceConversionsImpl constructor.
      *
-     * @param CommandsStaticHitsPo $staticHits
+     * @param StaticHitsPo $staticHits
      * @param BatchInsertUtils $batchInsertUtils
      * @param array $config
      */
-    public function __construct(CommandsStaticHitsPo $staticHits, BatchInsertUtils $batchInsertUtils, $config = [])
+    public function __construct(StaticHitsPo $staticHits, BatchInsertUtils $batchInsertUtils, $config = [])
     {
         $this->staticHits = $staticHits;
         $this->batchInsertUtils = $batchInsertUtils;
@@ -50,7 +50,7 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
             //数据库去重处理
             $staticHitsFindList = $this->staticHits::find()->select(['ip', 'date', 'u_id']);
             foreach ($staticHitsList as $staticHits) {
-                /* @var $staticHits CommandsStaticHitsPo */
+                /* @var $staticHits StaticHitsPo */
                 $staticHitsFindList = $staticHitsFindList->orWhere([
                     'ip'   => $staticHits->ip,
                     'date' => $staticHits->date,
@@ -59,6 +59,8 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
             }
             $staticHitsFindList = $staticHitsFindList->all();
             //TODO 去除重复
+            var_dump($staticHitsFindList);
+            exit;
 
             //批量插入
             $this->batchInsertUtils->onDuplicateKeyUpdate($staticHitsFindList, [

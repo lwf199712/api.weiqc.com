@@ -3,16 +3,16 @@
 namespace app\modules\v1\userAction\service;
 
 use app\common\exception\ValidateException;
-use app\modules\v1\userAction\domain\po\StaticServiceConversionsPo;
-use app\modules\v1\userAction\domain\po\StaticUrlPo;
+use app\models\po\StaticServiceConversionsPo;
+use app\models\po\StaticUrlPo;
 
 /**
- * Interface StaticServiceConversionsService
+ * Interface UserActionStaticServiceConversionsService
  *
  * @package app\modules\v1\service
  * @author: lirong
  */
-interface StaticServiceConversionsService
+interface UserActionStaticServiceConversionsService
 {
     /**
      * @param mixed $condition
@@ -27,5 +27,5 @@ interface StaticServiceConversionsService
      * @throws ValidateException
      * @author: lirong
      */
-    public function increasedConversions($staticUrl): void;
+    public function increasedConversions(StaticUrlPo  $staticUrl): void;
 }

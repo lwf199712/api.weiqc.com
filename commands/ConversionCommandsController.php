@@ -3,8 +3,8 @@
 namespace app\commands;
 
 use app\commands\conversionCommands\service\CommandsStaticHitsService;
-use app\common\rest\CommandsBaseController;
-use app\modules\v1\userAction\domain\po\StaticHitsPo;
+use app\common\commands\CommandsBaseController;
+use app\models\po\StaticHitsPo;
 use app\modules\v1\userAction\enum\ConversionEnum;
 use app\utils\ArrayUtils;
 use app\utils\RedisUtils;

@@ -2,14 +2,15 @@
 
 namespace app\modules\v1\userAction\service;
 
-use app\modules\v1\userAction\domain\po\StaticUrlPo;
+
+use app\models\po\StaticUrlPo;
 
 /**
  * Interface ConversionService
  *
  * @author: lirong
  */
-interface StaticUrlService
+interface UserActionStaticUrlService
 {
     /**
      * @param mixed $condition

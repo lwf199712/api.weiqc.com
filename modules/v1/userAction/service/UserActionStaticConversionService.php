@@ -3,15 +3,15 @@
 namespace app\modules\v1\userAction\service;
 
 use app\common\exception\ValidateException;
-use app\modules\v1\userAction\domain\po\StaticConversionPo;
+use app\models\po\StaticConversionPo;
 
 /**
- * Interface StaticConversionService
+ * Interface UserActionStaticConversionService
  *
  * @package app\modules\v1\service
  * @author: lirong
  */
-interface StaticConversionService
+interface UserActionStaticConversionService
 {
     /**
      * @param mixed $condition

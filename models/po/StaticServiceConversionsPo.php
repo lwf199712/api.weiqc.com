@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\models\po;
 
 use yii\db\ActiveRecord;
 
@@ -17,7 +17,7 @@ use yii\db\ActiveRecord;
  * @property int $conversions_time 开始转化时间
  * @property int $create_time 创建时间
  */
-class StaticServiceConversions extends ActiveRecord
+class StaticServiceConversionsPo extends ActiveRecord
 {
     /**
      * {@inheritdoc}

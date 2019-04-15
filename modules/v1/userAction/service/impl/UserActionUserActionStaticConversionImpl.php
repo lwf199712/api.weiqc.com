@@ -3,8 +3,8 @@
 namespace app\modules\v1\userAction\service\impl;
 
 use app\common\exception\ValidateException;
-use app\modules\v1\userAction\domain\po\StaticConversionPo;
-use app\modules\v1\userAction\service\StaticConversionService;
+use app\models\po\StaticConversionPo;
+use app\modules\v1\userAction\service\UserActionStaticConversionService;
 use yii\base\BaseObject;
 
 /**
@@ -13,13 +13,13 @@ use yii\base\BaseObject;
  * @property StaticConversionPo $staticConversion
  * @author: lirong
  */
-class StaticConversionImpl extends BaseObject implements StaticConversionService
+class UserActionUserActionStaticConversionImpl extends BaseObject implements UserActionStaticConversionService
 {
     /* @var StaticConversionPo */
     private $staticConversion;
 
     /**
-     * StaticConversionImpl constructor.
+     * UserActionUserActionStaticConversionImpl constructor.
      *
      * @param StaticConversionPo $StaticConversionPo
      * @param array $config

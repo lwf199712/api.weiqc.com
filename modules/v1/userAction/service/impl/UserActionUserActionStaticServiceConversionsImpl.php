@@ -3,9 +3,9 @@
 namespace app\modules\v1\userAction\service\impl;
 
 use app\common\exception\ValidateException;
-use app\modules\v1\userAction\domain\po\StaticServiceConversionsPo;
-use app\modules\v1\userAction\domain\po\StaticUrlPo;
-use app\modules\v1\userAction\service\StaticServiceConversionsService;
+use app\models\po\StaticServiceConversionsPo;
+use app\models\po\StaticUrlPo;
+use app\modules\v1\userAction\service\UserActionStaticServiceConversionsService;
 use yii\base\BaseObject;
 use yii\db\Exception;
 
@@ -15,13 +15,13 @@ use yii\db\Exception;
  * @property StaticServiceConversionsPo $staticServiceConversions
  * @author: lirong
  */
-class StaticServiceConversionsImpl extends BaseObject implements StaticServiceConversionsService
+class UserActionUserActionStaticServiceConversionsImpl extends BaseObject implements UserActionStaticServiceConversionsService
 {
     /* @var StaticServiceConversionsPo */
     private $staticServiceConversions;
 
     /**
-     * StaticServiceConversionsImpl constructor.
+     * UserActionUserActionStaticServiceConversionsImpl constructor.
      *
      * @param StaticServiceConversionsPo $staticServiceConversions
      * @param array $config
@@ -41,7 +41,7 @@ class StaticServiceConversionsImpl extends BaseObject implements StaticServiceCo
      * @throws ValidateException
      * @author: lirong
      */
-    public function increasedConversions($staticUrl): void
+    public function increasedConversions(StaticUrlPo $staticUrl): void
     {
         $staticServiceConversions = $this->staticServiceConversions::findOne(['u_id' => $staticUrl->id]);
         if (!$staticServiceConversions) {

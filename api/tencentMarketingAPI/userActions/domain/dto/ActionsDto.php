@@ -19,7 +19,7 @@ use yii\base\Model;
  * @package app\api\tencentMarketingApi\domain\dto
  * @author: lirong
  */
-class ActionsDto extends Model implements ActionTypeEnum
+class ActionsDto extends Model
 {
     /* @var integer $user_action_set_id */
     public $user_action_set_id;

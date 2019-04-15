@@ -2,8 +2,7 @@
 
 namespace app\modules\v1\userAction\service;
 
-use app\common\exception\ValidateException;
-use app\modules\v1\userAction\domain\po\StaticConversionPo;
+use app\models\po\StaticConversionPo;
 
 /**
  * Interface CommandsStaticHitsService
@@ -11,7 +10,7 @@ use app\modules\v1\userAction\domain\po\StaticConversionPo;
  * @package app\modules\v1\userAction\service
  * @author: lirong
  */
-interface StaticHitsService
+interface UserActionStaticHitsService
 {
     /**
      * @param mixed $condition

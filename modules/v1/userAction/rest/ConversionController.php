@@ -7,15 +7,15 @@ use app\common\exception\RedisException;
 use app\common\rest\RestBaseController;
 use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
-use app\modules\v1\userAction\domain\po\StaticConversionPo;
-use app\modules\v1\userAction\domain\po\StaticHitsPo;
+use app\models\po\StaticConversionPo;
+use app\models\po\StaticHitsPo;
 use app\modules\v1\userAction\domain\vo\ConversionInfo;
 use app\modules\v1\userAction\domain\vo\LinksInfo;
 use app\modules\v1\userAction\enum\ConversionEnum;
-use app\modules\v1\userAction\service\StaticConversionService;
-use app\modules\v1\userAction\service\StaticHitsService;
-use app\modules\v1\userAction\service\StaticServiceConversionsService;
-use app\modules\v1\userAction\service\StaticUrlService;
+use app\modules\v1\userAction\service\UserActionStaticConversionService;
+use app\modules\v1\userAction\service\UserActionStaticHitsService;
+use app\modules\v1\userAction\service\UserActionStaticServiceConversionsService;
+use app\modules\v1\userAction\service\UserActionStaticUrlService;
 use app\utils\IpLocationUtils;
 use app\utils\RedisUtils;
 use app\utils\ResponseUtils;
@@ -27,10 +27,10 @@ use Exception;
  * Landing page conversions（copy WeChat）.
  * Class ConversionController
  *
- * @property StaticUrlService $staticUrlService
- * @property StaticConversionService $staticConversionService
- * @property StaticServiceConversionsService $staticServiceConversionsService
- * @property StaticHitsService $staticHitsService
+ * @property UserActionStaticUrlService $staticUrlService
+ * @property UserActionStaticConversionService $staticConversionService
+ * @property UserActionStaticServiceConversionsService $staticServiceConversionsService
+ * @property UserActionStaticHitsService $staticHitsService
  * @property UserActionsAip $userActionsApi
  * @property ResponseUtils $responseUtils
  * @property SourceDetectionUtil $sourceDetectionUtil
@@ -43,13 +43,13 @@ use Exception;
  */
 class ConversionController extends RestBaseController
 {
-    /* @var StaticHitsService */
+    /* @var UserActionStaticHitsService */
     protected $staticHitsService;
-    /* @var StaticUrlService */
+    /* @var UserActionStaticUrlService */
     protected $staticUrlService;
-    /* @var StaticConversionService */
+    /* @var UserActionStaticConversionService */
     protected $staticConversionService;
-    /* @var StaticServiceConversionsService */
+    /* @var UserActionStaticServiceConversionsService */
     protected $staticServiceConversionsService;
     /* @var ResponseUtils */
     protected $responseUtils;
@@ -69,10 +69,10 @@ class ConversionController extends RestBaseController
      *
      * @param $id
      * @param $module
-     * @param StaticHitsService $staticHitsService
-     * @param StaticUrlService $staticUrlService
-     * @param StaticConversionService $staticConversionService
-     * @param StaticServiceConversionsService $staticServiceConversionsService
+     * @param UserActionStaticHitsService $staticHitsService
+     * @param UserActionStaticUrlService $staticUrlService
+     * @param UserActionStaticConversionService $staticConversionService
+     * @param UserActionStaticServiceConversionsService $staticServiceConversionsService
      * @param SourceDetectionUtil $sourceDetectionUtil
      * @param ResponseUtils $responseUtils
      * @param IpLocationUtils $ipLocationUtils
@@ -82,10 +82,10 @@ class ConversionController extends RestBaseController
      * @param array $config
      */
     public function __construct($id, $module,
-                                StaticHitsService $staticHitsService,
-                                StaticUrlService $staticUrlService,
-                                StaticConversionService $staticConversionService,
-                                StaticServiceConversionsService $staticServiceConversionsService,
+                                UserActionStaticHitsService $staticHitsService,
+                                UserActionStaticUrlService $staticUrlService,
+                                UserActionStaticConversionService $staticConversionService,
+                                UserActionStaticServiceConversionsService $staticServiceConversionsService,
                                 SourceDetectionUtil $sourceDetectionUtil,
                                 ResponseUtils $responseUtils,
                                 IpLocationUtils $ipLocationUtils,

@@ -2,10 +2,9 @@
 
 namespace app\modules\v1\userAction\service\impl;
 
-use app\modules\v1\userAction\domain\po\StaticUrlPo;
-use app\modules\v1\userAction\service\StaticUrlService;
+use app\models\po\StaticUrlPo;
+use app\modules\v1\userAction\service\UserActionStaticUrlService;
 use yii\base\BaseObject;
-use yii\db\ActiveQuery;
 
 /**
  * Interface ConversionService
@@ -13,7 +12,7 @@ use yii\db\ActiveQuery;
  * @property StaticUrlPo $staticUrl
  * @author: lirong
  */
-class StaticUrlImpl extends BaseObject implements StaticUrlService
+class UserActionUserActionStaticUrlImpl extends BaseObject implements UserActionStaticUrlService
 {
     /* @var StaticUrlPo */
     private $staticUrl;

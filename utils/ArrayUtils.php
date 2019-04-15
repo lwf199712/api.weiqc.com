@@ -60,6 +60,7 @@ class ArrayUtils
      */
     public function uniqueArrayDelete(array $arrayList, array $whereList): array
     {
+        $arrayList = array_reverse($arrayList);
         foreach ($arrayList as $key => $array) {
             foreach ($arrayList as $keyFind => $arrayFind) {
                 if ($key !== $keyFind) {
@@ -70,11 +71,11 @@ class ArrayUtils
                         }
                     }
                     if ($isUnique === false) {
-                        unset($arrayList[$keyFind]);
+                        unset($arrayList[$key]);
                     }
                 }
             }
         }
-        return $arrayList;
+        return array_reverse($arrayList);;
     }
 }

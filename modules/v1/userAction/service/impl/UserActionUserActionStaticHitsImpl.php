@@ -2,9 +2,8 @@
 
 namespace app\modules\v1\userAction\service\impl;
 
-use app\modules\v1\userAction\domain\po\StaticConversionPo;
-use app\modules\v1\userAction\domain\po\StaticHitsPo;
-use app\modules\v1\userAction\service\StaticHitsService;
+use app\models\po\StaticHitsPo;
+use app\modules\v1\userAction\service\UserActionStaticHitsService;
 use yii\base\BaseObject;
 
 /**
@@ -13,13 +12,13 @@ use yii\base\BaseObject;
  * @property StaticHitsPo $staticHits
  * @author: lirong
  */
-class StaticHitsImpl extends BaseObject implements StaticHitsService
+class UserActionUserActionStaticHitsImpl extends BaseObject implements UserActionStaticHitsService
 {
     /* @var StaticHitsPo */
     private $staticHits;
 
     /**
-     * StaticServiceConversionsImpl constructor.
+     * UserActionUserActionStaticServiceConversionsImpl constructor.
      *
      * @param StaticHitsPo $staticHits
      * @param array $config
@@ -47,7 +46,7 @@ class StaticHitsImpl extends BaseObject implements StaticHitsService
      * Returns a value indicating whether the query result contains any row of data.
      *
      * @param mixed $condition
-     * @return StaticConversionPo|null|mixed
+     * @return StaticHitsPo|null|mixed
      * @author: lirong
      */
     public function exists($condition): bool

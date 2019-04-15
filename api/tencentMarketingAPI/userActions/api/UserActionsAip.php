@@ -5,7 +5,7 @@ namespace app\api\tencentMarketingApi\userActions\api;
 use app\api\tencentMarketingApi\userActions\domain\dto\ActionsDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\TraceDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
-use app\api\tencentMarketingAPI\userActions\service\impl\UserActionsImpl;
+use app\api\tencentMarketingApi\userActions\enum\ActionTypeEnum;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
 use app\common\api\ApiBaseController;
 use app\common\exception\TencentMarketingApiException;
@@ -51,7 +51,7 @@ class UserActionsAip extends ApiBaseController
         $userActionsDto->actions->user_action_set_id = $this->request->post('user_action_set_id');
         $userActionsDto->actions->url = $this->request->post('url');
         $userActionsDto->actions->action_time = time();
-        $userActionsDto->actions->action_type = ActionsDto::COMPLETE_ORDER;
+        $userActionsDto->actions->action_type = ActionTypeEnum::COMPLETE_ORDER;
         $userActionsDto->actions->trace = new TraceDto();
         $userActionsDto->actions->trace->click_id = $this->request->post('click_id', -1);
         if ($this->request->post('action_param')) {
