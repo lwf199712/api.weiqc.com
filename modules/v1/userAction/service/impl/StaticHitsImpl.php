@@ -18,7 +18,6 @@ class StaticHitsImpl extends BaseObject implements StaticHitsService
     /* @var StaticHitsPo */
     private $staticHits;
 
-
     /**
      * StaticServiceConversionsImpl constructor.
      *

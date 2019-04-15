@@ -6,7 +6,7 @@ use app\common\exception\ValidateException;
 use app\modules\v1\userAction\domain\po\StaticConversionPo;
 
 /**
- * Interface StaticHitsService
+ * Interface CommandsStaticHitsService
  *
  * @package app\modules\v1\userAction\service
  * @author: lirong

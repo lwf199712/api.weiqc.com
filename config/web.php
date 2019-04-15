@@ -14,6 +14,8 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 //v1容器注册
 require_once __DIR__ . '/container/v1_container.php';
+//定时器容器注册
+require_once __DIR__ . '/container/commands.php';
 
 $config = [
     'id'         => 'basic',

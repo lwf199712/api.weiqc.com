@@ -48,4 +48,33 @@ class ArrayUtils
         }
         return $modelList;
     }
+
+
+    /**
+     * 二位数组唯一性处理
+     *
+     * @param array $arrayList 二维数组
+     * @param array $whereList ['name','age'] 当其名字和年龄相同时删除后面找到的一个值
+     * @return array
+     * @author: lirong
+     */
+    public function uniqueArrayDelete(array $arrayList, array $whereList): array
+    {
+        foreach ($arrayList as $key => $array) {
+            foreach ($arrayList as $keyFind => $arrayFind) {
+                if ($key !== $keyFind) {
+                    $isUnique = false;
+                    foreach ($whereList as $where) {
+                        if ((string)$array[$where] !== (string)$arrayFind[$where]) {
+                            $isUnique = true;
+                        }
+                    }
+                    if ($isUnique === false) {
+                        unset($arrayList[$keyFind]);
+                    }
+                }
+            }
+        }
+        return $arrayList;
+    }
 }

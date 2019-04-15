@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\v1\userAction\domain\po;
+namespace app\commands\conversionCommands\po;
 
 
 use app\models\StaticHits;
@@ -11,7 +11,7 @@ use app\models\StaticHits;
  * @package app\modules\v1\userAction\domain\po
  * @author: lirong
  */
-class StaticHitsPo extends StaticHits
+class CommandsStaticHitsPo extends StaticHits
 {
 
 }
