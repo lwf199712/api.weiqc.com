@@ -6,16 +6,35 @@ use app\api\tencentMarketingApi\userActions\api\UserActionsAip;
 use app\api\tencentMarketingApi\userActions\domain\dto\ActionsDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\TraceDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
+use app\utils\RedisUtils;
 use yii\console\Controller;
 
 /**
  * Class ConversionCommands
  *
+ * @property RedisUtils $redisUtils
  * @package app\commands
  * @author: lirong
  */
 class ConversionCommands extends Controller
 {
+    /* @var RedisUtils */
+    protected $redisUtils;
+
+    /**
+     * ConversionCommands constructor.
+     *
+     * @param $id
+     * @param $module
+     * @param RedisUtils $redisUtils
+     * @param array $config
+     */
+    public function __construct($id, $module, RedisUtils $redisUtils, $config = [])
+    {
+        $this->redisUtils = $redisUtils;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * Landing page conversions - add views
      *

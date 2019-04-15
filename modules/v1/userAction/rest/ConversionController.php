@@ -15,6 +15,7 @@ use app\modules\v1\userAction\service\StaticHitsService;
 use app\modules\v1\userAction\service\StaticServiceConversionsService;
 use app\modules\v1\userAction\service\StaticUrlService;
 use app\utils\IpLocationUtils;
+use app\utils\RedisUtils;
 use app\utils\ResponseUtils;
 use app\utils\SourceDetectionUtil;
 use app\utils\RequestUtils;
@@ -33,6 +34,7 @@ use Exception;
  * @property SourceDetectionUtil $sourceDetectionUtil
  * @property IpLocationUtils $ipLocationUtils
  * @property RequestUtils $requestUtils
+ * @property RedisUtils $redisUtils
  *
  * @package app\modules\v1\rest
  * @author: lirong
@@ -58,6 +60,23 @@ class ConversionController extends RestBaseController
     /* @var UserActionsAip */
     protected $userActionsApi;
 
+    /**
+     * ConversionController constructor.
+     *
+     * @param $id
+     * @param $module
+     * @param StaticUrlService $staticHitsService
+     * @param StaticUrlService $staticUrlService
+     * @param StaticConversionService $staticConversionService
+     * @param StaticServiceConversionsService $staticServiceConversionsService
+     * @param SourceDetectionUtil $sourceDetectionUtil
+     * @param ResponseUtils $responseUtils
+     * @param IpLocationUtils $ipLocationUtils
+     * @param RequestUtils $requestUtils
+     * @param RedisUtils $redisUtils
+     * @param UserActionsAip $userActionsApi
+     * @param array $config
+     */
     public function __construct($id, $module,
                                 StaticUrlService $staticHitsService,
                                 StaticUrlService $staticUrlService,
@@ -67,6 +86,7 @@ class ConversionController extends RestBaseController
                                 ResponseUtils $responseUtils,
                                 IpLocationUtils $ipLocationUtils,
                                 RequestUtils $requestUtils,
+                                RedisUtils $redisUtils,
                                 UserActionsAip $userActionsApi,
                                 $config = [])
     {
@@ -81,6 +101,7 @@ class ConversionController extends RestBaseController
         $this->ipLocationUtils = $ipLocationUtils;
         $this->requestUtils = $requestUtils;
         $this->responseUtils = $responseUtils;
+        $this->redisUtils = $redisUtils;
         parent::__construct($id, $module, $config);
     }
 
@@ -92,7 +113,10 @@ class ConversionController extends RestBaseController
      */
     public function verbs(): array
     {
-        return ['add-conversion' => ['POST', 'HEAD']];
+        return [
+            'add-conversion' => ['POST', 'HEAD'],
+            'add-view'       => ['POST', 'HEAD']
+        ];
     }
 
     /**
@@ -123,7 +147,9 @@ class ConversionController extends RestBaseController
             //访问记录
             $staticConversionPo = new StaticConversionPo();
             $staticConversionPo->wxh = $conversionInfo->wxh;
-            $staticConversionPo->referer = $_SERVER['HTTP_REFERER']??'';
+            if (isset($_SERVER['HTTP_REFERER'])) {
+                $staticConversionPo->referer = $_SERVER['HTTP_REFERER'];
+            }
             $staticConversionPo->agent = $_SERVER['HTTP_USER_AGENT'];
             $staticConversionPo->createtime = $_SERVER['REQUEST_TIME'];
             $ipLocationUtils = $this->ipLocationUtils->getlocation(long2ip($this->responseUtils->ipToInt($this->request->getUserIP())));
@@ -190,7 +216,8 @@ class ConversionController extends RestBaseController
             $staticHitsPo->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
             $staticHitsPo->date = strtotime(date('Y-m-d'));
             $staticHitsPo->page = $page;
-            //TODO redis暂存
+            //redis暂存
+            $this->redisUtils->pushList(ConversionEnum::REDIS_ADD_VIEW, serialize($staticHitsPo));
             return [true, '操作成功!', 200];
         } catch (Exception $e) {
             return [false, $e->getMessage(), $e->getCode()];
