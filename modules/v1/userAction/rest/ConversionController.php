@@ -3,6 +3,7 @@
 namespace app\modules\v1\userAction\rest;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsAip;
+use app\common\exception\RedisException;
 use app\common\rest\RestBaseController;
 use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
@@ -10,6 +11,7 @@ use app\modules\v1\userAction\domain\po\StaticConversionPo;
 use app\modules\v1\userAction\domain\po\StaticHitsPo;
 use app\modules\v1\userAction\domain\vo\ConversionInfo;
 use app\modules\v1\userAction\domain\vo\LinksInfo;
+use app\modules\v1\userAction\enum\ConversionEnum;
 use app\modules\v1\userAction\service\StaticConversionService;
 use app\modules\v1\userAction\service\StaticHitsService;
 use app\modules\v1\userAction\service\StaticServiceConversionsService;
@@ -57,6 +59,8 @@ class ConversionController extends RestBaseController
     protected $ipLocationUtils;
     /* @var RequestUtils */
     protected $requestUtils;
+    /* @var RedisUtils */
+    protected $redisUtils;
     /* @var UserActionsAip */
     protected $userActionsApi;
 
@@ -65,7 +69,7 @@ class ConversionController extends RestBaseController
      *
      * @param $id
      * @param $module
-     * @param StaticUrlService $staticHitsService
+     * @param StaticHitsService $staticHitsService
      * @param StaticUrlService $staticUrlService
      * @param StaticConversionService $staticConversionService
      * @param StaticServiceConversionsService $staticServiceConversionsService
@@ -78,7 +82,7 @@ class ConversionController extends RestBaseController
      * @param array $config
      */
     public function __construct($id, $module,
-                                StaticUrlService $staticHitsService,
+                                StaticHitsService $staticHitsService,
                                 StaticUrlService $staticUrlService,
                                 StaticConversionService $staticConversionService,
                                 StaticServiceConversionsService $staticServiceConversionsService,
@@ -137,7 +141,7 @@ class ConversionController extends RestBaseController
             if (!$staticUrl) {
                 return [false, 'Token不存在', 500];
             }
-            if ($this->staticConversionService->findOne([
+            if ($this->staticConversionService->exists([
                 'ip'   => $this->responseUtils->ipToInt($this->request->getUserIP()),
                 'date' => strtotime(date('Y-m-d')),
                 'u_id' => $staticUrl->id
@@ -147,9 +151,7 @@ class ConversionController extends RestBaseController
             //访问记录
             $staticConversionPo = new StaticConversionPo();
             $staticConversionPo->wxh = $conversionInfo->wxh;
-            if (isset($_SERVER['HTTP_REFERER'])) {
-                $staticConversionPo->referer = $_SERVER['HTTP_REFERER'];
-            }
+            $staticConversionPo->referer = $_SERVER['HTTP_REFERER'] ?? '';
             $staticConversionPo->agent = $_SERVER['HTTP_USER_AGENT'];
             $staticConversionPo->createtime = $_SERVER['REQUEST_TIME'];
             $ipLocationUtils = $this->ipLocationUtils->getlocation(long2ip($this->responseUtils->ipToInt($this->request->getUserIP())));
@@ -187,7 +189,7 @@ class ConversionController extends RestBaseController
             $linksInfo = new LinksInfo();
             $linksInfo->setAttributes($this->request->post());
             //检查落地页是否存在
-            $staticUrl = $this->staticUrlService->findOne(['ident' => $linksInfo->token]);
+            $staticUrl = $this->staticUrlService->findOne(['ident' => $linksInfo->token], ['id', 'url', 'pcurl']);
             if (!$staticUrl) {
                 return [false, 'Token不存在', 500];
             }
@@ -207,7 +209,7 @@ class ConversionController extends RestBaseController
             //点击数
             $staticHitsPo = new StaticHitsPo();
             $staticHitsPo->u_id = $staticUrl->id;
-            $staticHitsPo->referer = $_SERVER['HTTP_REFERER'];
+            $staticHitsPo->referer = $_SERVER['HTTP_REFERER'] ?? '';
             $staticHitsPo->ip = long2ip($this->responseUtils->ipToInt($this->request->getUserIP()));
             $staticHitsPo->agent = addslashes($_SERVER['HTTP_USER_AGENT']);
             $staticHitsPo->createtime = $_SERVER['REQUEST_TIME'];
@@ -216,10 +218,12 @@ class ConversionController extends RestBaseController
             $staticHitsPo->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
             $staticHitsPo->date = strtotime(date('Y-m-d'));
             $staticHitsPo->page = $page;
-            //redis暂存
-            $this->redisUtils->pushList(ConversionEnum::REDIS_ADD_VIEW, serialize($staticHitsPo));
+            //redis存储
+            if (!$this->redisUtils->getRedis()->rpush(ConversionEnum::REDIS_ADD_VIEW, [json_encode($staticHitsPo->attributes)])) {
+                throw new RedisException('push list false', 500);
+            }
             return [true, '操作成功!', 200];
-        } catch (Exception $e) {
+        } catch (Exception|RedisException $e) {
             return [false, $e->getMessage(), $e->getCode()];
         }
     }

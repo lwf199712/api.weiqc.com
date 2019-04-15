@@ -21,6 +21,13 @@ interface StaticConversionService
     public function findOne($condition);
 
     /**
+     * @param mixed $condition
+     * @return boolean|null|mixed
+     * @author: lirong
+     */
+    public function exists($condition);
+
+    /**
      * @param StaticConversionPo $staticConversionPo
      * @return int
      * @throws ValidateException

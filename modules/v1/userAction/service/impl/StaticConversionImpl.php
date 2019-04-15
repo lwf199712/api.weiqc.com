@@ -56,4 +56,14 @@ class StaticConversionImpl extends BaseObject implements StaticConversionService
         }
         return (int)$staticConversion->id;
     }
+
+    /**
+     * @param mixed $condition
+     * @return boolean|null|mixed
+     * @author: lirong
+     */
+    public function exists($condition)
+    {
+        return $this->staticConversion::find()->where($condition)->exists();
+    }
 }

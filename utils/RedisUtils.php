@@ -30,14 +30,11 @@ class RedisUtils extends BaseObject
     }
 
     /**
-     * push list
-     *
-     * @param mixed $key
-     * @param mixed $value
+     * @return Client
      * @author: lirong
      */
-    public function pushList($key, $value): void
+    public function getRedis(): Client
     {
-        $this->redis->rpushx($key, $value);
+        return $this->redis;
     }
 }

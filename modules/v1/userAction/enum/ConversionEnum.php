@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\v1\userAction\rest;
+namespace app\modules\v1\userAction\enum;
 
 abstract class ConversionEnum
 {

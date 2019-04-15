@@ -13,8 +13,9 @@ interface StaticUrlService
 {
     /**
      * @param mixed $condition
+     * @param null $select
      * @return StaticUrlPo|null|mixed
      * @author: lirong
      */
-    public function findOne($condition);
+    public function findOne($condition, $select = null);
 }

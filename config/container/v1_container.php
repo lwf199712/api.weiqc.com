@@ -22,6 +22,7 @@ use app\modules\v1\userAction\service\StaticHitsService;
 use app\modules\v1\userAction\service\StaticServiceConversionsService;
 use app\modules\v1\userAction\service\StaticUrlService;
 use app\utils\IpLocationUtils;
+use app\utils\RedisUtils;
 use app\utils\RequestUtils;
 use app\utils\ResponseUtils;
 use app\utils\SourceDetectionUtil;
@@ -45,6 +46,7 @@ $containerList = [
     StaticConversionPo::class              => StaticConversionPo::class,
     StaticHitsPo::class                    => StaticHitsPo::class,
     StaticUrlPo::class                     => StaticUrlPo::class,
+    RedisUtils::class                      => RedisUtils::class,
 ];
 
 foreach ($containerList as $class => $definition) {
