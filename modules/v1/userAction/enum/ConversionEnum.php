@@ -2,7 +2,7 @@
 
 namespace app\modules\v1\userAction\rest;
 
-interface ConversionEnum
+abstract class ConversionEnum
 {
     public const REDIS_ADD_VIEW = 'redis_add_view';
 }
