@@ -211,19 +211,6 @@ class ConversionController extends RestBaseController
             if (!$staticUrl) {
                 return [false, 'Token不存在', 500];
             }
-            //检查客户端类型
-            $page = $staticUrl->url;
-            if ($staticUrl->pcurl && !$this->requestUtils->requestFromMobile()) {
-                $page = $staticUrl->pcurl;
-            }
-            //检查点击数是否存在
-            if ($this->staticHitsService->exists([
-                'ip'   => long2ip($this->responseUtils->ipToInt($this->request->getUserIP())),
-                'date' => strtotime(date('Y-m-d')),
-                'u_id' => $staticUrl->id,
-            ])) {
-                return [false, 'IP点击数已存在!'];
-            }
             //点击数
             $redisAddViewDto = new RedisAddViewDto();
             $redisAddViewDto->u_id = $staticUrl->id;
@@ -235,7 +222,10 @@ class ConversionController extends RestBaseController
             $redisAddViewDto->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
             $redisAddViewDto->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
             $redisAddViewDto->date = strtotime(date('Y-m-d'));
-            $redisAddViewDto->page = $page;
+            $redisAddViewDto->page = $staticUrl->url;
+            if ($staticUrl->pcurl && !$this->requestUtils->requestFromMobile()) {
+                $redisAddViewDto->page = $staticUrl->pcurl;
+            }
             $redisAddViewDto->account_id = $this->request->post('account_id', -1);
             $redisAddViewDto->user_action_set_id = $this->request->post('user_action_set_id');
             $redisAddViewDto->click_id = $this->request->post('click_id', -1);
