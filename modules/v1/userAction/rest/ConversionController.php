@@ -14,7 +14,6 @@ use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
 use app\models\po\StaticConversionPo;
 use app\modules\v1\userAction\domain\vo\ConversionInfo;
-use app\modules\v1\userAction\domain\vo\LinksInfo;
 use app\modules\v1\userAction\enum\ConversionEnum;
 use app\modules\v1\userAction\service\UserActionStaticConversionService;
 use app\modules\v1\userAction\service\UserActionStaticHitsService;
@@ -155,7 +154,9 @@ class ConversionController extends RestBaseController
             //访问记录
             $staticConversionPo = new StaticConversionPo();
             $staticConversionPo->wxh = $conversionInfo->wxh;
-            $staticConversionPo->referer = $_SERVER['HTTP_REFERER'] ?? '';
+            if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER']) {
+                $staticConversionPo->referer = $_SERVER['HTTP_REFERER'];
+            }
             $staticConversionPo->agent = $_SERVER['HTTP_USER_AGENT'];
             $staticConversionPo->createtime = $_SERVER['REQUEST_TIME'];
             $staticConversionPo->ip = $this->responseUtils->ipToInt($this->request->getUserIP());
@@ -207,13 +208,16 @@ class ConversionController extends RestBaseController
             //点击数(存储在redis)
             $redisAddViewDto = new RedisAddViewDto();
             $redisAddViewDto->token = $this->request->post('token');
-            $redisAddViewDto->referer = $_SERVER['HTTP_REFERER'] ?? '';
+            if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER']) {
+                $redisAddViewDto->referer = $_SERVER['HTTP_REFERER'];
+            }
             $redisAddViewDto->ip = long2ip($this->responseUtils->ipToInt($this->request->getUserIP()));
             $redisAddViewDto->agent = addslashes($_SERVER['HTTP_USER_AGENT']);
             $redisAddViewDto->createtime = $_SERVER['REQUEST_TIME'];
             $ipLocationUtils = $this->ipLocationUtils->getlocation(long2ip($this->responseUtils->ipToInt($this->request->getUserIP())));
             $redisAddViewDto->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
             $redisAddViewDto->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
+            $redisAddViewDto->url = $this->request->post('url');
             $redisAddViewDto->date = strtotime(date('Y-m-d'));
             $redisAddViewDto->account_id = $this->request->post('account_id', -1);
             $redisAddViewDto->user_action_set_id = $this->request->post('user_action_set_id');

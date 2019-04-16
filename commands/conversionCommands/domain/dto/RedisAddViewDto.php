@@ -8,10 +8,12 @@ use yii\base\Model;
  * Class RedisAddViewDto
  *
  * @property string $token token
+ * @property integer $u_id
  * @property integer $ip IP地址
  * @property string $country 国家
  * @property string $area 区域
  * @property string $date 日期
+ * @property string $url
  * @property string $referer 引荐
  * @property string $agent 代理人
  * @property integer $createtime 创建时间
@@ -26,6 +28,8 @@ class RedisAddViewDto extends Model
 {
     /* @var string $token */
     public $token;
+    /* @var integer $u_id */
+    public $u_id;
     /* @var integer $ip */
     public $ip;
     /* @var string $country */
@@ -48,4 +52,6 @@ class RedisAddViewDto extends Model
     public $click_id;
     /* @var string $action_param */
     public $action_param;
+    /* @var string $url */
+    public $url;
 }

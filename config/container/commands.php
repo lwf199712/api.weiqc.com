@@ -8,8 +8,10 @@
 //conversionCommands容器,标记为注册conversionCommands容器
 use app\api\tencentMarketingAPI\userActions\service\impl\UserActionsImpl;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
+use app\commands\conversionCommands\service\CommandsStaticConversionService;
 use app\commands\conversionCommands\service\CommandsStaticHitsService;
 use app\commands\conversionCommands\service\impl\CommandsCommandsStaticHitsImpl;
+use app\commands\conversionCommands\service\impl\CommandsStaticConversionImpl;
 use app\commands\utils\CommandsBatchInsertUtils;
 use app\models\po\StaticHitsPo;
 use app\utils\ArrayUtils;
@@ -17,14 +19,15 @@ use app\utils\RedisUtils;
 
 $containerList = [
     //接口容器
-    CommandsStaticHitsService::class => CommandsCommandsStaticHitsImpl::class,
-    UserActionsService::class        => UserActionsImpl::class,
+    CommandsStaticHitsService::class       => CommandsCommandsStaticHitsImpl::class,
+    CommandsStaticConversionService::class => CommandsStaticConversionImpl::class,
+    UserActionsService::class              => UserActionsImpl::class,
     //工具
-    ArrayUtils::class                => ArrayUtils::class,
-    RedisUtils::class                => RedisUtils::class,
-    CommandsBatchInsertUtils::class  => CommandsBatchInsertUtils::class,
+    ArrayUtils::class                      => ArrayUtils::class,
+    RedisUtils::class                      => RedisUtils::class,
+    CommandsBatchInsertUtils::class        => CommandsBatchInsertUtils::class,
     //po
-    StaticHitsPo::class              => StaticHitsPo::class,
+    StaticHitsPo::class                    => StaticHitsPo::class,
 
 ];
 

@@ -44,36 +44,42 @@ class ConversionCommandsController extends CommandsBaseController
                                 RedisUtils $redisUtils,
                                 ArrayUtils $arrayUtils,
                                 CommandsStaticHitsService $commandsStaticHitsService,
+
                                 $config = [])
     {
         $this->redisUtils = $redisUtils;
         $this->arrayUtils = $arrayUtils;
         $this->commandsStaticHitsService = $commandsStaticHitsService;
+
         parent::__construct($id, $module, $config);
     }
 
     /**
      * Landing page conversions - add views
      *
-     * @return void
+     * @return array
      * @author: lirong
      */
-    public function actionAddViews(): void
+    public function actionAddViews(): array
     {
-        $redisAddViewDtoList = [];
-        $redisAddViewDto = $redisAddViewBaseDto = new RedisAddViewDto();
         try {
+            $redisAddViewDtoList = [];
+            $redisAddViewBaseDto = new RedisAddViewDto();
             do {
                 $redisAddViewPop = $this->redisUtils->getRedis()->rpop(ConversionEnum::REDIS_ADD_VIEW);
                 if ($redisAddViewPop) {
                     $redisAddViewDto = clone $redisAddViewBaseDto;
                     $redisAddViewDto->attributes = json_decode($redisAddViewPop, true);
                     $redisAddViewDtoList[] = $redisAddViewDto;
-                    $this->commandsStaticHitsService->batchInsert($redisAddViewDtoList);
                 }
             } while ($redisAddViewPop);
+            $redisAddViewDtoList = $this->arrayUtils->uniqueArrayDelete($redisAddViewDtoList, ['ip', 'date', 'u_id']);
+
+            $this->commandsStaticHitsService->batchInsert($redisAddViewDtoList);
+            return [true];
         } catch (TencentMarketingApiException $e) {
-            $this->redisUtils->getRedis()->rpush(ConversionEnum::REDIS_ADD_VIEW, [json_encode($redisAddViewDto->attributes)]);
+            return [false];
         }
     }
+
 }

@@ -89,15 +89,43 @@ class ArrayUtils
      */
     public function arrayExists(array $arrayList, array $whereList): bool
     {
-        foreach ($arrayList as $array) {
-            $isExists = true;
-            foreach ($whereList as $where => $value) {
-                if ((string)$array[$where] !== (string)$value) {
-                    $isExists = false;
+        if ($arrayList) {
+            foreach ($arrayList as $array) {
+                $isExists = true;
+                foreach ($whereList as $where => $value) {
+                    if ((string)$array[$where] !== (string)$value) {
+                        $isExists = false;
+                    }
+                }
+                if ($isExists === true) {
+                    return true;
                 }
             }
-            if ($isExists === true) {
-                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 在一个数组中查找一个数据
+     *
+     * @param array $arrayList
+     * @param array $whereList
+     * @return bool|mixed
+     * @author: lirong
+     */
+    public function findOne(array $arrayList, array $whereList)
+    {
+        if ($arrayList) {
+            foreach ($arrayList as $array) {
+                $isExists = true;
+                foreach ($whereList as $where => $value) {
+                    if ((string)$array[$where] !== (string)$value) {
+                        $isExists = false;
+                    }
+                }
+                if ($isExists === true) {
+                    return $array;
+                }
             }
         }
         return false;
