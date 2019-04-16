@@ -18,19 +18,18 @@ use yii\db\Exception;
  * @property StaticHitsPo $staticHits
  * @property CommandsBatchInsertUtils $batchInsertUtils
  * @property ArrayUtils $arrayUtils
- * @property UserActionsApi $userActionsApi
  * @author: lirong
  */
 class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStaticHitsService
 {
-    /* @var UserActionsApi */
-    protected $userActionsApi;
     /* @var StaticHitsPo */
     private $staticHits;
     /* @var CommandsBatchInsertUtils */
     private $batchInsertUtils;
     /* @var ArrayUtils */
     private $arrayUtils;
+    /* @var UserActionsApi*/
+    protected $userActionsApi;
 
     /**
      * UserActionUserActionStaticServiceConversionsImpl constructor.
@@ -38,14 +37,9 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
      * @param StaticHitsPo $staticHits
      * @param CommandsBatchInsertUtils $batchInsertUtils
      * @param ArrayUtils $arrayUtils
-     * @param UserActionsApi $userActionsApi
      * @param array $config
      */
-    public function __construct(StaticHitsPo $staticHits,
-                                CommandsBatchInsertUtils $batchInsertUtils,
-                                ArrayUtils $arrayUtils,
-                                UserActionsApi $userActionsApi,
-                                $config = [])
+    public function __construct(StaticHitsPo $staticHits, CommandsBatchInsertUtils $batchInsertUtils, ArrayUtils $arrayUtils, $config = [])
     {
         $this->staticHits = $staticHits;
         $this->batchInsertUtils = $batchInsertUtils;
@@ -100,17 +94,9 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
                 'createtime',//=> '创建时间',
             ], $this->staticHits::tableName());
             //广点通用户行为点击数增加
+
+
             $this->userActionsApi->add($userActionsDto);
         }
-    }
-
-    /**
-     * @param RedisAddViewDto $redisAddViewDto
-     * @return mixed
-     * @author: lirong
-     */
-    public function insert(RedisAddViewDto $redisAddViewDto): void
-    {
-        // TODO: Implement insert() method.
     }
 }

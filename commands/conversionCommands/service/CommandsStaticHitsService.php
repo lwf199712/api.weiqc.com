@@ -3,7 +3,7 @@
 namespace app\commands\conversionCommands\service;
 
 
-use app\commands\conversionCommands\domain\dto\RedisAddViewDto;
+use app\common\exception\TencentMarketingApiException;
 
 /**
  * Interface CommandsStaticHitsService
@@ -14,9 +14,12 @@ use app\commands\conversionCommands\domain\dto\RedisAddViewDto;
 interface CommandsStaticHitsService
 {
     /**
-     * @param RedisAddViewDto $redisAddViewDto
-     * @return mixed
+     * batch insert
+     *
+     * @param array $redisAddViewDtoList
+     * @return void
+     * @throws TencentMarketingApiException
      * @author: lirong
      */
-    public function insert(RedisAddViewDto $redisAddViewDto): void;
+    public function batchInsert(array $redisAddViewDtoList): void;
 }

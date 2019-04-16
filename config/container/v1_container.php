@@ -33,21 +33,21 @@ $containerList = [
     UserActionStaticUrlService::class                => UserActionUserActionStaticUrlImpl::class,
     UserActionStaticConversionService::class         => UserActionUserActionStaticConversionImpl::class,
     UserActionStaticServiceConversionsService::class => UserActionUserActionStaticServiceConversionsImpl::class,
-    UserActionsService::class          => UserActionsImpl::class,
-    UserActionStaticHitsService::class => UserActionUserActionStaticHitsImpl::class,
+    UserActionsService::class                        => UserActionsImpl::class,
+    UserActionStaticHitsService::class               => UserActionUserActionStaticHitsImpl::class,
     //工具类
-    SourceDetectionUtil::class         => SourceDetectionUtil::class,
-    ResponseUtils::class               => ResponseUtils::class,
-    IpLocationUtils::class             => IpLocationUtils::class,
-    RequestUtils::class                => RequestUtils::class,
+    SourceDetectionUtil::class                       => SourceDetectionUtil::class,
+    ResponseUtils::class                             => ResponseUtils::class,
+    IpLocationUtils::class                           => IpLocationUtils::class,
+    RequestUtils::class                              => RequestUtils::class,
     //API
-    UserActionsApi::class              => UserActionsApi::class,
+    UserActionsApi::class                            => UserActionsApi::class,
     //po
-    StaticServiceConversionsPo::class  => StaticServiceConversionsPo::class,
-    StaticConversionPo::class          => StaticConversionPo::class,
-    StaticHitsPo::class                => StaticHitsPo::class,
-    StaticUrlPo::class                 => StaticUrlPo::class,
-    RedisUtils::class                  => RedisUtils::class,
+    StaticServiceConversionsPo::class                => StaticServiceConversionsPo::class,
+    StaticConversionPo::class                        => StaticConversionPo::class,
+    StaticHitsPo::class                              => StaticHitsPo::class,
+    StaticUrlPo::class                               => StaticUrlPo::class,
+    RedisUtils::class                                => RedisUtils::class,
 ];
 
 foreach ($containerList as $class => $definition) {

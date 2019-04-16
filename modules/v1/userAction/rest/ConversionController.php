@@ -158,7 +158,8 @@ class ConversionController extends RestBaseController
             $staticConversionPo->referer = $_SERVER['HTTP_REFERER'] ?? '';
             $staticConversionPo->agent = $_SERVER['HTTP_USER_AGENT'];
             $staticConversionPo->createtime = $_SERVER['REQUEST_TIME'];
-            $ipLocationUtils = $this->ipLocationUtils->getlocation(long2ip($this->responseUtils->ipToInt($this->request->getUserIP())));
+            $staticConversionPo->ip = $this->responseUtils->ipToInt($this->request->getUserIP());
+            $ipLocationUtils = $this->ipLocationUtils->getlocation(long2ip($staticConversionPo->ip));
             $staticConversionPo->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
             $staticConversionPo->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
             $staticConversionPo->date = strtotime(date('Y-m-d'));
@@ -166,7 +167,6 @@ class ConversionController extends RestBaseController
             if ($staticUrl->pcurl && !$this->requestUtils->requestFromMobile()) {
                 $staticConversionPo->page = $staticUrl->pcurl;
             }
-            $staticConversionPo->ip = $this->responseUtils->ipToInt($this->request->getUserIP());
             $staticConversionPo->u_id = $staticUrl->id;
             $staticConversionId = $this->staticConversionService->insert($staticConversionPo);
             //系统转化数增加
@@ -204,17 +204,9 @@ class ConversionController extends RestBaseController
     public function actionAddViews(): array
     {
         try {
-            $linksInfo = new LinksInfo();
-            $linksInfo->setAttributes($this->request->post());
-            //检查落地页是否存在
-            $staticUrl = $this->staticUrlService->findOne(['ident' => $linksInfo->token], ['id', 'url', 'pcurl']);
-            if (!$staticUrl) {
-                return [false, 'Token不存在', 500];
-            }
-            //TODO 代码再次精简,将token查询移入定时器
-            //点击数
+            //点击数(存储在redis)
             $redisAddViewDto = new RedisAddViewDto();
-            $redisAddViewDto->u_id = $staticUrl->id;
+            $redisAddViewDto->token = $this->request->post('token');
             $redisAddViewDto->referer = $_SERVER['HTTP_REFERER'] ?? '';
             $redisAddViewDto->ip = long2ip($this->responseUtils->ipToInt($this->request->getUserIP()));
             $redisAddViewDto->agent = addslashes($_SERVER['HTTP_USER_AGENT']);
@@ -223,10 +215,6 @@ class ConversionController extends RestBaseController
             $redisAddViewDto->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
             $redisAddViewDto->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
             $redisAddViewDto->date = strtotime(date('Y-m-d'));
-            $redisAddViewDto->page = $staticUrl->url;
-            if ($staticUrl->pcurl && !$this->requestUtils->requestFromMobile()) {
-                $redisAddViewDto->page = $staticUrl->pcurl;
-            }
             $redisAddViewDto->account_id = $this->request->post('account_id', -1);
             $redisAddViewDto->user_action_set_id = $this->request->post('user_action_set_id');
             $redisAddViewDto->click_id = $this->request->post('click_id', -1);

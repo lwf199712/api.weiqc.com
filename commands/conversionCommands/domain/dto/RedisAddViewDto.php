@@ -7,12 +7,11 @@ use yii\base\Model;
 /**
  * Class RedisAddViewDto
  *
- * @property integer $u_id statis_url表id
+ * @property string $token token
  * @property integer $ip IP地址
  * @property string $country 国家
  * @property string $area 区域
  * @property string $date 日期
- * @property string $page 页
  * @property string $referer 引荐
  * @property string $agent 代理人
  * @property integer $createtime 创建时间
@@ -25,8 +24,8 @@ use yii\base\Model;
  */
 class RedisAddViewDto extends Model
 {
-    /* @var integer $u_id */
-    public $u_id;
+    /* @var string $token */
+    public $token;
     /* @var integer $ip */
     public $ip;
     /* @var string $country */
@@ -35,8 +34,6 @@ class RedisAddViewDto extends Model
     public $area;
     /* @var string $date */
     public $date;
-    /* @var string $page */
-    public $page;
     /* @var string $referer */
     public $referer;
     /* @var string $agent */

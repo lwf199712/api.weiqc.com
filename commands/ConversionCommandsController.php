@@ -68,22 +68,12 @@ class ConversionCommandsController extends CommandsBaseController
                 if ($redisAddViewPop) {
                     $redisAddViewDto = clone $redisAddViewBaseDto;
                     $redisAddViewDto->attributes = json_decode($redisAddViewPop, true);
-                    $this->commandsStaticHitsService->insert($redisAddViewDto);
+                    $redisAddViewDtoList[] = $redisAddViewDto;
+                    $this->commandsStaticHitsService->batchInsert($redisAddViewDtoList);
                 }
             } while ($redisAddViewPop);
         } catch (TencentMarketingApiException $e) {
             $this->redisUtils->getRedis()->rpush(ConversionEnum::REDIS_ADD_VIEW, [json_encode($redisAddViewDto->attributes)]);
         }
-    }
-
-    /**
-     * transaction close
-     *
-     * @return array
-     * @author: lirong
-     */
-    protected function transactionClose(): array
-    {
-        return ['actionAddViews'];
     }
 }
