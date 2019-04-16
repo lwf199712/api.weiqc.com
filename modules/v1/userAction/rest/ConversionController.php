@@ -211,6 +211,7 @@ class ConversionController extends RestBaseController
             if (!$staticUrl) {
                 return [false, 'Token不存在', 500];
             }
+            //TODO 代码再次精简,将token查询移入定时器
             //点击数
             $redisAddViewDto = new RedisAddViewDto();
             $redisAddViewDto->u_id = $staticUrl->id;
