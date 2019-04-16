@@ -76,6 +76,30 @@ class ArrayUtils
                 }
             }
         }
-        return array_reverse($arrayList);;
+        return array_reverse($arrayList);
+    }
+
+    /**
+     * 查找二维数组是否存在指定数据
+     *
+     * @param array $arrayList
+     * @param array $whereList
+     * @return bool
+     * @author: lirong
+     */
+    public function arrayExists(array $arrayList, array $whereList): bool
+    {
+        foreach ($arrayList as $array) {
+            $isExists = true;
+            foreach ($whereList as $where => $value) {
+                if ((string)$array[$where] !== (string)$value) {
+                    $isExists = false;
+                }
+            }
+            if ($isExists === true) {
+                return true;
+            }
+        }
+        return false;
     }
 }

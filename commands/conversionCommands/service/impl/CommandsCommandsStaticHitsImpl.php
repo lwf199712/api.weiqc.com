@@ -2,9 +2,13 @@
 
 namespace app\commands\conversionCommands\service\impl;
 
+use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
+use app\commands\conversionCommands\domain\dto\RedisAddViewDto;
 use app\commands\conversionCommands\service\CommandsStaticHitsService;
+use app\commands\utils\CommandsBatchInsertUtils;
+use app\common\exception\TencentMarketingApiException;
 use app\models\po\StaticHitsPo;
-use app\utils\BatchInsertUtils;
+use app\utils\ArrayUtils;
 use yii\base\BaseObject;
 use yii\db\Exception;
 
@@ -12,58 +16,79 @@ use yii\db\Exception;
  * Interface ConversionService
  *
  * @property StaticHitsPo $staticHits
- * @property BatchInsertUtils $batchInsertUtils
+ * @property CommandsBatchInsertUtils $batchInsertUtils
+ * @property ArrayUtils $arrayUtils
+ * @property UserActionsApi $userActionsApi
  * @author: lirong
  */
 class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStaticHitsService
 {
+    /* @var UserActionsApi */
+    protected $userActionsApi;
     /* @var StaticHitsPo */
     private $staticHits;
-    /* @var BatchInsertUtils */
+    /* @var CommandsBatchInsertUtils */
     private $batchInsertUtils;
+    /* @var ArrayUtils */
+    private $arrayUtils;
 
     /**
      * UserActionUserActionStaticServiceConversionsImpl constructor.
      *
      * @param StaticHitsPo $staticHits
-     * @param BatchInsertUtils $batchInsertUtils
+     * @param CommandsBatchInsertUtils $batchInsertUtils
+     * @param ArrayUtils $arrayUtils
+     * @param UserActionsApi $userActionsApi
      * @param array $config
      */
-    public function __construct(StaticHitsPo $staticHits, BatchInsertUtils $batchInsertUtils, $config = [])
+    public function __construct(StaticHitsPo $staticHits,
+                                CommandsBatchInsertUtils $batchInsertUtils,
+                                ArrayUtils $arrayUtils,
+                                UserActionsApi $userActionsApi,
+                                $config = [])
     {
         $this->staticHits = $staticHits;
         $this->batchInsertUtils = $batchInsertUtils;
+        $this->arrayUtils = $arrayUtils;
+        $this->userActionsApi = $userActionsApi;
         parent::__construct($config);
     }
 
     /**
      * batch insert
      *
-     * @param array $staticHitsList
+     * @param array $redisAddViewDtoList
      * @return void
      * @throws Exception
+     * @throws TencentMarketingApiException
      * @author: lirong
      */
-    public function batchInsert(array $staticHitsList): void
+    public function batchInsert(array $redisAddViewDtoList): void
     {
-        if ($staticHitsList) {
+        if ($redisAddViewDtoList) {
             //数据库去重处理
             $staticHitsFindList = $this->staticHits::find()->select(['ip', 'date', 'u_id']);
-            foreach ($staticHitsList as $staticHits) {
-                /* @var $staticHits StaticHitsPo */
+            foreach ($redisAddViewDtoList as $redisAddViewDto) {
+                /* @var $redisAddViewDto RedisAddViewDto */
                 $staticHitsFindList = $staticHitsFindList->orWhere([
-                    'ip'   => $staticHits->ip,
-                    'date' => $staticHits->date,
-                    'u_id' => $staticHits->u_id,
+                    'ip'   => $redisAddViewDto->ip,
+                    'date' => $redisAddViewDto->date,
+                    'u_id' => $redisAddViewDto->u_id,
                 ]);
             }
             $staticHitsFindList = $staticHitsFindList->all();
-            //TODO 去除重复
-            var_dump($staticHitsFindList);
-            exit;
 
+            foreach ($redisAddViewDtoList as $key => $redisAddViewDto) {
+                /* @var $staticHitsFind StaticHitsPo */
+                $this->arrayUtils->arrayExists($staticHitsFindList, [
+                    'ip'   => $redisAddViewDto->ip,
+                    'date' => $redisAddViewDto->date,
+                    'u_id' => $redisAddViewDto->u_id
+                ]);
+                unset($redisAddViewDtoList[$key]);
+            }
             //批量插入
-            $this->batchInsertUtils->onDuplicateKeyUpdate($staticHitsFindList, [
+            $lastInsertId = $this->batchInsertUtils->onDuplicateKeyUpdate($redisAddViewDtoList, [
                 'u_id',      //=> 'statis_url表id',
                 'ip',        //=> 'IP地址',
                 'country',   //=> '国家',
@@ -74,6 +99,18 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
                 'agent',     //=> '代理人',
                 'createtime',//=> '创建时间',
             ], $this->staticHits::tableName());
+            //广点通用户行为点击数增加
+            $this->userActionsApi->add($userActionsDto);
         }
+    }
+
+    /**
+     * @param RedisAddViewDto $redisAddViewDto
+     * @return mixed
+     * @author: lirong
+     */
+    public function insert(RedisAddViewDto $redisAddViewDto): void
+    {
+        // TODO: Implement insert() method.
     }
 }

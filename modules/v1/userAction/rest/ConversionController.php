@@ -2,13 +2,17 @@
 
 namespace app\modules\v1\userAction\rest;
 
-use app\api\tencentMarketingApi\userActions\api\UserActionsAip;
+use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
+use app\api\tencentMarketingApi\userActions\domain\dto\ActionsDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\TraceDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
+use app\api\tencentMarketingApi\userActions\enum\ActionTypeEnum;
+use app\commands\conversionCommands\domain\dto\RedisAddViewDto;
 use app\common\exception\RedisException;
 use app\common\rest\RestBaseController;
 use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
 use app\models\po\StaticConversionPo;
-use app\models\po\StaticHitsPo;
 use app\modules\v1\userAction\domain\vo\ConversionInfo;
 use app\modules\v1\userAction\domain\vo\LinksInfo;
 use app\modules\v1\userAction\enum\ConversionEnum;
@@ -31,7 +35,7 @@ use Exception;
  * @property UserActionStaticConversionService $staticConversionService
  * @property UserActionStaticServiceConversionsService $staticServiceConversionsService
  * @property UserActionStaticHitsService $staticHitsService
- * @property UserActionsAip $userActionsApi
+ * @property UserActionsApi $userActionsApi
  * @property ResponseUtils $responseUtils
  * @property SourceDetectionUtil $sourceDetectionUtil
  * @property IpLocationUtils $ipLocationUtils
@@ -61,7 +65,7 @@ class ConversionController extends RestBaseController
     protected $requestUtils;
     /* @var RedisUtils */
     protected $redisUtils;
-    /* @var UserActionsAip */
+    /* @var UserActionsApi */
     protected $userActionsApi;
 
     /**
@@ -78,7 +82,7 @@ class ConversionController extends RestBaseController
      * @param IpLocationUtils $ipLocationUtils
      * @param RequestUtils $requestUtils
      * @param RedisUtils $redisUtils
-     * @param UserActionsAip $userActionsApi
+     * @param UserActionsApi $userActionsApi
      * @param array $config
      */
     public function __construct($id, $module,
@@ -91,7 +95,7 @@ class ConversionController extends RestBaseController
                                 IpLocationUtils $ipLocationUtils,
                                 RequestUtils $requestUtils,
                                 RedisUtils $redisUtils,
-                                UserActionsAip $userActionsApi,
+                                UserActionsApi $userActionsApi,
                                 $config = [])
     {
         $this->staticHitsService = $staticHitsService;
@@ -168,7 +172,21 @@ class ConversionController extends RestBaseController
             //系统转化数增加
             $this->staticServiceConversionsService->increasedConversions($staticUrl);
             //广点通用户行为统计接口转化数增加
-            $this->userActionsApi->add($staticConversionId);
+            $userActionsDto = new UserActionsDto();
+            $userActionsDto->account_id = $this->request->post('account_id', -1);
+            $userActionsDto->actions = new ActionsDto();
+            $userActionsDto->actions->user_action_set_id = $this->request->post('user_action_set_id');
+            $userActionsDto->actions->url = $this->request->post('url');
+            $userActionsDto->actions->action_time = time();
+            $userActionsDto->actions->action_type = ActionTypeEnum::COMPLETE_ORDER;
+            $userActionsDto->actions->trace = new TraceDto();
+            $userActionsDto->actions->trace->click_id = $this->request->post('click_id', -1);
+            if ($this->request->post('action_param')) {
+                $userActionsDto->actions->action_param = $this->request->post('action_param');
+            }
+            $userActionsDto->actions->outer_action_id = $staticConversionId;
+            $userActionsDto->actions = [$userActionsDto->actions];
+            $this->userActionsApi->add($userActionsDto);
             return [true, '操作成功!', 200];
         } catch (ValidateException|Exception|TencentMarketingApiException $e) {
             return [false, $e->getMessage(), $e->getCode()];
@@ -207,24 +225,39 @@ class ConversionController extends RestBaseController
                 return [false, 'IP点击数已存在!'];
             }
             //点击数
-            $staticHitsPo = new StaticHitsPo();
-            $staticHitsPo->u_id = $staticUrl->id;
-            $staticHitsPo->referer = $_SERVER['HTTP_REFERER'] ?? '';
-            $staticHitsPo->ip = long2ip($this->responseUtils->ipToInt($this->request->getUserIP()));
-            $staticHitsPo->agent = addslashes($_SERVER['HTTP_USER_AGENT']);
-            $staticHitsPo->createtime = $_SERVER['REQUEST_TIME'];
+            $redisAddViewDto = new RedisAddViewDto();
+            $redisAddViewDto->u_id = $staticUrl->id;
+            $redisAddViewDto->referer = $_SERVER['HTTP_REFERER'] ?? '';
+            $redisAddViewDto->ip = long2ip($this->responseUtils->ipToInt($this->request->getUserIP()));
+            $redisAddViewDto->agent = addslashes($_SERVER['HTTP_USER_AGENT']);
+            $redisAddViewDto->createtime = $_SERVER['REQUEST_TIME'];
             $ipLocationUtils = $this->ipLocationUtils->getlocation(long2ip($this->responseUtils->ipToInt($this->request->getUserIP())));
-            $staticHitsPo->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
-            $staticHitsPo->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
-            $staticHitsPo->date = strtotime(date('Y-m-d'));
-            $staticHitsPo->page = $page;
+            $redisAddViewDto->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
+            $redisAddViewDto->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
+            $redisAddViewDto->date = strtotime(date('Y-m-d'));
+            $redisAddViewDto->page = $page;
+            $redisAddViewDto->account_id = $this->request->post('account_id', -1);
+            $redisAddViewDto->user_action_set_id = $this->request->post('user_action_set_id');
+            $redisAddViewDto->click_id = $this->request->post('click_id', -1);
+            $redisAddViewDto->action_param = $this->request->post('action_param');
             //redis存储
-            if (!$this->redisUtils->getRedis()->rpush(ConversionEnum::REDIS_ADD_VIEW, [json_encode($staticHitsPo->attributes)])) {
+            if (!$this->redisUtils->getRedis()->rpush(ConversionEnum::REDIS_ADD_VIEW, [json_encode($redisAddViewDto->attributes)])) {
                 throw new RedisException('push list false', 500);
             }
             return [true, '操作成功!', 200];
         } catch (Exception|RedisException $e) {
             return [false, $e->getMessage(), $e->getCode()];
         }
+    }
+
+    /**
+     * transaction close
+     *
+     * @return array
+     * @author: lirong
+     */
+    protected function transactionClose(): array
+    {
+        return ['actionAddViews'];
     }
 }

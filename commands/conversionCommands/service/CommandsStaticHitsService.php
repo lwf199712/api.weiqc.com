@@ -3,6 +3,8 @@
 namespace app\commands\conversionCommands\service;
 
 
+use app\commands\conversionCommands\domain\dto\RedisAddViewDto;
+
 /**
  * Interface CommandsStaticHitsService
  *
@@ -12,11 +14,9 @@ namespace app\commands\conversionCommands\service;
 interface CommandsStaticHitsService
 {
     /**
-     * batch insert
-     *
-     * @param array $staticHitsList
-     * @return void
+     * @param RedisAddViewDto $redisAddViewDto
+     * @return mixed
      * @author: lirong
      */
-    public function batchInsert(array $staticHitsList): void;
+    public function insert(RedisAddViewDto $redisAddViewDto): void;
 }

@@ -1,4 +1,9 @@
 <?php
+/**
+ * web config
+ *
+ * @author lirong
+ */
 
 use yii\debug\Module as DebugModule;
 use yii\gii\Module as GiiModule;
@@ -14,8 +19,6 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 //v1容器注册
 require_once __DIR__ . '/container/v1_container.php';
-//定时器容器注册
-require_once __DIR__ . '/container/commands.php';
 
 $config = [
     'id'         => 'basic',

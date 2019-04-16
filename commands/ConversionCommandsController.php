@@ -2,16 +2,17 @@
 
 namespace app\commands;
 
+use app\commands\conversionCommands\domain\dto\RedisAddViewDto;
 use app\commands\conversionCommands\service\CommandsStaticHitsService;
 use app\common\commands\CommandsBaseController;
-use app\models\po\StaticHitsPo;
+use app\common\exception\TencentMarketingApiException;
 use app\modules\v1\userAction\enum\ConversionEnum;
 use app\utils\ArrayUtils;
 use app\utils\RedisUtils;
 use yii\base\Module;
 
 /**
- * Class ConversionCommandsController
+ * Class ConversionCommandsTest
  *
  * @property RedisUtils $redisUtils
  * @property ArrayUtils $arrayUtils
@@ -30,7 +31,7 @@ class ConversionCommandsController extends CommandsBaseController
     protected $commandsStaticHitsService;
 
     /**
-     * ConversionCommandsController constructor.
+     * ConversionCommandsTest constructor.
      *
      * @param int $id
      * @param Module $module
@@ -54,24 +55,35 @@ class ConversionCommandsController extends CommandsBaseController
     /**
      * Landing page conversions - add views
      *
+     * @return void
+     * @author: lirong
+     */
+    public function actionAddViews(): void
+    {
+        $redisAddViewDtoList = [];
+        $redisAddViewDto = $redisAddViewBaseDto = new RedisAddViewDto();
+        try {
+            do {
+                $redisAddViewPop = $this->redisUtils->getRedis()->rpop(ConversionEnum::REDIS_ADD_VIEW);
+                if ($redisAddViewPop) {
+                    $redisAddViewDto = clone $redisAddViewBaseDto;
+                    $redisAddViewDto->attributes = json_decode($redisAddViewPop, true);
+                    $this->commandsStaticHitsService->insert($redisAddViewDto);
+                }
+            } while ($redisAddViewPop);
+        } catch (TencentMarketingApiException $e) {
+            $this->redisUtils->getRedis()->rpush(ConversionEnum::REDIS_ADD_VIEW, [json_encode($redisAddViewDto->attributes)]);
+        }
+    }
+
+    /**
+     * transaction close
+     *
      * @return array
      * @author: lirong
      */
-    public function actionAddViews(): array
+    protected function transactionClose(): array
     {
-        $staticHitsPoList = [];
-        $staticHitsPoBase = new StaticHitsPo();
-        do {
-            $staticHitsPoPop = $this->redisUtils->getRedis()->rpop(ConversionEnum::REDIS_ADD_VIEW);
-            if ($staticHitsPoPop) {
-                $staticHitsPo = clone $staticHitsPoBase;
-                $staticHitsPo->attributes = json_decode($staticHitsPoPop, true);
-                $staticHitsPoList[] = $staticHitsPo;
-                $staticHitsPoList = $this->arrayUtils->uniqueArrayDelete($staticHitsPoList, ['ip', 'date', 'u_id']);
-            }
-        } while ($staticHitsPoPop);
-        //广点通用户行为点击数增加
-        $this->commandsStaticHitsService->batchInsert($staticHitsPoList);
-        return [true];
+        return ['actionAddViews'];
     }
 }
