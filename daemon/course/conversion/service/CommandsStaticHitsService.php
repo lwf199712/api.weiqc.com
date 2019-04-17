@@ -1,6 +1,6 @@
 <?php
 
-namespace app\daemon\conversionCommands\service;
+namespace app\daemon\sourse\conversion\service;
 
 
 use app\common\exception\TencentMarketingApiException;

@@ -11,7 +11,7 @@ use app\common\exception\RedisException;
 use app\common\rest\RestBaseController;
 use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
-use app\daemon\conversionCommands\domain\dto\RedisAddViewDto;
+use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
 use app\models\dataObject\StaticConversionDo;
 use app\modules\v1\userAction\domain\vo\ConversionInfo;
 use app\modules\v1\userAction\enum\ConversionEnum;
@@ -205,7 +205,7 @@ class ConversionController extends RestBaseController
     public function actionAddViews(): array
     {
         try {
-            //TODO 点击数(存储在redis)
+            //点击数(存储在redis)
             $redisAddViewDto = new RedisAddViewDto();
             $redisAddViewDto->token = $this->request->post('token');
             if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER']) {

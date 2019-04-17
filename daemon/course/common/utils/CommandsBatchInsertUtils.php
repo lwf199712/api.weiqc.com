@@ -1,6 +1,6 @@
 <?php
 
-namespace app\daemon\conversionCommands\utils;
+namespace app\daemon\course\common\utils;
 
 use Yii;
 use yii\db\Exception;
@@ -8,7 +8,7 @@ use yii\db\Exception;
 /**
  * Class CommandsBatchInsertUtils
  *
- * @package app\commands\conversionCommands\utils
+ * @package app\commands\conversion\utils
  * @author: lirong
  */
 class CommandsBatchInsertUtils

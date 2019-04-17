@@ -1,13 +1,13 @@
 <?php
 
-namespace app\daemon\conversionCommands\controller;
+namespace app\daemon\course\conversionCo\controller;
 
 use app\common\commands\CommandsBaseController;
 use app\common\exception\TencentMarketingApiException;
 use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;
-use app\daemon\conversionCommands\domain\dto\RedisAddViewDto;
-use app\daemon\conversionCommands\service\CommandsStaticHitsService;
+use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
+use app\daemon\sourse\conversion\service\CommandsStaticHitsService;
 use yii\base\Module;
 
 /**

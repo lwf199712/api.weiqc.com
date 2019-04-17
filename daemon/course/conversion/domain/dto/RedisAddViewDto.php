@@ -1,6 +1,6 @@
 <?php
 
-namespace app\daemon\conversionCommands\domain\dto;
+namespace app\daemon\course\conversion\domain\dto;
 
 use yii\base\Model;
 

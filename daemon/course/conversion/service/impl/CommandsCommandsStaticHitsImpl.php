@@ -1,17 +1,17 @@
 <?php
 
-namespace app\daemon\conversionCommands\service\impl;
+namespace app\daemon\sourse\conversion\service\impl;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
 use app\api\tencentMarketingApi\userActions\domain\dto\ActionsDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\TraceDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
 use app\api\tencentMarketingApi\userActions\enum\ActionTypeEnum;
-use app\commands\utils\CommandsBatchInsertUtils;
 use app\common\exception\TencentMarketingApiException;
-use app\daemon\conversionCommands\domain\dto\RedisAddViewDto;
-use app\daemon\conversionCommands\service\CommandsStaticHitsService;
-use app\daemon\conversionCommands\service\CommandsStaticUrlService;
+use app\daemon\course\common\utils\CommandsBatchInsertUtils;
+use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
+use app\daemon\sourse\conversion\service\CommandsStaticHitsService;
+use app\daemon\sourse\conversion\service\CommandsStaticUrlService;
 use app\models\dataObject\StaticHitsDo;
 use app\models\dataObject\StaticUrlDo;
 use app\common\utils\ArrayUtils;

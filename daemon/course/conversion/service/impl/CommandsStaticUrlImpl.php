@@ -1,8 +1,8 @@
 <?php
 
-namespace app\daemon\conversionCommands\service\impl;
+namespace app\daemon\sourse\conversion\service\impl;
 
-use app\daemon\conversionCommands\service\CommandsStaticUrlService;
+use app\daemon\sourse\conversion\service\CommandsStaticUrlService;
 use app\models\dataObject\StaticUrlDo;
 use yii\base\BaseObject;
 

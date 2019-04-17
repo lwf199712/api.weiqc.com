@@ -1,11 +1,11 @@
 <?php
 
-namespace app\daemon\conversionCommands\service;
+namespace app\daemon\sourse\conversion\service;
 
 /**
  * Interface CommandsStaticConversionService
  *
- * @package app\commands\conversionCommands\service
+ * @package app\commands\conversion\service
  * @author: lirong
  */
 interface CommandsStaticUrlService
