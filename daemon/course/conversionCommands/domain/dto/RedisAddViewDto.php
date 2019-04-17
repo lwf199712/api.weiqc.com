@@ -1,6 +1,6 @@
 <?php
 
-namespace app\commands\conversionCommands\domain\dto;
+namespace app\daemon\conversionCommands\domain\dto;
 
 use yii\base\Model;
 
@@ -54,4 +54,44 @@ class RedisAddViewDto extends Model
     public $action_param;
     /* @var string $url */
     public $url;
+
+
+    /**
+     * Returns the validation rules for attributes.
+     *
+     * @return array
+     * @author: lirong
+     */
+    public function rules(): array
+    {
+        return [
+            [['token', 'u_id', 'ip', 'country', 'area', 'date', 'referer', 'agent', 'createtime', 'account_id', 'user_action_set_id', 'click_id', 'action_param', 'url',], 'string']
+        ];
+    }
+
+    /**
+     * Returns the attribute labels.
+     *
+     * @return array
+     * @author: lirong
+     */
+    public function attributeLabels(): array
+    {
+        return [
+            'token'              => 'token',
+            'u_id'               => 'u_id',
+            'ip'                 => 'ip',
+            'country'            => 'country',
+            'area'               => 'area',
+            'date'               => 'date',
+            'referer'            => 'referer',
+            'agent'              => 'agent',
+            'createtime'         => 'createtime',
+            'account_id'         => 'account_id',
+            'user_action_set_id' => 'user_action_set_id',
+            'click_id'           => 'click_id',
+            'action_param'       => 'action_param',
+            'url'                => 'url',
+        ];
+    }
 }

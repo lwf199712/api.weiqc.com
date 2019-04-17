@@ -68,6 +68,9 @@ abstract class CommandsBaseController extends Controller
                 $this->transaction->commit();
             }
         }
+        if (isset($result[1]) && is_string($result[1])) {
+            echo $result[1];
+        }
         return parent::afterAction($action, $result);
     }
 

@@ -6,7 +6,7 @@ use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
 use app\common\client\ClientBaseService;
 use app\common\exception\TencentMarketingApiException;
-use app\utils\ArrayUtils;
+use app\common\utils\ArrayUtils;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Yii;

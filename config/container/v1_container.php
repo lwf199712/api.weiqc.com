@@ -22,11 +22,11 @@ use app\modules\v1\userAction\service\UserActionStaticConversionService;
 use app\modules\v1\userAction\service\UserActionStaticHitsService;
 use app\modules\v1\userAction\service\UserActionStaticServiceConversionsService;
 use app\modules\v1\userAction\service\UserActionStaticUrlService;
-use app\utils\IpLocationUtils;
-use app\utils\RedisUtils;
-use app\utils\RequestUtils;
-use app\utils\ResponseUtils;
-use app\utils\SourceDetectionUtil;
+use app\common\utils\IpLocationUtils;
+use app\common\utils\RedisUtils;
+use app\common\utils\RequestUtils;
+use app\common\utils\ResponseUtils;
+use app\common\utils\SourceDetectionUtil;
 
 $containerList = [
     //接口容器

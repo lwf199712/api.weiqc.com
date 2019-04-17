@@ -1,6 +1,6 @@
 <?php
 
-namespace app\commands\conversionCommands\service;
+namespace app\daemon\conversionCommands\service;
 
 /**
  * Interface CommandsStaticConversionService
@@ -8,7 +8,7 @@ namespace app\commands\conversionCommands\service;
  * @package app\commands\conversionCommands\service
  * @author: lirong
  */
-interface CommandsStaticConversionService
+interface CommandsStaticUrlService
 {
     /**
      * @param $condition

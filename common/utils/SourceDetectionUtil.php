@@ -1,6 +1,6 @@
 <?php
 
-namespace app\utils;
+namespace app\common\utils;
 
 use Yii;
 use yii\base\BaseObject;

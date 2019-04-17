@@ -1,6 +1,6 @@
 <?php
 
-namespace app\commands\utils;
+namespace app\daemon\conversionCommands\utils;
 
 use Yii;
 use yii\db\Exception;

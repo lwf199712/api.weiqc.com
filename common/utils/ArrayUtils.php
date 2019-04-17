@@ -1,13 +1,13 @@
 <?php
 
-namespace app\utils;
+namespace app\common\utils;
 
 use yii\base\Model;
 
 /**
  * Class ArrayUtils
  *
- * @package app\utils
+ * @package app\common\utils
  * @author: lirong
  */
 class ArrayUtils

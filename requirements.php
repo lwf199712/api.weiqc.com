@@ -69,7 +69,7 @@ if (extension_loaded('gd')) {
 }
 
 /**
- * Adjust requirements according to your application specifics.
+ * Adjust requirements according to your course specifics.
  */
 $requirements = array(
     // Database :

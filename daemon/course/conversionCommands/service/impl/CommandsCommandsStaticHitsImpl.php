@@ -1,20 +1,20 @@
 <?php
 
-namespace app\commands\conversionCommands\service\impl;
+namespace app\daemon\conversionCommands\service\impl;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
 use app\api\tencentMarketingApi\userActions\domain\dto\ActionsDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\TraceDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
 use app\api\tencentMarketingApi\userActions\enum\ActionTypeEnum;
-use app\commands\conversionCommands\domain\dto\RedisAddViewDto;
-use app\commands\conversionCommands\service\CommandsStaticConversionService;
-use app\commands\conversionCommands\service\CommandsStaticHitsService;
 use app\commands\utils\CommandsBatchInsertUtils;
 use app\common\exception\TencentMarketingApiException;
-use app\models\po\StaticConversionPo;
+use app\daemon\conversionCommands\domain\dto\RedisAddViewDto;
+use app\daemon\conversionCommands\service\CommandsStaticHitsService;
+use app\daemon\conversionCommands\service\CommandsStaticUrlService;
 use app\models\po\StaticHitsPo;
-use app\utils\ArrayUtils;
+use app\models\po\StaticUrlPo;
+use app\common\utils\ArrayUtils;
 use yii\base\BaseObject;
 use yii\db\Exception;
 
@@ -25,21 +25,21 @@ use yii\db\Exception;
  * @property CommandsBatchInsertUtils $batchInsertUtils
  * @property ArrayUtils $arrayUtils
  * @property UserActionsApi $userActionsApi
- * @property CommandsStaticConversionService $commandsStaticConversionService
+ * @property CommandsStaticUrlService $commandsStaticUrlService
  * @author: lirong
  */
 class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStaticHitsService
 {
     /* @var UserActionsApi */
     protected $userActionsApi;
-    /* @var CommandsStaticConversionService */
-    protected $commandsStaticConversionService;
+    /* @var CommandsStaticUrlService */
+    protected $commandsStaticUrlService;
     /* @var StaticHitsPo */
-    private $staticHits;
+    protected $staticHits;
     /* @var CommandsBatchInsertUtils */
-    private $batchInsertUtils;
+    protected $batchInsertUtils;
     /* @var ArrayUtils */
-    private $arrayUtils;
+    protected $arrayUtils;
 
     /**
      * UserActionUserActionStaticServiceConversionsImpl constructor.
@@ -48,21 +48,21 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
      * @param CommandsBatchInsertUtils $batchInsertUtils
      * @param ArrayUtils $arrayUtils
      * @param UserActionsApi $userActionsApi
-     * @param CommandsStaticConversionService $commandsStaticConversionService
+     * @param CommandsStaticUrlService $commandsStaticUrlService
      * @param array $config
      */
     public function __construct(StaticHitsPo $staticHits,
                                 CommandsBatchInsertUtils $batchInsertUtils,
                                 ArrayUtils $arrayUtils,
-                                userActionsApi $userActionsApi,
-                                CommandsStaticConversionService $commandsStaticConversionService,
+                                UserActionsApi $userActionsApi,
+                                CommandsStaticUrlService $commandsStaticUrlService,
                                 $config = [])
     {
         $this->staticHits = $staticHits;
         $this->batchInsertUtils = $batchInsertUtils;
         $this->arrayUtils = $arrayUtils;
         $this->userActionsApi = $userActionsApi;
-        $this->commandsStaticConversionService = $commandsStaticConversionService;
+        $this->commandsStaticUrlService = $commandsStaticUrlService;
         parent::__construct($config);
     }
 
@@ -77,16 +77,16 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
     {
         if ($redisAddViewDtoList) {
             //查询数据是否已经被记录
-            $staticConversionFindList = $this->commandsStaticConversionService->findAll(['token' => array_column($redisAddViewDtoList, 'token')]);
+            $staticUrlFindList = $this->commandsStaticUrlService->findAll(['ident' => array_column($redisAddViewDtoList, 'token')]);
             $staticHitsFindList = $this->staticHits::find()->select(['ip', 'date', 'u_id']);
             foreach ($redisAddViewDtoList as $key => $redisAddViewDto) {
                 /* @var $redisAddViewDto RedisAddViewDto */
-                /* @var $staticConversionFind StaticConversionPo */
-                $staticConversionFind = $this->arrayUtils->findOne($staticConversionFindList, ['token' => $redisAddViewDto->token]);
-                if (!$staticConversionFind) {
+                /* @var $staticUrlFind StaticUrlPo */
+                $staticUrlFind = $this->arrayUtils->findOne($staticUrlFindList, ['ident' => $redisAddViewDto->token]);
+                if (!$staticUrlFind) {
                     unset($redisAddViewDtoList[$key]);
                 }
-                $redisAddViewDto->u_id = $staticConversionFind->u_id;
+                $redisAddViewDto->u_id = $staticUrlFind->id;
                 $staticHitsFindList = $staticHitsFindList->orWhere([
                     'ip'   => $redisAddViewDto->ip,
                     'date' => $redisAddViewDto->date,
@@ -106,9 +106,10 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
             }
             //批量插入
             $redisAddViewDtoList = array_values($redisAddViewDtoList);
-            $redisAddViewDtoChunkList = array_chunk($redisAddViewDtoList, 1000);
+            $redisAddViewDtoChunkList = array_chunk($redisAddViewDtoList, 500);
             try {
                 foreach ($redisAddViewDtoChunkList as $key => $redisAddViewDtoList) {
+
                     $lastInsertId = $this->batchInsertUtils->onDuplicateKeyUpdate($redisAddViewDtoList, [
                         'u_id',      //statis_url表id
                         'ip',        //IP地址
@@ -123,6 +124,7 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
                     if (!$lastInsertId) {
                         throw new Exception('批量插入失败!返回的id为空', [], 500);
                     }
+                    $redisAddViewDtoList = array_unique($redisAddViewDtoList);
                     //广点通用户行为点击数增加
                     foreach ($redisAddViewDtoList as $redisAddViewDto) {
                         $userActionsDto = new UserActionsDto();
@@ -145,7 +147,8 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
                     unset($redisAddViewDtoChunkList[$key]);
                 }
             } catch (Exception|TencentMarketingApiException $e) {
-
+                var_dump($e->getMessage());
+                exit;
             }
         }
     }
