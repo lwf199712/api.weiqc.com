@@ -1,6 +1,6 @@
 <?php
 
-namespace app\daemon\sourse\conversion\service\impl;
+namespace app\daemon\course\conversion\service\impl;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
 use app\api\tencentMarketingApi\userActions\domain\dto\ActionsDto;
@@ -8,10 +8,10 @@ use app\api\tencentMarketingApi\userActions\domain\dto\TraceDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
 use app\api\tencentMarketingApi\userActions\enum\ActionTypeEnum;
 use app\common\exception\TencentMarketingApiException;
-use app\daemon\course\common\utils\CommandsBatchInsertUtils;
+use app\daemon\common\utils\CommandsBatchInsertUtils;
 use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
-use app\daemon\sourse\conversion\service\CommandsStaticHitsService;
-use app\daemon\sourse\conversion\service\CommandsStaticUrlService;
+use app\daemon\course\conversion\service\CommandsStaticHitsService;
+use app\daemon\course\conversion\service\CommandsStaticUrlService;
 use app\models\dataObject\StaticHitsDo;
 use app\models\dataObject\StaticUrlDo;
 use app\common\utils\ArrayUtils;
@@ -71,6 +71,8 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
      *
      * @param array $redisAddViewDtoList
      * @return void
+     * @throws Exception
+     * @throws TencentMarketingApiException
      * @author: lirong
      */
     public function batchInsert(array $redisAddViewDtoList): void
@@ -79,6 +81,7 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
             //查询数据是否已经被记录
             $staticUrlFindList = $this->commandsStaticUrlService->findAll(['ident' => array_column($redisAddViewDtoList, 'token')]);
             $staticHitsFindList = $this->staticHits::find()->select(['ip', 'date', 'u_id']);
+            //耦合代码:执行查询落地页同时,进行数据赋值
             foreach ($redisAddViewDtoList as $key => $redisAddViewDto) {
                 /* @var $redisAddViewDto RedisAddViewDto */
                 /* @var $staticUrlFind StaticUrlDo */
@@ -86,14 +89,20 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
                 if (!$staticUrlFind) {
                     unset($redisAddViewDtoList[$key]);
                 }
-                $redisAddViewDto->u_id = $staticUrlFind->id;
                 $staticHitsFindList = $staticHitsFindList->orWhere([
                     'ip'   => $redisAddViewDto->ip,
                     'date' => $redisAddViewDto->date,
-                    'u_id' => $redisAddViewDto->u_id,
+                    'u_id' => $staticUrlFind->id
                 ]);
+                //数据赋值
+                $redisAddViewDto->u_id = $staticUrlFind->id;
+                $redisAddViewDto->page = $staticUrlFind->url;
+                if ($staticUrlFind->pcurl && !$redisAddViewDto->request_from_mobile) {
+                    $redisAddViewDto->page = $staticUrlFind->pcurl;
+                }
             }
             $staticHitsFindList = $staticHitsFindList->all();
+            //检查数据是否存在
             foreach ($redisAddViewDtoList as $key => $redisAddViewDto) {
                 /* @var $staticHitsFind StaticHitsDo */
                 if ($this->arrayUtils->arrayExists($staticHitsFindList, [
@@ -105,51 +114,43 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
                 }
             }
             //批量插入
-            $redisAddViewDtoList = array_values($redisAddViewDtoList);
-            $redisAddViewDtoChunkList = array_chunk($redisAddViewDtoList, 500);
-            try {
-                foreach ($redisAddViewDtoChunkList as $key => $redisAddViewDtoList) {
-
-                    $lastInsertId = $this->batchInsertUtils->onDuplicateKeyUpdate($redisAddViewDtoList, [
-                        'u_id',      //statis_url表id
-                        'ip',        //IP地址
-                        'country',   //国家
-                        'area',      //区域
-                        'date',      //日期
-                        'page',      //页
-                        'referer',   //引荐
-                        'agent',     //代理人
-                        'createtime',//创建时间
-                    ], $this->staticHits::tableName());
-                    if (!$lastInsertId) {
-                        throw new Exception('批量插入失败!返回的id为空', [], 500);
-                    }
-                    $redisAddViewDtoList = array_unique($redisAddViewDtoList);
-                    //广点通用户行为点击数增加
-                    foreach ($redisAddViewDtoList as $redisAddViewDto) {
-                        $userActionsDto = new UserActionsDto();
-                        $userActionsDto->account_id = $redisAddViewDto->account_id;
-                        $userActionsDto->actions = new ActionsDto();
-                        $userActionsDto->actions->user_action_set_id = $redisAddViewDto->user_action_set_id;
-                        $userActionsDto->actions->url = $redisAddViewDto->url;
-                        $userActionsDto->actions->action_time = time();
-                        $userActionsDto->actions->action_type = ActionTypeEnum::PAGE_VIEW;
-                        $userActionsDto->actions->trace = new TraceDto();
-                        $userActionsDto->actions->trace->click_id = $redisAddViewDto->click_id;
-                        if ($redisAddViewDto->action_param) {
-                            $userActionsDto->actions->action_param = $redisAddViewDto->action_param;
-                        }
-                        $userActionsDto->actions->outer_action_id = $lastInsertId;
-                        $userActionsDto->actions = [$userActionsDto->actions];
-                        $this->userActionsApi->add($userActionsDto);
-                        $lastInsertId--;
-                    }
-                    unset($redisAddViewDtoChunkList[$key]);
-                }
-            } catch (Exception|TencentMarketingApiException $e) {
-                var_dump($e->getMessage());
-                exit;
+            $lastInsertId = $this->batchInsertUtils->onDuplicateKeyUpdate($redisAddViewDtoList, [
+                'u_id',      //statis_url表id
+                'ip',        //IP地址
+                'country',   //国家
+                'area',      //区域
+                'date',      //日期
+                'page',      //页
+                'referer',   //引荐
+                'agent',     //代理人
+                'createtime',//创建时间
+            ], $this->staticHits::tableName());
+            if (!$lastInsertId) {
+                throw new Exception('批量插入失败!返回的id为空', [], 500);
             }
+            $redisAddViewDtoList = array_unique($redisAddViewDtoList);
+            //广点通用户行为点击数增加
+            $userActionsDtoList = [];
+            foreach ($redisAddViewDtoList as $redisAddViewDto) {
+                $userActionsDto = new UserActionsDto();
+                $userActionsDto->account_id = $redisAddViewDto->account_id;
+                $userActionsDto->actions = new ActionsDto();
+                $userActionsDto->actions->user_action_set_id = $redisAddViewDto->user_action_set_id;
+                $userActionsDto->actions->url = $redisAddViewDto->url;
+                $userActionsDto->actions->action_time = time();
+                $userActionsDto->actions->action_type = ActionTypeEnum::PAGE_VIEW;
+                $userActionsDto->actions->trace = new TraceDto();
+                $userActionsDto->actions->trace->click_id = $redisAddViewDto->click_id;
+                if ($redisAddViewDto->action_param) {
+                    $userActionsDto->actions->action_param = $redisAddViewDto->action_param;
+                }
+                $userActionsDto->actions->outer_action_id = $lastInsertId;
+                $userActionsDto->actions = [$userActionsDto->actions];
+                $userActionsDtoList[] = $userActionsDto;
+                $lastInsertId--;
+            }
+            $this->userActionsApi->batchAdd($userActionsDtoList);
+            unset($userActionsDtoList);
         }
     }
 }

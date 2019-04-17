@@ -21,6 +21,8 @@ use yii\base\Model;
  * @property string $user_action_set_id
  * @property string $click_id
  * @property string $action_param
+ * @property string $request_from_mobile
+ * @property string $page
  * @package app\modules\v1\userAction\domain\dto
  * @author: lirong
  */
@@ -54,6 +56,10 @@ class RedisAddViewDto extends Model
     public $action_param;
     /* @var string $url */
     public $url;
+    /* @var string $request_from_mobile */
+    public $request_from_mobile;
+    /* @var string $page */
+    public $page;
 
 
     /**
@@ -65,7 +71,7 @@ class RedisAddViewDto extends Model
     public function rules(): array
     {
         return [
-            [['token', 'u_id', 'ip', 'country', 'area', 'date', 'referer', 'agent', 'createtime', 'account_id', 'user_action_set_id', 'click_id', 'action_param', 'url',], 'string']
+            [['page', 'request_from_mobile', 'token', 'u_id', 'ip', 'country', 'area', 'date', 'referer', 'agent', 'createtime', 'account_id', 'user_action_set_id', 'click_id', 'action_param', 'url',], 'string']
         ];
     }
 
@@ -78,20 +84,21 @@ class RedisAddViewDto extends Model
     public function attributeLabels(): array
     {
         return [
-            'token'              => 'token',
-            'u_id'               => 'u_id',
-            'ip'                 => 'ip',
-            'country'            => 'country',
-            'area'               => 'area',
-            'date'               => 'date',
-            'referer'            => 'referer',
-            'agent'              => 'agent',
-            'createtime'         => 'createtime',
-            'account_id'         => 'account_id',
-            'user_action_set_id' => 'user_action_set_id',
-            'click_id'           => 'click_id',
-            'action_param'       => 'action_param',
-            'url'                => 'url',
+            'token'               => 'token',
+            'u_id'                => 'u_id',
+            'ip'                  => 'ip',
+            'country'             => 'country',
+            'area'                => 'area',
+            'date'                => 'date',
+            'referer'             => 'referer',
+            'agent'               => 'agent',
+            'createtime'          => 'createtime',
+            'account_id'          => 'account_id',
+            'user_action_set_id'  => 'user_action_set_id',
+            'click_id'            => 'click_id',
+            'action_param'        => 'action_param',
+            'url'                 => 'url',
+            'request_from_mobile' => 'request_from_mobile',
         ];
     }
 }
