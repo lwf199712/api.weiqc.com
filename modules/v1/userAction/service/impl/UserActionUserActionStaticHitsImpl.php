@@ -2,28 +2,28 @@
 
 namespace app\modules\v1\userAction\service\impl;
 
-use app\models\po\StaticHitsPo;
+use app\models\dataObject\StaticHitsDo;
 use app\modules\v1\userAction\service\UserActionStaticHitsService;
 use yii\base\BaseObject;
 
 /**
  * Interface ConversionService
  *
- * @property StaticHitsPo $staticHits
+ * @property StaticHitsDo $staticHits
  * @author: lirong
  */
 class UserActionUserActionStaticHitsImpl extends BaseObject implements UserActionStaticHitsService
 {
-    /* @var StaticHitsPo */
+    /* @var StaticHitsDo */
     private $staticHits;
 
     /**
      * UserActionUserActionStaticServiceConversionsImpl constructor.
      *
-     * @param StaticHitsPo $staticHits
+     * @param StaticHitsDo $staticHits
      * @param array $config
      */
-    public function __construct(StaticHitsPo $staticHits, $config = [])
+    public function __construct(StaticHitsDo $staticHits, $config = [])
     {
         $this->staticHits = $staticHits;
         parent::__construct($config);
@@ -34,7 +34,7 @@ class UserActionUserActionStaticHitsImpl extends BaseObject implements UserActio
      * ActiveRecord instance matching the condition, or `null` if nothing matches.
      *
      * @param mixed $condition
-     * @return StaticHitsPo|null|mixed
+     * @return StaticHitsDo|null|mixed
      * @author: lirong
      */
     public function findOne($condition)
@@ -46,7 +46,7 @@ class UserActionUserActionStaticHitsImpl extends BaseObject implements UserActio
      * Returns a value indicating whether the query result contains any row of data.
      *
      * @param mixed $condition
-     * @return StaticHitsPo|null|mixed
+     * @return StaticHitsDo|null|mixed
      * @author: lirong
      */
     public function exists($condition): bool

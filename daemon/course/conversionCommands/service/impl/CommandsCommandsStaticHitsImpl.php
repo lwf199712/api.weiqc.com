@@ -12,8 +12,8 @@ use app\common\exception\TencentMarketingApiException;
 use app\daemon\conversionCommands\domain\dto\RedisAddViewDto;
 use app\daemon\conversionCommands\service\CommandsStaticHitsService;
 use app\daemon\conversionCommands\service\CommandsStaticUrlService;
-use app\models\po\StaticHitsPo;
-use app\models\po\StaticUrlPo;
+use app\models\dataObject\StaticHitsDo;
+use app\models\dataObject\StaticUrlDo;
 use app\common\utils\ArrayUtils;
 use yii\base\BaseObject;
 use yii\db\Exception;
@@ -21,7 +21,7 @@ use yii\db\Exception;
 /**
  * Interface ConversionService
  *
- * @property StaticHitsPo $staticHits
+ * @property StaticHitsDo $staticHits
  * @property CommandsBatchInsertUtils $batchInsertUtils
  * @property ArrayUtils $arrayUtils
  * @property UserActionsApi $userActionsApi
@@ -34,7 +34,7 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
     protected $userActionsApi;
     /* @var CommandsStaticUrlService */
     protected $commandsStaticUrlService;
-    /* @var StaticHitsPo */
+    /* @var StaticHitsDo */
     protected $staticHits;
     /* @var CommandsBatchInsertUtils */
     protected $batchInsertUtils;
@@ -44,14 +44,14 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
     /**
      * UserActionUserActionStaticServiceConversionsImpl constructor.
      *
-     * @param StaticHitsPo $staticHits
+     * @param StaticHitsDo $staticHits
      * @param CommandsBatchInsertUtils $batchInsertUtils
      * @param ArrayUtils $arrayUtils
      * @param UserActionsApi $userActionsApi
      * @param CommandsStaticUrlService $commandsStaticUrlService
      * @param array $config
      */
-    public function __construct(StaticHitsPo $staticHits,
+    public function __construct(StaticHitsDo $staticHits,
                                 CommandsBatchInsertUtils $batchInsertUtils,
                                 ArrayUtils $arrayUtils,
                                 UserActionsApi $userActionsApi,
@@ -81,7 +81,7 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
             $staticHitsFindList = $this->staticHits::find()->select(['ip', 'date', 'u_id']);
             foreach ($redisAddViewDtoList as $key => $redisAddViewDto) {
                 /* @var $redisAddViewDto RedisAddViewDto */
-                /* @var $staticUrlFind StaticUrlPo */
+                /* @var $staticUrlFind StaticUrlDo */
                 $staticUrlFind = $this->arrayUtils->findOne($staticUrlFindList, ['ident' => $redisAddViewDto->token]);
                 if (!$staticUrlFind) {
                     unset($redisAddViewDtoList[$key]);
@@ -95,7 +95,7 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
             }
             $staticHitsFindList = $staticHitsFindList->all();
             foreach ($redisAddViewDtoList as $key => $redisAddViewDto) {
-                /* @var $staticHitsFind StaticHitsPo */
+                /* @var $staticHitsFind StaticHitsDo */
                 if ($this->arrayUtils->arrayExists($staticHitsFindList, [
                     'ip'   => $redisAddViewDto->ip,
                     'date' => $redisAddViewDto->date,

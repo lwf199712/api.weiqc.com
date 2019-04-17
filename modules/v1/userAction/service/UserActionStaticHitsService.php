@@ -2,7 +2,7 @@
 
 namespace app\modules\v1\userAction\service;
 
-use app\models\po\StaticConversionPo;
+use app\models\dataObject\StaticConversionDo;
 
 /**
  * Interface CommandsStaticHitsService
@@ -14,14 +14,14 @@ interface UserActionStaticHitsService
 {
     /**
      * @param mixed $condition
-     * @return StaticConversionPo|null|mixed
+     * @return StaticConversionDo|null|mixed
      * @author: lirong
      */
     public function findOne($condition);
 
     /**
      * @param mixed $condition
-     * @return StaticConversionPo|null|mixed
+     * @return StaticConversionDo|null|mixed
      * @author: lirong
      */
     public function exists($condition);

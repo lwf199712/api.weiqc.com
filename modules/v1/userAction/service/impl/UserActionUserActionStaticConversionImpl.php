@@ -3,28 +3,28 @@
 namespace app\modules\v1\userAction\service\impl;
 
 use app\common\exception\ValidateException;
-use app\models\po\StaticConversionPo;
+use app\models\dataObject\StaticConversionDo;
 use app\modules\v1\userAction\service\UserActionStaticConversionService;
 use yii\base\BaseObject;
 
 /**
  * Interface ConversionService
  *
- * @property StaticConversionPo $staticConversion
+ * @property StaticConversionDo $staticConversion
  * @author: lirong
  */
 class UserActionUserActionStaticConversionImpl extends BaseObject implements UserActionStaticConversionService
 {
-    /* @var StaticConversionPo */
+    /* @var StaticConversionDo */
     private $staticConversion;
 
     /**
      * UserActionUserActionStaticConversionImpl constructor.
      *
-     * @param StaticConversionPo $StaticConversionPo
+     * @param StaticConversionDo $StaticConversionPo
      * @param array $config
      */
-    public function __construct(StaticConversionPo $StaticConversionPo, $config = [])
+    public function __construct(StaticConversionDo $StaticConversionPo, $config = [])
     {
         $this->staticConversion = $StaticConversionPo;
         parent::__construct($config);
@@ -32,7 +32,7 @@ class UserActionUserActionStaticConversionImpl extends BaseObject implements Use
 
     /**
      * @param mixed $condition
-     * @return StaticConversionPo|null|mixed
+     * @return StaticConversionDo|null|mixed
      * @author: lirong
      */
     public function findOne($condition)
@@ -41,14 +41,14 @@ class UserActionUserActionStaticConversionImpl extends BaseObject implements Use
     }
 
     /**
-     * @param StaticConversionPo $staticConversionPo
+     * @param StaticConversionDo $staticConversionPo
      * @return int
      * @throws ValidateException
      * @author: lirong
      */
     public function insert($staticConversionPo): int
     {
-        /* @var $staticConversion StaticConversionPo */
+        /* @var $staticConversion StaticConversionDo */
         $staticConversion = clone $this->staticConversion;
         $staticConversion->attributes = $staticConversionPo->attributes;
         if (!$staticConversion->save()) {

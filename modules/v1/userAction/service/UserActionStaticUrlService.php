@@ -3,7 +3,7 @@
 namespace app\modules\v1\userAction\service;
 
 
-use app\models\po\StaticUrlPo;
+use app\models\dataObject\StaticUrlDo;
 
 /**
  * Interface ConversionService
@@ -15,7 +15,7 @@ interface UserActionStaticUrlService
     /**
      * @param mixed $condition
      * @param null $select
-     * @return StaticUrlPo|null|mixed
+     * @return StaticUrlDo|null|mixed
      * @author: lirong
      */
     public function findOne($condition, $select = null);

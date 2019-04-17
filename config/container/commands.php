@@ -13,7 +13,7 @@ use app\commands\conversionCommands\service\CommandsStaticHitsService;
 use app\commands\conversionCommands\service\impl\CommandsCommandsStaticHitsImpl;
 use app\commands\conversionCommands\service\impl\CommandsStaticUrlImpl;
 use app\commands\utils\CommandsBatchInsertUtils;
-use app\models\po\StaticHitsPo;
+use app\models\dataObject\StaticHitsDo;
 use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;
 
@@ -27,7 +27,7 @@ $containerList = [
     RedisUtils::class                => RedisUtils::class,
     CommandsBatchInsertUtils::class  => CommandsBatchInsertUtils::class,
     //po
-    StaticHitsPo::class              => StaticHitsPo::class,
+    StaticHitsDo::class              => StaticHitsDo::class,
 
 ];
 

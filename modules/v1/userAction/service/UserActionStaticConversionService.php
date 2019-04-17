@@ -3,7 +3,7 @@
 namespace app\modules\v1\userAction\service;
 
 use app\common\exception\ValidateException;
-use app\models\po\StaticConversionPo;
+use app\models\dataObject\StaticConversionDo;
 
 /**
  * Interface UserActionStaticConversionService
@@ -15,7 +15,7 @@ interface UserActionStaticConversionService
 {
     /**
      * @param mixed $condition
-     * @return StaticConversionPo|null|mixed
+     * @return StaticConversionDo|null|mixed
      * @author: lirong
      */
     public function findOne($condition);
@@ -28,7 +28,7 @@ interface UserActionStaticConversionService
     public function exists($condition);
 
     /**
-     * @param StaticConversionPo $staticConversionPo
+     * @param StaticConversionDo $staticConversionPo
      * @return int
      * @throws ValidateException
      * @author: lirong

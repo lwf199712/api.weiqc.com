@@ -12,7 +12,7 @@ use app\common\rest\RestBaseController;
 use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
 use app\daemon\conversionCommands\domain\dto\RedisAddViewDto;
-use app\models\po\StaticConversionPo;
+use app\models\dataObject\StaticConversionDo;
 use app\modules\v1\userAction\domain\vo\ConversionInfo;
 use app\modules\v1\userAction\enum\ConversionEnum;
 use app\modules\v1\userAction\service\UserActionStaticConversionService;
@@ -152,7 +152,7 @@ class ConversionController extends RestBaseController
                 return [false, 'Ip已经被记录', 500];
             }
             //访问记录
-            $staticConversionPo = new StaticConversionPo();
+            $staticConversionPo = new StaticConversionDo();
             $staticConversionPo->wxh = $conversionInfo->wxh;
             if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER']) {
                 $staticConversionPo->referer = $_SERVER['HTTP_REFERER'];
@@ -205,7 +205,7 @@ class ConversionController extends RestBaseController
     public function actionAddViews(): array
     {
         try {
-            //点击数(存储在redis)
+            //TODO 点击数(存储在redis)
             $redisAddViewDto = new RedisAddViewDto();
             $redisAddViewDto->token = $this->request->post('token');
             if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER']) {

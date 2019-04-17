@@ -3,27 +3,27 @@
 namespace app\daemon\conversionCommands\service\impl;
 
 use app\daemon\conversionCommands\service\CommandsStaticUrlService;
-use app\models\po\StaticUrlPo;
+use app\models\dataObject\StaticUrlDo;
 use yii\base\BaseObject;
 
 /**
  * Interface ConversionService
  *
- * @property StaticUrlPo $staticUrl
+ * @property StaticUrlDo $staticUrl
  * @author: lirong
  */
 class CommandsStaticUrlImpl extends BaseObject implements CommandsStaticUrlService
 {
-    /* @var $staticUrl StaticUrlPo */
+    /* @var $staticUrl StaticUrlDo */
     private $staticUrl;
 
     /**
      * CommandsStaticConversionImpl constructor.
      *
-     * @param StaticUrlPo $staticUrl
+     * @param StaticUrlDo $staticUrl
      * @param array $config
      */
-    public function __construct(StaticUrlPo $staticUrl, $config = [])
+    public function __construct(StaticUrlDo $staticUrl, $config = [])
     {
         $this->staticUrl = $staticUrl;
         parent::__construct($config);

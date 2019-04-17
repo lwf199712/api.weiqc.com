@@ -3,8 +3,8 @@
 namespace app\modules\v1\userAction\service\impl;
 
 use app\common\exception\ValidateException;
-use app\models\po\StaticServiceConversionsPo;
-use app\models\po\StaticUrlPo;
+use app\models\dataObject\StaticServiceConversionsDo;
+use app\models\dataObject\StaticUrlDo;
 use app\modules\v1\userAction\service\UserActionStaticServiceConversionsService;
 use yii\base\BaseObject;
 use yii\db\Exception;
@@ -12,21 +12,21 @@ use yii\db\Exception;
 /**
  * Interface ConversionService
  *
- * @property StaticServiceConversionsPo $staticServiceConversions
+ * @property StaticServiceConversionsDo $staticServiceConversions
  * @author: lirong
  */
 class UserActionUserActionStaticServiceConversionsImpl extends BaseObject implements UserActionStaticServiceConversionsService
 {
-    /* @var StaticServiceConversionsPo */
+    /* @var StaticServiceConversionsDo */
     private $staticServiceConversions;
 
     /**
      * UserActionUserActionStaticServiceConversionsImpl constructor.
      *
-     * @param StaticServiceConversionsPo $staticServiceConversions
+     * @param StaticServiceConversionsDo $staticServiceConversions
      * @param array $config
      */
-    public function __construct(StaticServiceConversionsPo $staticServiceConversions, $config = [])
+    public function __construct(StaticServiceConversionsDo $staticServiceConversions, $config = [])
     {
         $this->staticServiceConversions = $staticServiceConversions;
         parent::__construct($config);
@@ -35,13 +35,13 @@ class UserActionUserActionStaticServiceConversionsImpl extends BaseObject implem
     /**
      * increased conversions
      *
-     * @param StaticUrlPo $staticUrl
+     * @param StaticUrlDo $staticUrl
      * @return void
      * @throws Exception
      * @throws ValidateException
      * @author: lirong
      */
-    public function increasedConversions(StaticUrlPo $staticUrl): void
+    public function increasedConversions(StaticUrlDo $staticUrl): void
     {
         $staticServiceConversions = $this->staticServiceConversions::findOne(['u_id' => $staticUrl->id]);
         if (!$staticServiceConversions) {
@@ -59,7 +59,7 @@ class UserActionUserActionStaticServiceConversionsImpl extends BaseObject implem
      * find one
      *
      * @param mixed $condition
-     * @return StaticServiceConversionsPo|null|mixed
+     * @return StaticServiceConversionsDo|null|mixed
      * @author: lirong
      */
     public function findOne($condition)

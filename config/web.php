@@ -40,7 +40,7 @@ $config = [
             'cookieValidationKey' => 'cQVUlOD_Ex9tcIfnLkdCloLB8CjRLDodLDOd',
             'parsers'             => [
                 //receive form-data to receive json data
-                'course/json' => JsonParser::class,
+                'application/json' => JsonParser::class,
             ]
         ],
         'response'     => [
