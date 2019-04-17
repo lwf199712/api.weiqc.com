@@ -11,8 +11,6 @@ use yii\caching\FileCache;
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
-//定时器容器注册
-require_once __DIR__ . '/container/commands.php';
 
 $config = [
     'id'                  => 'basic-console',
@@ -33,7 +31,7 @@ $config = [
                 [
                     'class'  => FileTarget::class,
                     'levels' => ['error', 'warning'],
-                ],
+                ]
             ],
         ],
         'db'    => $db,

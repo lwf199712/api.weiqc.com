@@ -44,4 +44,18 @@ class UserActionsApi extends ApiBaseController
     {
         $this->userActionsService->add($userActionsDto);
     }
+
+    /**
+     * 批量上报用户行为
+     *
+     * @param array $userActionsDtoList
+     * @throws TencentMarketingApiException
+     * @author: lirong
+     */
+    public function batchAdd(array $userActionsDtoList): void
+    {
+        if ($userActionsDtoList) {
+            $this->userActionsService->batchAdd($userActionsDtoList);
+        }
+    }
 }

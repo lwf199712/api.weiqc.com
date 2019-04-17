@@ -8,11 +8,11 @@
 //conversionCommands容器,标记为注册conversionCommands容器
 use app\api\tencentMarketingAPI\userActions\service\impl\UserActionsImpl;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
-use app\daemon\course\common\utils\CommandsBatchInsertUtils;
-use app\daemon\sourse\conversion\service\CommandsStaticHitsService;
-use app\daemon\sourse\conversion\service\CommandsStaticUrlService;
-use app\daemon\sourse\conversion\service\impl\CommandsCommandsStaticHitsImpl;
-use app\daemon\sourse\conversion\service\impl\CommandsStaticUrlImpl;
+use app\daemon\common\utils\CommandsBatchInsertUtils;
+use app\daemon\course\conversion\service\CommandsStaticHitsService;
+use app\daemon\course\conversion\service\impl\CommandsCommandsStaticHitsImpl;
+use app\daemon\course\conversion\service\CommandsStaticUrlService;
+use app\daemon\course\conversion\service\impl\CommandsStaticUrlImpl;
 use app\models\dataObject\StaticHitsDo;
 use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;

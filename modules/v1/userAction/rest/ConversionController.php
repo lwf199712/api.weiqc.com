@@ -208,6 +208,7 @@ class ConversionController extends RestBaseController
             //点击数(存储在redis)
             $redisAddViewDto = new RedisAddViewDto();
             $redisAddViewDto->token = $this->request->post('token');
+            $redisAddViewDto->referer = '';
             if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER']) {
                 $redisAddViewDto->referer = $_SERVER['HTTP_REFERER'];
             }
@@ -223,6 +224,7 @@ class ConversionController extends RestBaseController
             $redisAddViewDto->user_action_set_id = $this->request->post('user_action_set_id');
             $redisAddViewDto->click_id = $this->request->post('click_id', -1);
             $redisAddViewDto->action_param = $this->request->post('action_param');
+            $redisAddViewDto->request_from_mobile = $this->requestUtils->requestFromMobile();
             //redis存储
             if (!$this->redisUtils->getRedis()->rpush(ConversionEnum::REDIS_ADD_VIEW, [json_encode($redisAddViewDto->attributes)])) {
                 throw new RedisException('push list false', 500);

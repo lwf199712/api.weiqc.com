@@ -21,4 +21,12 @@ interface UserActionsService
      * @author: lirong
      */
     public function add(UserActionsDto $userActionsDto): void;
+    /**
+     * 批量上传用户行为数据
+     *
+     * @param array $userActionsDtoList
+     * @throws TencentMarketingApiException
+     * @author: lirong
+     */
+    public function batchAdd(array $userActionsDtoList):void;
 }
