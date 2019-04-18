@@ -7,10 +7,10 @@ use app\api\tencentMarketingApi\userActions\domain\dto\ActionsDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\TraceDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
 use app\api\tencentMarketingApi\userActions\enum\ActionTypeEnum;
-use app\common\exception\TencentMarketingApiException;
 use app\daemon\common\utils\CommandsBatchInsertUtils;
+use app\daemon\course\conversion\domain\dto\FalseUserActionsDto;
 use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
-use app\daemon\course\conversion\service\CommandsStaticHitsService;
+use app\daemon\course\conversion\service\CourseStaticHitsService;
 use app\daemon\course\conversion\service\CommandsStaticUrlService;
 use app\models\dataObject\StaticHitsDo;
 use app\models\dataObject\StaticUrlDo;
@@ -28,7 +28,7 @@ use yii\db\Exception;
  * @property CommandsStaticUrlService $commandsStaticUrlService
  * @author: lirong
  */
-class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStaticHitsService
+class CommandsCourseStaticHitsImpl extends BaseObject implements CourseStaticHitsService
 {
     /* @var UserActionsApi */
     protected $userActionsApi;
@@ -70,12 +70,11 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
      * batch insert
      *
      * @param array $redisAddViewDtoList
-     * @return void
+     * @return array
      * @throws Exception
-     * @throws TencentMarketingApiException|Exception
      * @author: lirong
      */
-    public function batchInsert(array $redisAddViewDtoList): void
+    public function batchInsert(array $redisAddViewDtoList): array
     {
         if ($redisAddViewDtoList) {
             //查询数据是否已经被记录
@@ -149,8 +148,18 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
                 $userActionsDtoList[] = $userActionsDto;
                 $lastInsertId--;
             }
-            $this->userActionsApi->batchAdd($userActionsDtoList);
-            unset($userActionsDtoList);
+            //删除上报失败的记录
+            $falseUserActionsDtoList = $this->userActionsApi->batchAdd($userActionsDtoList);
+            if ($falseUserActionsDtoList) {
+                $deleteList = [];
+                foreach ($falseUserActionsDtoList as $falseUserActionsDto) {
+                    /* @var FalseUserActionsDto $falseUserActionsDto */
+                    $deleteList[] = $falseUserActionsDto->userActionsDto->actions->outer_action_id;
+                }
+                $this->staticHits::deleteAll(['id' => $deleteList]);
+            }
+            return $falseUserActionsDtoList;
         }
+        return [];
     }
 }

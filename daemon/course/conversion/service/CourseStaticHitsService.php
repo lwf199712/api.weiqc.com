@@ -3,7 +3,6 @@
 namespace app\daemon\course\conversion\service;
 
 
-use app\common\exception\TencentMarketingApiException;
 use yii\db\Exception;
 
 /**
@@ -12,15 +11,15 @@ use yii\db\Exception;
  * @package app\modules\v1\userAction\service
  * @author: lirong
  */
-interface CommandsStaticHitsService
+interface CourseStaticHitsService
 {
     /**
      * batch insert
      *
      * @param array $redisAddViewDtoList
-     * @return void
-     * @throws TencentMarketingApiException|Exception
+     * @return array
+     * @throws Exception
      * @author: lirong
      */
-    public function batchInsert(array $redisAddViewDtoList): void;
+    public function batchInsert(array $redisAddViewDtoList): array;
 }

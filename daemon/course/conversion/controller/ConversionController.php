@@ -5,8 +5,9 @@ namespace app\daemon\course\conversion\controller;
 use app\common\exception\TencentMarketingApiException;
 use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;
+use app\daemon\course\conversion\domain\dto\FalseUserActionsDto;
 use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
-use app\daemon\course\conversion\service\CommandsStaticHitsService;
+use app\daemon\course\conversion\service\CourseStaticHitsService;
 use Yii;
 use yii\db\Exception;
 
@@ -15,7 +16,7 @@ use yii\db\Exception;
  *
  * @property RedisUtils $redisUtils
  * @property ArrayUtils $arrayUtils
- * @property CommandsStaticHitsService $commandsStaticHitsService
+ * @property CourseStaticHitsService $commandsStaticHitsService
  *
  * @package app\commands
  * @author: lirong
@@ -26,7 +27,7 @@ class ConversionController
     protected $redisUtils;
     /* @var ArrayUtils */
     protected $arrayUtils;
-    /* @var CommandsStaticHitsService */
+    /* @var CourseStaticHitsService */
     protected $commandsStaticHitsService;
 
     /**
@@ -34,9 +35,9 @@ class ConversionController
      *
      * @param RedisUtils $redisUtils
      * @param ArrayUtils $arrayUtils
-     * @param CommandsStaticHitsService $commandsStaticHitsService
+     * @param CourseStaticHitsService $commandsStaticHitsService
      */
-    public function __construct(RedisUtils $redisUtils, ArrayUtils $arrayUtils, CommandsStaticHitsService $commandsStaticHitsService)
+    public function __construct(RedisUtils $redisUtils, ArrayUtils $arrayUtils, CourseStaticHitsService $commandsStaticHitsService)
     {
         $this->redisUtils = $redisUtils;
         $this->arrayUtils = $arrayUtils;
@@ -47,11 +48,11 @@ class ConversionController
      * Landing page conversions - add views
      *
      * @param array $redisAddViewDtoList
-     * @return void
+     * @return array
      * @throws Exception
      * @author: lirong
      */
-    public function actionAddViews(array $redisAddViewDtoList): void
+    public function actionAddViews(array $redisAddViewDtoList): array
     {
         Yii::$app->db->beginTransaction();
         try {
@@ -66,12 +67,21 @@ class ConversionController
             //去重
             $redisAddViewDtoList = $this->arrayUtils->uniqueArrayDelete($redisAddViewDtoList, ['ip', 'date', 'u_id']);
             //批量插入
-            $this->commandsStaticHitsService->batchInsert($redisAddViewDtoList);
-        } catch (TencentMarketingApiException|Exception $e) {
+            $falseUserActionsDtoList = $this->commandsStaticHitsService->batchInsert($redisAddViewDtoList);
+            if ($falseUserActionsDtoList) {
+                foreach ($falseUserActionsDtoList as &$falseUserActionsDto) {
+                    /* @var $falseUserActionsDto FalseUserActionsDto */
+                    $falseUserActionsDto->message;
+                    $falseUserActionsDto->userActionsDto;
+                }
+                unset($falseUserActionsDto);
+            }
+            Yii::$app->db->beginTransaction()->commit();
+            return $falseUserActionsDtoList;
+        } catch (Exception $e) {
             Yii::$app->db->beginTransaction()->rollBack();
             throw new Exception($e->getMessage(), [], $e->getCode());
         }
-        Yii::$app->db->beginTransaction()->commit();
     }
 
 }

@@ -3,6 +3,7 @@
 use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;
 use app\daemon\course\conversion\controller\ConversionController;
+use app\daemon\course\conversion\domain\dto\FalseUserActionsDto;
 use app\daemon\course\conversion\service\CourseStaticHitsService;
 use app\modules\v1\userAction\enum\ConversionEnum;
 use Workerman\Lib\Timer;
@@ -50,11 +51,20 @@ $worker->onWorkerStart = static function () {
                         /* @var CourseStaticHitsService $commandsStaticHitsService */
                         $commandsStaticHitsService = $container->get(CourseStaticHitsService::class);
                         $conversionController = new ConversionController($redisUtils, $arrayUtils, $commandsStaticHitsService);
-                        $conversionController->actionAddViews($redisPopList);
+                        $falseUserActionsDtoList = $conversionController->actionAddViews($redisPopList);
                         //成功时删除备份队列数据(注:不成功将保存该备份,该备份应由开发人员定期删除)
                         for ($num = 1, $numMax = count($redisPopList); $num <= $numMax; $num++) {
                             $redisUtils->getRedis()->rpop(ConversionEnum::REDIS_ADD_VIEW_BACKUPS);
                         }
+                        //插入失败的数据记录
+                        if ($falseUserActionsDtoList) {
+                            foreach ($falseUserActionsDtoList as $falseUserActionsDto) {
+                                /* @var FalseUserActionsDto $falseUserActionsDto */
+                                $falseUserActionsDto->userActionsDto = ArrayUtils::attributesAsMap($falseUserActionsDto->userActionsDto);
+                                $falseUserActionsDtoList = $falseUserActionsDto->attributes;
+                            }
+                        }
+                        $redisUtils->getRedis()->rpush(ConversionEnum::REDIS_ADD_VIEW_BACKUPS, $falseUserActionsDtoList);
                     } catch (Exception $e) {
                         //TODO 无法使用日志功能
                         echo $e->getMessage() . $e->getCode() . "\n";
