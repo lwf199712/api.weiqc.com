@@ -72,7 +72,7 @@ class CommandsCommandsStaticHitsImpl extends BaseObject implements CommandsStati
      * @param array $redisAddViewDtoList
      * @return void
      * @throws Exception
-     * @throws TencentMarketingApiException
+     * @throws TencentMarketingApiException|Exception
      * @author: lirong
      */
     public function batchInsert(array $redisAddViewDtoList): void

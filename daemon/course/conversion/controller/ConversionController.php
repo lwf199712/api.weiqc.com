@@ -7,6 +7,7 @@ use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;
 use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
 use app\daemon\course\conversion\service\CommandsStaticHitsService;
+use Yii;
 use yii\db\Exception;
 
 /**
@@ -52,6 +53,7 @@ class ConversionController
      */
     public function actionAddViews(array $redisAddViewDtoList): void
     {
+        Yii::$app->db->beginTransaction();
         try {
             //获得对象组
             $redisAddViewBaseDto = new RedisAddViewDto();
@@ -65,9 +67,11 @@ class ConversionController
             $redisAddViewDtoList = $this->arrayUtils->uniqueArrayDelete($redisAddViewDtoList, ['ip', 'date', 'u_id']);
             //批量插入
             $this->commandsStaticHitsService->batchInsert($redisAddViewDtoList);
-        } catch (TencentMarketingApiException $e) {
+        } catch (TencentMarketingApiException|Exception $e) {
+            Yii::$app->db->beginTransaction()->rollBack();
             throw new Exception($e->getMessage(), [], $e->getCode());
         }
+        Yii::$app->db->beginTransaction()->commit();
     }
 
 }

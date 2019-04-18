@@ -4,6 +4,7 @@ namespace app\daemon\course\conversion\service;
 
 
 use app\common\exception\TencentMarketingApiException;
+use yii\db\Exception;
 
 /**
  * Interface CommandsStaticHitsService
@@ -18,7 +19,7 @@ interface CommandsStaticHitsService
      *
      * @param array $redisAddViewDtoList
      * @return void
-     * @throws TencentMarketingApiException
+     * @throws TencentMarketingApiException|Exception
      * @author: lirong
      */
     public function batchInsert(array $redisAddViewDtoList): void;
