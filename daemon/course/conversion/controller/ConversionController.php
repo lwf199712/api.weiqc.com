@@ -2,10 +2,8 @@
 
 namespace app\daemon\course\conversion\controller;
 
-use app\common\exception\TencentMarketingApiException;
 use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;
-use app\daemon\course\conversion\domain\dto\FalseUserActionsDto;
 use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
 use app\daemon\course\conversion\service\CourseStaticHitsService;
 use Yii;
@@ -68,14 +66,6 @@ class ConversionController
             $redisAddViewDtoList = $this->arrayUtils->uniqueArrayDelete($redisAddViewDtoList, ['ip', 'date', 'u_id']);
             //批量插入
             $falseUserActionsDtoList = $this->commandsStaticHitsService->batchInsert($redisAddViewDtoList);
-            if ($falseUserActionsDtoList) {
-                foreach ($falseUserActionsDtoList as &$falseUserActionsDto) {
-                    /* @var $falseUserActionsDto FalseUserActionsDto */
-                    $falseUserActionsDto->message;
-                    $falseUserActionsDto->userActionsDto;
-                }
-                unset($falseUserActionsDto);
-            }
             Yii::$app->db->beginTransaction()->commit();
             return $falseUserActionsDtoList;
         } catch (Exception $e) {
