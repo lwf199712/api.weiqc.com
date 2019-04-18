@@ -23,6 +23,14 @@ use yii\di\NotInstantiableException;
 class ConversionApplication
 {
     /**
+     * 触发上报数量
+     *
+     * @var integer APPEAR_NUMBER
+     * @author lirong
+     */
+    private const APPEAR_NUMBER = 500;
+
+    /**
      * 定时器调用的静态方法
      *
      * @throws InvalidConfigException
@@ -33,7 +41,6 @@ class ConversionApplication
     {
         static $redisPopList = [];
         do {
-            //容器
             /* @var Container $container */
             $container = Yii::$container;
             /* @var redisUtils $redisUtils */
@@ -43,11 +50,8 @@ class ConversionApplication
             if ($redisAddViewPop) {
                 //保存数据到备份队列中
                 $redisUtils->getRedis()->rpush(ConversionEnum::REDIS_ADD_VIEW_BACKUPS, [$redisAddViewPop]);
-                //队列读取超过500条时触发上报
                 $redisPopList[] = $redisAddViewPop;
-                echo '当前长度' . count($redisPopList) . "\n";
-                if (count($redisPopList) > 3) {
-                    echo "执行操作\n";
+                if (count($redisPopList) > self::APPEAR_NUMBER) {
                     try {
                         /* @var ArrayUtils $arrayUtils */
                         $arrayUtils = $container->get(ArrayUtils::class);
@@ -68,8 +72,7 @@ class ConversionApplication
                             }
                         }
                     } catch (Exception $e) {
-                        //TODO 无法使用日志功能
-                        echo $e->getMessage() . $e->getCode() . "\n";
+                        Yii::error($e->getMessage() . $e->getCode(), 'daemon');
                     }
                     unset($conversionController);
                     $redisPopList = [];

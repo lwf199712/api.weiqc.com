@@ -31,7 +31,15 @@ $config = [
                 [
                     'class'  => FileTarget::class,
                     'levels' => ['error', 'warning'],
-                ]
+                ],
+                [
+                    'class'       => FileTarget::class,
+                    'levels'      => ['error'],
+                    'categories'  => ['daemon'],
+                    'logFile'     => '@app/runtime/logs/daemon.log',
+                    'maxFileSize' => 1024 * 2,
+                    'maxLogFiles' => 20,
+                ],
             ],
         ],
         'db'    => $db,
