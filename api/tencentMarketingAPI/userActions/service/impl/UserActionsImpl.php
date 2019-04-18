@@ -7,6 +7,7 @@ use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
 use app\common\client\ClientBaseService;
 use app\common\exception\TencentMarketingApiException;
 use app\common\utils\ArrayUtils;
+use app\daemon\course\conversion\domain\dto\FalseUserActionsDto;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Pool;
@@ -64,10 +65,15 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
      * 批量上传用户行为数据
      *
      * @param array $userActionsDtoList
+     * @return array
      * @author: lirong
      */
-    public function batchAdd(array $userActionsDtoList): void
+    public function batchAdd(array $userActionsDtoList): array
     {
+        //失败返回的数组
+        $falseUserActionsDtoList = [];
+        $falseUserActionsDtoBase = new FalseUserActionsDto();
+        $userActionsDtoList = array_values($userActionsDtoList);
         $requests = function () use ($userActionsDtoList) {
             //创建多个请求
             foreach ($userActionsDtoList as $userActionsDto) {
@@ -85,19 +91,24 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
         };
         $config = [
             'concurrency' => 20, //并发请求数
-            'fulfilled'   => static function ($response, $index) {
+            'fulfilled'   => static function ($response, $index) use ($userActionsDtoList, &$falseUserActionsDtoList, $falseUserActionsDtoBase) {
                 /* @var $response Request */
                 $contents = json_decode($response->getBody()->getContents(), true);
                 if (($contents['code'] ?? true) && (int)$contents['code'] !== 0) {
-                    $index++;
-                    throw new TencentMarketingApiException("第{$index}次错误!上传用户行为数据失败,接口返回错误:{$contents['message']}", $contents['code'] ?? 500);
+                    $falseUserActionsDto = clone $falseUserActionsDtoBase;
+                    $falseUserActionsDto->message = $contents['message'];
+                    $falseUserActionsDto->userActionsDto = $userActionsDtoList[$index];
+                    $falseUserActionsDtoList[] = $falseUserActionsDto;
                 }
             },
-            'rejected'    => static function ($reason, $index) {
-                $index++;
-                throw new TencentMarketingApiException("第{$index}次错误!上传用户行为数据失败,接口返回错误:{$reason}", 500);
+            'rejected'    => static function ($reason, $index) use ($userActionsDtoList, &$falseUserActionsDtoList,$falseUserActionsDtoBase) {
+                $falseUserActionsDto = clone $falseUserActionsDtoBase;
+                $falseUserActionsDto->message = $reason;
+                $falseUserActionsDto->userActionsDto = $userActionsDtoList[$index];
+                $falseUserActionsDtoList[] = $falseUserActionsDto;
             },
         ];
         (new Pool($this->client, $requests(), $config))->promise()->wait();
+        return $falseUserActionsDtoList;
     }
 }

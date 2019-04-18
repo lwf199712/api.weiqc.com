@@ -49,13 +49,14 @@ class UserActionsApi extends ApiBaseController
      * 批量上报用户行为
      *
      * @param array $userActionsDtoList
-     * @throws TencentMarketingApiException
+     * @return array
      * @author: lirong
      */
-    public function batchAdd(array $userActionsDtoList): void
+    public function batchAdd(array $userActionsDtoList): array
     {
         if ($userActionsDtoList) {
-            $this->userActionsService->batchAdd($userActionsDtoList);
+            return $this->userActionsService->batchAdd($userActionsDtoList);
         }
+        return [];
     }
 }
