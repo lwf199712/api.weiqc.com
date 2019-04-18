@@ -1,6 +1,6 @@
 <?php
 
-namespace app\daemon\course\conversion\entrance;
+namespace app\daemon\course\conversion;
 
 use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;
@@ -20,7 +20,7 @@ use yii\di\NotInstantiableException;
  * @package app\daemon\course\conversion\controller
  * @author: lirong
  */
-class ConversionEntrance
+class ConversionApplication
 {
     /**
      * 定时器调用的静态方法

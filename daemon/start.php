@@ -1,6 +1,6 @@
 <?php
 
-use app\daemon\course\conversion\entrance\ConversionEntrance;
+use app\daemon\course\conversion\ConversionApplication;
 use Workerman\Lib\Timer;
 use Workerman\Worker;
 use yii\base\InvalidConfigException;
@@ -22,7 +22,7 @@ $worker = new Worker('tcp://0.0.0.0:8585');
 $worker->count = 1;
 $worker->onWorkerStart = static function () {
     Timer::add(0.5, static function () {
-        ConversionEntrance::addViewsWorkMan();
+        ConversionApplication::addViewsWorkMan();
     });
 };
 // 运行worker
