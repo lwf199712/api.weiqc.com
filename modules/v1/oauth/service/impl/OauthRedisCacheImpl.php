@@ -1,13 +1,14 @@
 <?php
 
-namespace app\modules\v1\userAction\service\impl;
+namespace app\modules\v1\oauth\service\impl;
 
 use app\common\exception\RedisException;
 use app\common\utils\RedisUtils;
 use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
 use app\models\dataObject\StaticConversionDo;
-use app\modules\v1\userAction\enum\ConversionEnum;
-use app\modules\v1\userAction\service\UserActionCache;
+use app\modules\v1\oauth\domain\vo\AuthorizationTokenDto;
+use app\modules\v1\oauth\domain\vo\AuthorizeResponseVo;
+use app\modules\v1\oauth\service\OauthCacheService;
 use yii\base\BaseObject;
 
 /**
@@ -17,10 +18,11 @@ use yii\base\BaseObject;
  * @property StaticConversionDo $staticConversion
  * @author: lirong
  */
-class UserActionRedisCacheImpl extends BaseObject implements UserActionCache
+class OauthRedisCacheImpl extends BaseObject implements OauthCacheService
 {
     /* @var RedisUtils */
     protected $redisUtils;
+
     /**
      * OauthRedisCacheServiceImpl constructor.
      *
@@ -34,18 +36,14 @@ class UserActionRedisCacheImpl extends BaseObject implements UserActionCache
     }
 
     /**
-     * 缓存用户行为 - 浏览(独立ip记录)
+     * TODO 缓存 - 缓存token
      *
-     * @param RedisAddViewDto $redisAddViewDto
+     * @param AuthorizationTokenDto $authorizationTokenDto
      * @return void
-     * @throws RedisException
      * @author: lirong
      */
-    public function addViews(RedisAddViewDto $redisAddViewDto): void
+    public function cacheToken(AuthorizationTokenDto $authorizationTokenDto): void
     {
-        //redis存储(从队列头插入)
-        if (!$this->redisUtils->getRedis()->lpush(ConversionEnum::REDIS_ADD_VIEW, [json_encode($redisAddViewDto->attributes)])) {
-            throw new RedisException('push list false', 500);
-        }
+
     }
 }

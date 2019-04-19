@@ -75,7 +75,7 @@ class ConversionController extends RestBaseController
      * @param $module
      * @param UserActionStaticHitsService $staticHitsService
      * @param UserActionStaticUrlService $staticUrlService
-     * @param UserActionStaticConversionService $staticConversionService
+     * @param UserActionStaticConversionService $staticConversionApi
      * @param UserActionStaticServiceConversionsService $staticServiceConversionsService
      * @param SourceDetectionUtil $sourceDetectionUtil
      * @param ResponseUtils $responseUtils
@@ -88,7 +88,7 @@ class ConversionController extends RestBaseController
     public function __construct($id, $module,
                                 UserActionStaticHitsService $staticHitsService,
                                 UserActionStaticUrlService $staticUrlService,
-                                UserActionStaticConversionService $staticConversionService,
+                                UserActionStaticConversionService $staticConversionApi,
                                 UserActionStaticServiceConversionsService $staticServiceConversionsService,
                                 SourceDetectionUtil $sourceDetectionUtil,
                                 ResponseUtils $responseUtils,
@@ -100,7 +100,7 @@ class ConversionController extends RestBaseController
     {
         $this->staticHitsService = $staticHitsService;
         $this->staticUrlService = $staticUrlService;
-        $this->staticConversionService = $staticConversionService;
+        $this->staticConversionService = $staticConversionApi;
         $this->staticServiceConversionsService = $staticServiceConversionsService;
         $this->userActionsApi = $userActionsApi;
         $this->userActionCache = $userActionCache;

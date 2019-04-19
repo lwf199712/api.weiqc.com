@@ -48,21 +48,21 @@ class CommandsCourseStaticHitsImpl extends BaseObject implements CourseStaticHit
      * @param CommandsBatchInsertUtils $batchInsertUtils
      * @param ArrayUtils $arrayUtils
      * @param UserActionsApi $userActionsApi
-     * @param CommandsStaticUrlService $commandsStaticUrlService
+     * @param CommandsStaticUrlService $commandsStaticUrlApi
      * @param array $config
      */
     public function __construct(StaticHitsDo $staticHits,
                                 CommandsBatchInsertUtils $batchInsertUtils,
                                 ArrayUtils $arrayUtils,
                                 UserActionsApi $userActionsApi,
-                                CommandsStaticUrlService $commandsStaticUrlService,
+                                CommandsStaticUrlService $commandsStaticUrlApi,
                                 $config = [])
     {
         $this->staticHits = $staticHits;
         $this->batchInsertUtils = $batchInsertUtils;
         $this->arrayUtils = $arrayUtils;
         $this->userActionsApi = $userActionsApi;
-        $this->commandsStaticUrlService = $commandsStaticUrlService;
+        $this->commandsStaticUrlService = $commandsStaticUrlApi;
         parent::__construct($config);
     }
 

@@ -2,19 +2,24 @@
 
 namespace app\modules\v1\oauth\rest;
 
+use app\api\tencentMarketingApi\userActions\api\OauthApi;
 use app\common\utils\UrlUtils;
 use app\common\web\WebBaseController;
+use app\modules\v1\oauth\domain\vo\AuthorizationTokenDto;
 use app\modules\v1\oauth\domain\vo\AuthorizeRequestVo;
 use app\modules\v1\oauth\domain\vo\AuthorizeResponseVo;
+use app\modules\v1\oauth\enum\AuthorizationTokenEnum;
 use app\modules\v1\oauth\enum\AuthorizeEnum;
+use app\modules\v1\oauth\service\OauthCacheService;
 use Yii;
-use yii\web\Response;
 
 /**
  * 鉴权控制器
  * Class AuthorizeController
  *
  * @property UrlUtils $urlUtils
+ * @property OauthCacheService actionCache
+ * @property OauthApi $oauthApi
  * @package app\modules\v1\oauth\rest
  * @author: lirong
  */
@@ -22,6 +27,10 @@ class AuthorizeController extends WebBaseController
 {
     /* @var UrlUtils $urlUtils */
     public $urlUtils;
+    /* @var OauthCacheService $actionCache */
+    public $actionCache;
+    /* @var OauthApi $oauthApi */
+    public $oauthApi;
 
     /**
      * AuthorizeController constructor.
@@ -29,11 +38,19 @@ class AuthorizeController extends WebBaseController
      * @param $id
      * @param $module
      * @param UrlUtils $urlUtils
+     * @param OauthCacheService $actionCacheService
+     * @param OauthApi $oauthApi
      * @param array $config
      */
-    public function __construct($id, $module, UrlUtils $urlUtils, $config = [])
+    public function __construct($id, $module,
+                                UrlUtils $urlUtils,
+                                OauthCacheService $actionCacheService,
+                                OauthApi $oauthApi,
+                                $config = [])
     {
         $this->urlUtils = $urlUtils;
+        $this->actionCache = $actionCacheService;
+        $this->oauthApi = $oauthApi;
         parent::__construct($id, $module, $config);
     }
 
@@ -72,7 +89,8 @@ class AuthorizeController extends WebBaseController
         $authorizeDto = new AuthorizeRequestVo();
         $authorizeDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
         $authorizeDto->redirect_uri = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['redirect_uri'];
-        $authorizeDto->state = '';//TODO 用于验证
+        //TODO 用于验证
+        $authorizeDto->state = '';
         $authorizeDto->scope = AuthorizeEnum::USER_ACTIONS;
         //重定向到腾讯页
         $this->redirect(Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['redirect_url'] .
@@ -88,7 +106,14 @@ class AuthorizeController extends WebBaseController
     {
         $tokenDto = new AuthorizeResponseVo();
         $tokenDto->authorization_code = $this->request->get('authorization_code');
+        //TODO 用于验证
         $tokenDto->state = $this->request->get('state');
-
+        $authorizationTokenDto = new AuthorizationTokenDto();
+        $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
+        $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
+        $authorizationTokenDto->grant_type = AuthorizationTokenEnum::AUTHORIZATION_CODE;
+        $authorizationTokenDto->authorization_code = $tokenDto->authorization_code;
+        $authorizationTokenDto->redirect_uri = '????';//TODO 回调地址,没什么用
+        $this->actionCache->cacheToken($this->oauthApi->token($authorizationTokenDto));
     }
 }

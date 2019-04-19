@@ -6,7 +6,6 @@
  * @author lirong
  */
 
-//userAction容器,标记为注册userAction容器
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
 use app\api\tencentMarketingAPI\userActions\service\impl\UserActionsImpl;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
@@ -15,6 +14,8 @@ use app\models\dataObject\StaticConversionDo;
 use app\models\dataObject\StaticHitsDo;
 use app\models\dataObject\StaticServiceConversionsDo;
 use app\models\dataObject\StaticUrlDo;
+use app\modules\v1\oauth\service\impl\OauthRedisCacheImpl;
+use app\modules\v1\oauth\service\OauthCacheService;
 use app\modules\v1\userAction\service\impl\UserActionRedisCacheImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticConversionImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticHitsImpl;
@@ -32,27 +33,29 @@ use app\common\utils\ResponseUtils;
 use app\common\utils\SourceDetectionUtil;
 
 $containerList = [
-    //接口容器
+    //公共容器:工具类
+    SourceDetectionUtil::class                       => SourceDetectionUtil::class,
+    ResponseUtils::class                             => ResponseUtils::class,
+    IpLocationUtils::class                           => IpLocationUtils::class,
+    RequestUtils::class                              => RequestUtils::class,
+    UrlUtils::class                                  => UrlUtils::class,
+    //公共容器:API
+    UserActionsApi::class                            => UserActionsApi::class,
+    //公共容器:po
+    StaticServiceConversionsDo::class                => StaticServiceConversionsDo::class,
+    StaticConversionDo::class                        => StaticConversionDo::class,
+    StaticHitsDo::class                              => StaticHitsDo::class,
+    StaticUrlDo::class                               => StaticUrlDo::class,
+    RedisUtils::class                                => RedisUtils::class,
+    //userAction模块容器
     UserActionStaticUrlService::class                => UserActionUserActionStaticUrlImpl::class,
     UserActionStaticConversionService::class         => UserActionUserActionStaticConversionImpl::class,
     UserActionStaticServiceConversionsService::class => UserActionUserActionStaticServiceConversionsImpl::class,
     UserActionsService::class                        => UserActionsImpl::class,
     UserActionStaticHitsService::class               => UserActionUserActionStaticHitsImpl::class,
     UserActionCache::class                           => UserActionRedisCacheImpl::class,
-    //工具类
-    SourceDetectionUtil::class                       => SourceDetectionUtil::class,
-    ResponseUtils::class                             => ResponseUtils::class,
-    IpLocationUtils::class                           => IpLocationUtils::class,
-    RequestUtils::class                              => RequestUtils::class,
-    UrlUtils::class                                  => UrlUtils::class,
-    //API
-    UserActionsApi::class                            => UserActionsApi::class,
-    //po
-    StaticServiceConversionsDo::class                => StaticServiceConversionsDo::class,
-    StaticConversionDo::class                        => StaticConversionDo::class,
-    StaticHitsDo::class                              => StaticHitsDo::class,
-    StaticUrlDo::class                               => StaticUrlDo::class,
-    RedisUtils::class                                => RedisUtils::class,
+    //oauth模块容器
+    OauthCacheService::class                         => OauthRedisCacheImpl::class,
 ];
 
 foreach ($containerList as $class => $definition) {
