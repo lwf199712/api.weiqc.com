@@ -59,7 +59,7 @@ class ConversionApplication
                         $commandsStaticHitsService = $container->get(CourseStaticHitsService::class);
                         $conversionController = new ConversionController($redisUtils, $arrayUtils, $commandsStaticHitsService);
                         $falseUserActionsDtoList = $conversionController->actionAddViews($redisPopList);
-                        //成功时删除备份队列数据(注:不成功将保存该备份,该备份应由开发人员定期删除)
+                        //成功时删除备份队列数据(注:不成功将保存该备份,该备份应由开发人员定期处理)
                         for ($num = 1, $numMax = count($redisPopList); $num <= $numMax; $num++) {
                             $redisUtils->getRedis()->rpop(ConversionEnum::REDIS_ADD_VIEW_BACKUPS);
                         }
