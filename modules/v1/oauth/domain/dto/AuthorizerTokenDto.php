@@ -6,7 +6,6 @@ use yii\base\Model;
 
 /**
  * 通过 Authorization Code 获取 Access Token 或刷新 Access Token
- * https://api.e.qq.com/oauth/token
  * Class AuthorizationTokenDto
  *
  * @property integer $client_id 应用 id，在开发者官网创建应用后获得，可通过 [应用程序管理页面] 查看
@@ -18,7 +17,7 @@ use yii\base\Model;
  * @package app\modules\v1\oauth\domain\vo
  * @author: lirong
  */
-class AuthorizationTokenDto extends Model
+class AuthorizerTokenDto extends Model
 {
     /* @var integer $client_id */
     public $client_id;

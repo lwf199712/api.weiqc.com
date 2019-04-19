@@ -1,11 +1,19 @@
 <?php
+
 namespace app\api\tencentMarketingAPI\oauth\service\impl;
 
+use app\api\tencentMarketingApi\oauth\domain\dto\AuthorizationInfoDto;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthDto;
 use app\api\tencentMarketingAPI\oauth\service\OauthService;
+use app\common\client\ClientBaseService;
+use app\common\exception\TencentMarketingApiException;
+use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;
 use app\models\dataObject\StaticConversionDo;
-use app\modules\v1\oauth\domain\vo\AuthorizationTokenDto;
-use yii\base\BaseObject;
+use app\modules\v1\oauth\domain\vo\AuthorizerTokenDto;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use Yii;
 
 /**
  * Interface ConversionService
@@ -14,31 +22,52 @@ use yii\base\BaseObject;
  * @property StaticConversionDo $staticConversion
  * @author: lirong
  */
-class OauthImpl extends BaseObject implements OauthService
+class OauthImpl extends ClientBaseService implements OauthService
 {
-    /* @var RedisUtils */
-    protected $redisUtils;
-
     /**
-     * OauthRedisCacheServiceImpl constructor.
-     *
-     * @param RedisUtils $redisUtils
-     * @param array $config
+     * UserActionsImpl constructor.
      */
-    public function __construct(RedisUtils $redisUtils, $config = [])
+    public function __construct()
     {
-        $this->redisUtils = $redisUtils;
-        parent::__construct($config);
+        $this->client = new Client([
+            'cookies'  => true,
+            'timeout'  => 300,
+            'base_uri' => Yii::$app->params['api']['tencent_marketing_api']['base_url']
+        ]);
     }
 
     /**
      * 通过 Authorization Code 获取 Access Token 或刷新 Access Token
      *
-     * @param AuthorizationTokenDto $authorizationTokenDto
+     * @param AuthorizerTokenDto $authorizationTokenDto
+     * @return OauthDto
+     * @throws TencentMarketingApiException
      * @author: lirong
      */
-    public function token(AuthorizationTokenDto $authorizationTokenDto): void
+    public function token(AuthorizerTokenDto $authorizationTokenDto): OauthDto
     {
-        // TODO: Implement token() method.
+        $oauthDto = new OauthDto();
+        $oauthDto->authorizer_info = new AuthorizationInfoDto();
+        try {
+            $response = $this->client->request('GET', Yii::$app->params['api']['tencent_marketing_api']['base_url'] . Yii::$app->params['api']['tencent_marketing_api']['api']['user_actions']['add'], [
+                'query' => [
+                    $authorizationTokenDto->attributes
+                ],
+            ]);
+            $response = json_decode($response->getBody()->getContents(), false);
+            if (($response->code ?? true) && (int)$response->code !== 0) {
+                throw new TencentMarketingApiException('获取 Access Token数据失败,接口返回错误:' . $response->message, $response->code ?? 500);
+            }
+            $oauthDto->access_token = $response->access_token ?? '';
+            $oauthDto->refresh_token = $response->refresh_token ?? '';
+            $oauthDto->access_token_expires_in = $response->access_token_expires_in ?? '';
+            $oauthDto->refresh_token_expires_in = $response->refresh_token_expires_in ?? '';
+            $oauthDto->authorizer_info->account_uin = $response->authorizer_info->account_uin ?? '';
+            $oauthDto->authorizer_info->account_id = $response->authorizer_info->account_id ?? '';
+            $oauthDto->authorizer_info->scope_list = $response->authorizer_info->scope_list ?? '';
+        } catch (GuzzleException $e) {
+            throw new TencentMarketingApiException($e->getMessage(), $e->getCode());
+        }
+        return $oauthDto;
     }
 }

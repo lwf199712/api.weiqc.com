@@ -2,10 +2,10 @@
 
 namespace app\modules\v1\oauth\rest;
 
-use app\api\tencentMarketingApi\userActions\api\OauthApi;
+use app\api\tencentMarketingApi\oauth\api\OauthApi;
 use app\common\utils\UrlUtils;
 use app\common\web\WebBaseController;
-use app\modules\v1\oauth\domain\vo\AuthorizationTokenDto;
+use app\modules\v1\oauth\domain\vo\AuthorizerTokenDto;
 use app\modules\v1\oauth\domain\vo\AuthorizeRequestVo;
 use app\modules\v1\oauth\domain\vo\AuthorizeResponseVo;
 use app\modules\v1\oauth\enum\AuthorizationTokenEnum;
@@ -108,7 +108,7 @@ class AuthorizeController extends WebBaseController
         $tokenDto->authorization_code = $this->request->get('authorization_code');
         //TODO 用于验证
         $tokenDto->state = $this->request->get('state');
-        $authorizationTokenDto = new AuthorizationTokenDto();
+        $authorizationTokenDto = new AuthorizerTokenDto();
         $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
         $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
         $authorizationTokenDto->grant_type = AuthorizationTokenEnum::AUTHORIZATION_CODE;

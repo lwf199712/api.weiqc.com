@@ -2,14 +2,14 @@
 
 namespace app\api\tencentMarketingApi\oauth\domain\dto;
 
-use app\modules\v1\oauth\domain\vo\AuthorizationTokenDto;
+use app\modules\v1\oauth\domain\vo\AuthorizerTokenDto;
 use yii\base\Model;
 
 /**
  * 鉴权token表单返回
  * Class OauthDto
  *
- * @property AuthorizationTokenDto $authorization_info 权限信息，当 grant_type=refresh_token 时不返回
+ * @property AuthorizerTokenDto $authorizer_info 权限信息，当 grant_type=refresh_token 时不返回
  * @property string $access_token 应用 access token
  * @property string $refresh_token 应用 refresh token，当 grant_type=refresh_token 时不返回
  * @property integer $access_token_expires_in access_token 过期时间，单位（秒）
@@ -19,8 +19,8 @@ use yii\base\Model;
  */
 class OauthDto extends Model
 {
-    /* @var AuthorizationTokenDto $authorization_info */
-    public $authorization_info;
+    /* @var AuthorizerTokenDto $authorizer_info */
+    public $authorizer_info;
     /* @var string $access_token */
     public $access_token;
     /* @var string $refresh_token */

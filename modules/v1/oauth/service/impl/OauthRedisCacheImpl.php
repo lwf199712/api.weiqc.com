@@ -2,12 +2,9 @@
 
 namespace app\modules\v1\oauth\service\impl;
 
-use app\common\exception\RedisException;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthDto;
 use app\common\utils\RedisUtils;
-use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
 use app\models\dataObject\StaticConversionDo;
-use app\modules\v1\oauth\domain\vo\AuthorizationTokenDto;
-use app\modules\v1\oauth\domain\vo\AuthorizeResponseVo;
 use app\modules\v1\oauth\service\OauthCacheService;
 use yii\base\BaseObject;
 
@@ -36,14 +33,16 @@ class OauthRedisCacheImpl extends BaseObject implements OauthCacheService
     }
 
     /**
-     * TODO 缓存 - 缓存token
+     * 缓存 - 缓存token
      *
-     * @param AuthorizationTokenDto $authorizationTokenDto
+     * @param OauthDto $oauthDto
      * @return void
      * @author: lirong
      */
-    public function cacheToken(AuthorizationTokenDto $authorizationTokenDto): void
+    public function cacheToken(OauthDto $oauthDto): void
     {
-
+        var_dump($oauthDto);
+        exit;
+        // TODO: Implement cacheToken() method.
     }
 }

@@ -2,7 +2,9 @@
 
 namespace app\api\tencentMarketingAPI\oauth\service;
 
-use app\modules\v1\oauth\domain\vo\AuthorizationTokenDto;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthDto;
+use app\common\exception\TencentMarketingApiException;
+use app\modules\v1\oauth\domain\vo\AuthorizerTokenDto;
 
 /**
  * Interface OauthTokenService
@@ -16,8 +18,10 @@ interface OauthService
     /**
      * 通过 Authorization Code 获取 Access Token 或刷新 Access Token
      *
-     * @param AuthorizationTokenDto $authorizationTokenDto
+     * @param AuthorizerTokenDto $authorizationTokenDto
+     * @throws TencentMarketingApiException
+     * @return OauthDto
      * @author: lirong
      */
-    public function token(AuthorizationTokenDto $authorizationTokenDto): void;
+    public function token(AuthorizerTokenDto $authorizationTokenDto): OauthDto;
 }

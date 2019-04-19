@@ -4,7 +4,6 @@ namespace app\modules\v1\oauth\enum;
 
 /**
  * 接口常量
- * https://api.e.qq.com/oauth/token
  * Class AuthorizeEnum
  *
  * @package app\modules\v1\oauth\enum

@@ -2,7 +2,7 @@
 
 namespace app\modules\v1\oauth\service;
 
-use app\modules\v1\oauth\domain\vo\AuthorizationTokenDto;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthDto;
 
 /**
  * Interface UserActionStaticConversionService
@@ -16,9 +16,9 @@ interface OauthCacheService
     /**
      * 缓存 - 缓存token
      *
-     * @param AuthorizationTokenDto $authorizationTokenDto
+     * @param OauthDto $oauthDto
      * @return void
      * @author: lirong
      */
-    public function cacheToken(AuthorizationTokenDto $authorizationTokenDto): void;
+    public function cacheToken(OauthDto $oauthDto): void;
 }
