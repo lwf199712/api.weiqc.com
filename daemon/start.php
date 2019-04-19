@@ -5,6 +5,7 @@ use Workerman\Lib\Timer;
 use Workerman\Worker;
 use yii\base\InvalidConfigException;
 
+//TODO 开发环境调试,上线记得将此调试关闭!!!
 defined('YII_DEBUG') or define('YII_DEBUG', false);
 defined('YII_ENV') or define('YII_ENV', 'prod');
 
