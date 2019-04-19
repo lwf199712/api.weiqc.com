@@ -34,7 +34,7 @@ class UserActionsApi extends ApiBaseController
     }
 
     /**
-     * 上传用户行为数据
+     * 用户行为数据API - 上传用户行为数据
      *
      * @param UserActionsDto $userActionsDto
      * @throws TencentMarketingApiException
@@ -46,7 +46,7 @@ class UserActionsApi extends ApiBaseController
     }
 
     /**
-     * 批量上报用户行为
+     * 用户行为数据API - 批量上报用户行为
      *
      * @param array $userActionsDtoList
      * @return array

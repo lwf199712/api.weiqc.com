@@ -4,6 +4,7 @@ namespace app\modules\v1;
 
 use yii\base\Module as BaseModule;
 use app\modules\v1\userAction\Module as ConversionModule;
+use app\modules\v1\oauth\Module as OauthModule;
 use Yii;
 
 /**
@@ -29,10 +30,14 @@ class Module extends BaseModule
         Yii::$app->user->loginUrl = null;
 
         $this->modules = [
+            //上报行为
             'user-action' => [
-                // Consider using a shorter namespace here
                 'class' => ConversionModule::class,
             ],
+            //鉴权
+            'oauth'       => [
+                'class' => OauthModule::class,
+            ]
         ];
     }
 }

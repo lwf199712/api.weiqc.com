@@ -27,7 +27,7 @@ use app\common\utils\RequestUtils;
 use Exception;
 
 /**
- * Landing page conversions（copy WeChat）.
+ * 上报用户行为控制器
  * Class ConversionController
  *
  * @property UserActionStaticUrlService $staticUrlService
@@ -127,7 +127,7 @@ class ConversionController extends RestBaseController
     }
 
     /**
-     * Landing page conversions - add conversions
+     * 上报用户行为 - 订单下单(转化数)
      * action_type COMPLETE_ORDER
      * complete order
      *
@@ -196,7 +196,7 @@ class ConversionController extends RestBaseController
 
     /**
      *
-     * Landing page conversions - add views
+     * 上报用户行为 - 浏览(独立ip记录)
      * action_type VIEW_CONTENT
      *
      * @return array
@@ -225,8 +225,8 @@ class ConversionController extends RestBaseController
             $redisAddViewDto->click_id = $this->request->post('click_id', -1);
             $redisAddViewDto->action_param = $this->request->post('action_param');
             $redisAddViewDto->request_from_mobile = $this->requestUtils->requestFromMobile();
-            //redis存储
-            if (!$this->redisUtils->getRedis()->rpush(ConversionEnum::REDIS_ADD_VIEW, [json_encode($redisAddViewDto->attributes)])) {
+            //redis存储(从队列头插入)
+            if (!$this->redisUtils->getRedis()->lpush(ConversionEnum::REDIS_ADD_VIEW, [json_encode($redisAddViewDto->attributes)])) {
                 throw new RedisException('push list false', 500);
             }
             return [true, '操作成功!', 200];
