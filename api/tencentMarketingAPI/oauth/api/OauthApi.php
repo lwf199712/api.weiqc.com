@@ -1,9 +1,8 @@
 <?php
 
-namespace app\api\tencentMarketingApi\userActions\api;
+namespace app\api\tencentMarketingApi\oauth\api;
 
 use app\api\tencentMarketingAPI\oauth\service\OauthService;
-use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
 use app\common\api\ApiBaseController;
 use app\modules\v1\oauth\domain\vo\AuthorizationTokenDto;
 
