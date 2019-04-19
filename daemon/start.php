@@ -21,6 +21,7 @@ try {
 $worker = new Worker('tcp://0.0.0.0:8585');
 $worker->count = 1;
 $worker->onWorkerStart = static function () {
+    //广点通独立IP上报
     Timer::add(0.5, static function () {
         ConversionApplication::addViewsWorkMan();
     });
