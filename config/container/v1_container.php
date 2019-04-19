@@ -10,14 +10,17 @@
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
 use app\api\tencentMarketingAPI\userActions\service\impl\UserActionsImpl;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
+use app\common\utils\UrlUtils;
 use app\models\dataObject\StaticConversionDo;
 use app\models\dataObject\StaticHitsDo;
 use app\models\dataObject\StaticServiceConversionsDo;
 use app\models\dataObject\StaticUrlDo;
+use app\modules\v1\userAction\service\impl\UserActionRedisCacheImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticConversionImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticHitsImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticServiceConversionsImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticUrlImpl;
+use app\modules\v1\userAction\service\UserActionCache;
 use app\modules\v1\userAction\service\UserActionStaticConversionService;
 use app\modules\v1\userAction\service\UserActionStaticHitsService;
 use app\modules\v1\userAction\service\UserActionStaticServiceConversionsService;
@@ -33,21 +36,23 @@ $containerList = [
     UserActionStaticUrlService::class                => UserActionUserActionStaticUrlImpl::class,
     UserActionStaticConversionService::class         => UserActionUserActionStaticConversionImpl::class,
     UserActionStaticServiceConversionsService::class => UserActionUserActionStaticServiceConversionsImpl::class,
-    UserActionsService::class          => UserActionsImpl::class,
-    UserActionStaticHitsService::class => UserActionUserActionStaticHitsImpl::class,
+    UserActionsService::class                        => UserActionsImpl::class,
+    UserActionStaticHitsService::class               => UserActionUserActionStaticHitsImpl::class,
+    UserActionCache::class                           => UserActionRedisCacheImpl::class,
     //工具类
-    SourceDetectionUtil::class        => SourceDetectionUtil::class,
-    ResponseUtils::class              => ResponseUtils::class,
-    IpLocationUtils::class            => IpLocationUtils::class,
-    RequestUtils::class               => RequestUtils::class,
+    SourceDetectionUtil::class                       => SourceDetectionUtil::class,
+    ResponseUtils::class                             => ResponseUtils::class,
+    IpLocationUtils::class                           => IpLocationUtils::class,
+    RequestUtils::class                              => RequestUtils::class,
+    UrlUtils::class                                  => UrlUtils::class,
     //API
-    UserActionsApi::class             => UserActionsApi::class,
+    UserActionsApi::class                            => UserActionsApi::class,
     //po
-    StaticServiceConversionsDo::class => StaticServiceConversionsDo::class,
-    StaticConversionDo::class         => StaticConversionDo::class,
-    StaticHitsDo::class               => StaticHitsDo::class,
-    StaticUrlDo::class                => StaticUrlDo::class,
-    RedisUtils::class                 => RedisUtils::class,
+    StaticServiceConversionsDo::class                => StaticServiceConversionsDo::class,
+    StaticConversionDo::class                        => StaticConversionDo::class,
+    StaticHitsDo::class                              => StaticHitsDo::class,
+    StaticUrlDo::class                               => StaticUrlDo::class,
+    RedisUtils::class                                => RedisUtils::class,
 ];
 
 foreach ($containerList as $class => $definition) {

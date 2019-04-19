@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\v1\oauth\domain\dto;
+namespace app\modules\v1\oauth\domain\vo;
 
 use yii\base\Model;
 
@@ -16,7 +16,7 @@ use yii\base\Model;
  * @package app\modules\v1\oauth\domain\dto
  * @author: lirong
  */
-class AuthorizeDto extends Model
+class AuthorizeRequestVo extends Model
 {
     /* @var integer $client_id */
     public $client_id;

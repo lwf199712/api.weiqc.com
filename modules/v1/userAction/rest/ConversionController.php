@@ -15,6 +15,7 @@ use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
 use app\models\dataObject\StaticConversionDo;
 use app\modules\v1\userAction\domain\vo\ConversionInfo;
 use app\modules\v1\userAction\enum\ConversionEnum;
+use app\modules\v1\userAction\service\UserActionCache;
 use app\modules\v1\userAction\service\UserActionStaticConversionService;
 use app\modules\v1\userAction\service\UserActionStaticHitsService;
 use app\modules\v1\userAction\service\UserActionStaticServiceConversionsService;
@@ -39,7 +40,7 @@ use Exception;
  * @property SourceDetectionUtil $sourceDetectionUtil
  * @property IpLocationUtils $ipLocationUtils
  * @property RequestUtils $requestUtils
- * @property RedisUtils $redisUtils
+ * @property UserActionCache userActionCache
  *
  * @package app\modules\v1\rest
  * @author: lirong
@@ -62,10 +63,10 @@ class ConversionController extends RestBaseController
     protected $ipLocationUtils;
     /* @var RequestUtils */
     protected $requestUtils;
-    /* @var RedisUtils */
-    protected $redisUtils;
     /* @var UserActionsApi */
     protected $userActionsApi;
+    /* @var UserActionCache */
+    protected $userActionCache;
 
     /**
      * ConversionController constructor.
@@ -80,8 +81,8 @@ class ConversionController extends RestBaseController
      * @param ResponseUtils $responseUtils
      * @param IpLocationUtils $ipLocationUtils
      * @param RequestUtils $requestUtils
-     * @param RedisUtils $redisUtils
      * @param UserActionsApi $userActionsApi
+     * @param UserActionCache $userActionCache
      * @param array $config
      */
     public function __construct($id, $module,
@@ -93,8 +94,8 @@ class ConversionController extends RestBaseController
                                 ResponseUtils $responseUtils,
                                 IpLocationUtils $ipLocationUtils,
                                 RequestUtils $requestUtils,
-                                RedisUtils $redisUtils,
                                 UserActionsApi $userActionsApi,
+                                UserActionCache $userActionCache,
                                 $config = [])
     {
         $this->staticHitsService = $staticHitsService;
@@ -102,13 +103,14 @@ class ConversionController extends RestBaseController
         $this->staticConversionService = $staticConversionService;
         $this->staticServiceConversionsService = $staticServiceConversionsService;
         $this->userActionsApi = $userActionsApi;
+        $this->userActionCache = $userActionCache;
         //工具类
         $this->responseUtils = $responseUtils;
         $this->sourceDetectionUtil = $sourceDetectionUtil;
         $this->ipLocationUtils = $ipLocationUtils;
         $this->requestUtils = $requestUtils;
         $this->responseUtils = $responseUtils;
-        $this->redisUtils = $redisUtils;
+
         parent::__construct($id, $module, $config);
     }
 
@@ -225,10 +227,7 @@ class ConversionController extends RestBaseController
             $redisAddViewDto->click_id = $this->request->post('click_id', -1);
             $redisAddViewDto->action_param = $this->request->post('action_param');
             $redisAddViewDto->request_from_mobile = $this->requestUtils->requestFromMobile();
-            //redis存储(从队列头插入)
-            if (!$this->redisUtils->getRedis()->lpush(ConversionEnum::REDIS_ADD_VIEW, [json_encode($redisAddViewDto->attributes)])) {
-                throw new RedisException('push list false', 500);
-            }
+            $this->userActionCache->addViews($redisAddViewDto);
             return [true, '操作成功!', 200];
         } catch (Exception|RedisException $e) {
             return [false, $e->getMessage(), $e->getCode()];
