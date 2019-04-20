@@ -7,6 +7,8 @@
  */
 
 use app\api\tencentMarketingAPI\oauth\service\impl\OauthImpl;
+use app\api\tencentMarketingAPI\oauth\service\impl\OauthRedisCacheImpl;
+use app\api\tencentMarketingApi\oauth\service\OauthCacheService;
 use app\api\tencentMarketingAPI\oauth\service\OauthService;
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
 use app\api\tencentMarketingAPI\userActions\service\impl\UserActionsImpl;
@@ -16,8 +18,6 @@ use app\models\dataObject\StaticConversionDo;
 use app\models\dataObject\StaticHitsDo;
 use app\models\dataObject\StaticServiceConversionsDo;
 use app\models\dataObject\StaticUrlDo;
-use app\modules\v1\oauth\service\impl\OauthRedisCacheImpl;
-use app\modules\v1\oauth\service\OauthCacheService;
 use app\modules\v1\userAction\service\impl\UserActionRedisCacheImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticConversionImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticHitsImpl;
@@ -55,8 +55,9 @@ $containerList = [
     UserActionStaticServiceConversionsService::class => UserActionUserActionStaticServiceConversionsImpl::class,
     UserActionsService::class                        => UserActionsImpl::class,
     UserActionStaticHitsService::class               => UserActionUserActionStaticHitsImpl::class,
-    UserActionCache::class                           => UserActionRedisCacheImpl::class,
     //oauth模块容器
+    UserActionCache::class                           => UserActionRedisCacheImpl::class,
+    //tencentMarketingApi - oauth 容器
     OauthCacheService::class                         => OauthRedisCacheImpl::class,
     OauthService::class                              => OauthImpl::class,
 ];

@@ -12,17 +12,14 @@ use app\modules\v1\oauth\domain\vo\AuthorizeRequestVo;
 use app\modules\v1\oauth\domain\vo\AuthorizeResponseVo;
 use app\modules\v1\oauth\enum\AuthorizationTokenEnum;
 use app\modules\v1\oauth\enum\AuthorizeEnum;
-use app\modules\v1\oauth\service\OauthCacheService;
 use Predis\Connection\ConnectionException;
 use Yii;
-use yii\db\Exception;
 
 /**
  * 鉴权控制器
  * Class AuthorizeController
  *
  * @property UrlUtils $urlUtils
- * @property OauthCacheService actionCache
  * @property OauthApi $oauthApi
  * @package app\modules\v1\oauth\rest
  * @author: lirong
@@ -31,8 +28,6 @@ class AuthorizeController extends WebBaseController
 {
     /* @var UrlUtils $urlUtils */
     public $urlUtils;
-    /* @var OauthCacheService $actionCache */
-    public $actionCache;
     /* @var OauthApi $oauthApi */
     public $oauthApi;
 
@@ -42,18 +37,15 @@ class AuthorizeController extends WebBaseController
      * @param $id
      * @param $module
      * @param UrlUtils $urlUtils
-     * @param OauthCacheService $actionCacheService
      * @param OauthApi $oauthApi
      * @param array $config
      */
     public function __construct($id, $module,
                                 UrlUtils $urlUtils,
-                                OauthCacheService $actionCacheService,
                                 OauthApi $oauthApi,
                                 $config = [])
     {
         $this->urlUtils = $urlUtils;
-        $this->actionCache = $actionCacheService;
         $this->oauthApi = $oauthApi;
         parent::__construct($id, $module, $config);
     }
@@ -121,7 +113,8 @@ class AuthorizeController extends WebBaseController
             $authorizationTokenDto->grant_type = AuthorizationTokenEnum::AUTHORIZATION_CODE;
             $authorizationTokenDto->authorization_code = $tokenDto->authorization_code;
             $authorizationTokenDto->redirect_uri = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['redirect_uri'];//回调地址
-            $oauthDto = $this->actionCache->cacheToken($this->oauthApi->token($authorizationTokenDto));
+            $oauthDto = $this->oauthApi->authorizeToken($authorizationTokenDto);
+            $this->oauthApi->cacheToken($oauthDto);
             return $this->render('@app/views/v1/oauth/token', ['oauthDto' => $oauthDto]);
         } catch (TencentMarketingApiException|RedisException|ConnectionException $e) {
             return $this->render('@app/views/site/error', ['message' => $e->getMessage(), 'name' => 'token获取失败!']);

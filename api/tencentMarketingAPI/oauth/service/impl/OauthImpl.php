@@ -24,7 +24,7 @@ use Yii;
 class OauthImpl extends ClientBaseService implements OauthService
 {
     /**
-     * OauthImpl constructor.
+     * OauthImpl constructor
      *
      * @param array $config
      */
@@ -46,7 +46,7 @@ class OauthImpl extends ClientBaseService implements OauthService
      * @throws TencentMarketingApiException
      * @author: lirong
      */
-    public function token(AuthorizerTokenDto $authorizationTokenDto): OauthDto
+    public function authorizeToken(AuthorizerTokenDto $authorizationTokenDto): OauthDto
     {
         $oauthDto = new OauthDto();
         $oauthDto->authorizer_info = new AuthorizationInfoDto();
@@ -60,8 +60,8 @@ class OauthImpl extends ClientBaseService implements OauthService
             }
             $oauthDto->access_token = $response->data->access_token ?? '';
             $oauthDto->refresh_token = $response->data->refresh_token ?? '';
-            $oauthDto->access_token_expires_in = $response->data->access_token_expires_in ?? '';
-            $oauthDto->refresh_token_expires_in = $response->data->refresh_token_expires_in ?? '';
+            $oauthDto->access_token_expires_in = ($response->data->access_token_expires_in ?? 0) + time();
+            $oauthDto->refresh_token_expires_in = ($response->data->refresh_token_expires_in ?? 0) + time();
             $oauthDto->authorizer_info->account_uin = $response->data->authorizer_info->account_uin ?? '';
             $oauthDto->authorizer_info->account_id = $response->data->authorizer_info->account_id ?? '';
             $oauthDto->authorizer_info->scope_list = $response->data->authorizer_info->scope_list ?? '';
@@ -70,4 +70,5 @@ class OauthImpl extends ClientBaseService implements OauthService
         }
         return $oauthDto;
     }
+
 }

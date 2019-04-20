@@ -2,6 +2,9 @@
 
 namespace app\api\tencentMarketingAPI\userActions\service\impl;
 
+use app\api\tencentMarketingApi\oauth\api\OauthApi;
+use app\api\tencentMarketingApi\oauth\service\OauthCacheService;
+use app\api\tencentMarketingAPI\oauth\service\OauthService;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
 use app\common\client\ClientBaseService;
@@ -13,22 +16,29 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use Yii;
+use yii\db\Exception;
 
 /**
  * Interface UserActionsImpl
  *
+ * @property OauthApi $oauthApi
  * @package app\api\tencentMarketingAPI\userActions\service\impl
  * @author: lirong
  */
 class UserActionsImpl extends ClientBaseService implements UserActionsService
 {
+    /* @var OauthApi */
+    private $oauthApi;
+
     /**
      * UserActionsImpl constructor.
      *
+     * @param OauthApi $oauthApi
      * @param array $config
      */
-    public function __construct($config = [])
+    public function __construct(OauthApi $oauthApi, $config = [])
     {
+        $this->oauthApi = $oauthApi;
         $this->client = new Client([
             'cookies'  => true,
             'timeout'  => 300,
@@ -43,6 +53,7 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
      *
      * @param UserActionsDto $userActionsDto
      * @throws TencentMarketingApiException
+     * @throws Exception
      * @author: lirong
      */
     public function add(UserActionsDto $userActionsDto): void
@@ -50,7 +61,7 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
         try {
             $response = $this->client->request('POST', Yii::$app->params['api']['tencent_marketing_api']['base_url'] . Yii::$app->params['api']['tencent_marketing_api']['api']['user_actions']['add'], [
                 'query' => [
-                    'access_token' => Yii::$app->params['api']['tencent_marketing_api']['access_token'],
+                    'access_token' => $this->oauthApi->getToken($userActionsDto->account_id),
                     'timestamp'    => time(),
                     'nonce'        => uniqid('', false) . time(),
                 ],
@@ -82,9 +93,10 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
             //创建多个请求
             foreach ($userActionsDtoList as $userActionsDto) {
                 yield function () use ($userActionsDto) {
+                    /* @var $userActionsDto UserActionsDto */
                     return $this->client->request('POST', Yii::$app->params['api']['tencent_marketing_api']['base_url'] . Yii::$app->params['api']['tencent_marketing_api']['api']['user_actions']['add'], [
                         'query' => [
-                            'access_token' => Yii::$app->params['api']['tencent_marketing_api']['access_token'],
+                            'access_token' => $this->oauthApi->getToken($userActionsDto->account_id),
                             'timestamp'    => time(),
                             'nonce'        => uniqid('', false) . time(),
                         ],

@@ -19,9 +19,9 @@ interface OauthService
      * 通过 Authorization Code 获取 Access Token 或刷新 Access Token
      *
      * @param AuthorizerTokenDto $authorizationTokenDto
-     * @throws TencentMarketingApiException
      * @return OauthDto
+     * @throws TencentMarketingApiException
      * @author: lirong
      */
-    public function token(AuthorizerTokenDto $authorizationTokenDto): OauthDto;
+    public function authorizeToken(AuthorizerTokenDto $authorizationTokenDto): OauthDto;
 }

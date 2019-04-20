@@ -1,13 +1,15 @@
 <?php
 
-namespace app\modules\v1\oauth\service\impl;
+namespace app\api\tencentMarketingAPI\oauth\service\impl;
 
+use app\api\tencentMarketingApi\oauth\domain\dto\AuthorizationInfoDto;
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthDto;
+use app\api\tencentMarketingApi\oauth\service\OauthCacheService;
 use app\common\exception\RedisException;
 use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;
 use app\models\dataObject\StaticConversionDo;
-use app\modules\v1\oauth\service\OauthCacheService;
+use Predis\Connection\ConnectionException;
 use Yii;
 use yii\base\BaseObject;
 
@@ -44,11 +46,10 @@ class OauthRedisCacheImpl extends BaseObject implements OauthCacheService
      * 缓存 - 缓存token
      *
      * @param OauthDto $oauthDto
-     * @return OauthDto
-     * @throws RedisException
+     * @throws RedisException|ConnectionException
      * @author: lirong
      */
-    public function cacheToken(OauthDto $oauthDto): OauthDto
+    public function cacheToken(OauthDto $oauthDto): void
     {
         $this->redisUtils->getRedis()->hdel(Yii::$app->params['oauth']['tencent_marketing_api']['token_key'], [$oauthDto->authorizer_info->account_id]);
         if (!$this->redisUtils->getRedis()->set(Yii::$app->params['oauth']['tencent_marketing_api']['token_key'] . $oauthDto->authorizer_info->account_id,
@@ -58,6 +59,30 @@ class OauthRedisCacheImpl extends BaseObject implements OauthCacheService
         //设置过期时间:以refresh_token 过期时间设置
         $this->redisUtils->getRedis()->expire(Yii::$app->params['oauth']['tencent_marketing_api']['token_key'] . $oauthDto->authorizer_info->account_id,
             $oauthDto->refresh_token_expires_in);
-        return $oauthDto;
+    }
+
+
+    /**
+     * 缓存 - 获得token
+     *
+     * @param int $accountId
+     * @return OauthDto|null
+     * @author: lirong
+     */
+    public function getToken(int $accountId): ?OauthDto
+    {
+        //从redis中获取token
+        $oauthRedisDto = $this->redisUtils->getRedis()->get(Yii::$app->params['oauth']['tencent_marketing_api']['token_key'] . $accountId);
+        if ($oauthRedisDto) {
+            $oauthRedisDto = json_decode($oauthRedisDto, false);
+            $oauthDto = new OauthDto();
+            $oauthDto->attributes = $oauthRedisDto;
+            if ($oauthRedisDto['authorizer_info'] ?? false) {
+                $oauthDto->authorizer_info = new AuthorizationInfoDto();
+                $oauthDto->authorizer_info->attributes = $oauthRedisDto['authorizer_info'];
+            }
+            return $oauthDto;
+        }
+        return null;
     }
 }
