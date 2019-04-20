@@ -1,6 +1,6 @@
 <?php
 
-use app\daemon\course\conversion\ConversionApplication;
+use app\daemon\course\conversion\ConversionProcess;
 use Workerman\Lib\Timer;
 use Workerman\Worker;
 use yii\base\InvalidConfigException;
@@ -24,7 +24,7 @@ $worker->count = 1;
 $worker->onWorkerStart = static function () {
     //广点通独立IP上报
     Timer::add(0.5, static function () {
-        ConversionApplication::addViewsWorkMan();
+        ConversionProcess::start();
     });
 };
 // 运行worker

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    /**
+     * 腾讯 oauth2.0 验证地址 及本地鉴权接收地址
+     */
     'tencent_marketing_api' => [
         'token_key'    => 'tencent_marketing_api:',
         'user_actions' => [

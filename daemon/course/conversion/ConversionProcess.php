@@ -20,7 +20,7 @@ use yii\di\NotInstantiableException;
  * @package app\daemon\course\conversion\controller
  * @author: lirong
  */
-class ConversionApplication
+class ConversionProcess
 {
     /**
      * 触发上报数量
@@ -37,7 +37,7 @@ class ConversionApplication
      * @throws NotInstantiableException
      * @author: lirong
      */
-    public static function addViewsWorkMan(): void
+    public static function start(): void
     {
         static $redisPopList = [];
         do {

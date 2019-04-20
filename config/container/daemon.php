@@ -1,11 +1,10 @@
 <?php
 /**
- * 容器注册(只为commands代码服务)
+ * 容器注册(只为daemon代码服务)
  *
  * @author lirong
  */
 
-//conversionCommands容器,标记为注册conversionCommands容器
 use app\api\tencentMarketingAPI\userActions\service\impl\UserActionsImpl;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
 use app\daemon\common\utils\CommandsBatchInsertUtils;
@@ -18,7 +17,7 @@ use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;
 
 $containerList = [
-    //接口容器
+    //conversion模块容器
     CourseStaticHitsService::class  => CommandsCourseStaticHitsImpl::class,
     CommandsStaticUrlService::class => CommandsStaticUrlImpl::class,
     UserActionsService::class       => UserActionsImpl::class,

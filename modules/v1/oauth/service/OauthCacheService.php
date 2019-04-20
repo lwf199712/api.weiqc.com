@@ -4,6 +4,7 @@ namespace app\modules\v1\oauth\service;
 
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthDto;
 use app\common\exception\RedisException;
+use Predis\Connection\ConnectionException;
 
 /**
  * Interface UserActionStaticConversionService
@@ -18,9 +19,9 @@ interface OauthCacheService
      * 缓存 - 缓存token
      *
      * @param OauthDto $oauthDto
-     * @return void
-     * @throws RedisException
+     * @return OauthDto
+     * @throws RedisException|ConnectionException
      * @author: lirong
      */
-    public function cacheToken(OauthDto $oauthDto): void;
+    public function cacheToken(OauthDto $oauthDto): OauthDto;
 }

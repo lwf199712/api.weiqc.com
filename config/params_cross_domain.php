@@ -1,8 +1,6 @@
 <?php
 /**
  * 允许跨域的主域名
- *
- * @author lirong
  */
 return [
     'hzldyt.com',

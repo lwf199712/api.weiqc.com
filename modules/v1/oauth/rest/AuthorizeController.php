@@ -13,6 +13,7 @@ use app\modules\v1\oauth\domain\vo\AuthorizeResponseVo;
 use app\modules\v1\oauth\enum\AuthorizationTokenEnum;
 use app\modules\v1\oauth\enum\AuthorizeEnum;
 use app\modules\v1\oauth\service\OauthCacheService;
+use Predis\Connection\ConnectionException;
 use Yii;
 use yii\db\Exception;
 
@@ -120,8 +121,8 @@ class AuthorizeController extends WebBaseController
             $authorizationTokenDto->grant_type = AuthorizationTokenEnum::AUTHORIZATION_CODE;
             $authorizationTokenDto->authorization_code = $tokenDto->authorization_code;
             $authorizationTokenDto->redirect_uri = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['redirect_uri'];//回调地址
-            $this->actionCache->cacheToken($this->oauthApi->token($authorizationTokenDto));
-        } catch (TencentMarketingApiException|RedisException $e) {
+            $oauthDto = $this->actionCache->cacheToken($this->oauthApi->token($authorizationTokenDto));
+        } catch (TencentMarketingApiException|RedisException|ConnectionException $e) {
             throw new Exception($e->getMessage(), [], $e->getCode());
         }
     }
