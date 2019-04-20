@@ -3,11 +3,12 @@
 namespace app\modules\v1\oauth\rest;
 
 use app\api\tencentMarketingApi\oauth\api\OauthApi;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenRequestDto;
+use app\api\tencentMarketingApi\userActionSets\api\UserActionSetsApi;
 use app\common\exception\RedisException;
 use app\common\exception\TencentMarketingApiException;
 use app\common\utils\UrlUtils;
 use app\common\web\WebBaseController;
-use app\modules\v1\oauth\domain\dto\AuthorizerTokenDto;
 use app\modules\v1\oauth\domain\vo\AuthorizeRequestVo;
 use app\modules\v1\oauth\domain\vo\AuthorizeResponseVo;
 use app\modules\v1\oauth\enum\AuthorizationTokenEnum;
@@ -21,6 +22,7 @@ use Yii;
  *
  * @property UrlUtils $urlUtils
  * @property OauthApi $oauthApi
+ * @property UserActionSetsApi $actionSetsApi
  * @package app\modules\v1\oauth\rest
  * @author: lirong
  */
@@ -30,6 +32,8 @@ class AuthorizeController extends WebBaseController
     public $urlUtils;
     /* @var OauthApi $oauthApi */
     public $oauthApi;
+    /* @var UserActionSetsApi $actionSetsApi */
+    public $actionSetsApi;
 
     /**
      * AuthorizeController constructor.
@@ -38,15 +42,18 @@ class AuthorizeController extends WebBaseController
      * @param $module
      * @param UrlUtils $urlUtils
      * @param OauthApi $oauthApi
+     * @param UserActionSetsApi $actionSetsApi
      * @param array $config
      */
     public function __construct($id, $module,
                                 UrlUtils $urlUtils,
                                 OauthApi $oauthApi,
+                                UserActionSetsApi $actionSetsApi,
                                 $config = [])
     {
         $this->urlUtils = $urlUtils;
         $this->oauthApi = $oauthApi;
+        $this->actionSetsApi = $actionSetsApi;
         parent::__construct($id, $module, $config);
     }
 
@@ -107,7 +114,7 @@ class AuthorizeController extends WebBaseController
             //TODO 用于验证
             $tokenDto->state = $this->request->get('state');
 
-            $authorizationTokenDto = new AuthorizerTokenDto();
+            $authorizationTokenDto = new OauthTokenRequestDto();
             $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
             $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
             $authorizationTokenDto->grant_type = AuthorizationTokenEnum::AUTHORIZATION_CODE;
