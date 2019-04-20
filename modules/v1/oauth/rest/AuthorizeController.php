@@ -3,15 +3,18 @@
 namespace app\modules\v1\oauth\rest;
 
 use app\api\tencentMarketingApi\oauth\api\OauthApi;
+use app\common\exception\RedisException;
+use app\common\exception\TencentMarketingApiException;
 use app\common\utils\UrlUtils;
 use app\common\web\WebBaseController;
-use app\modules\v1\oauth\domain\vo\AuthorizerTokenDto;
+use app\modules\v1\oauth\domain\dto\AuthorizerTokenDto;
 use app\modules\v1\oauth\domain\vo\AuthorizeRequestVo;
 use app\modules\v1\oauth\domain\vo\AuthorizeResponseVo;
 use app\modules\v1\oauth\enum\AuthorizationTokenEnum;
 use app\modules\v1\oauth\enum\AuthorizeEnum;
 use app\modules\v1\oauth\service\OauthCacheService;
 use Yii;
+use yii\db\Exception;
 
 /**
  * 鉴权控制器
@@ -62,7 +65,7 @@ class AuthorizeController extends WebBaseController
      */
     public function transactionClose(): array
     {
-        return ['actionAuthorize'];
+        return ['actionAuthorize', 'actionToken'];
     }
 
     /**
@@ -93,27 +96,33 @@ class AuthorizeController extends WebBaseController
         $authorizeDto->state = '';
         $authorizeDto->scope = AuthorizeEnum::USER_ACTIONS;
         //重定向到腾讯页
-        $this->redirect(Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['redirect_url'] .
+        $this->redirect(Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['authorize_url'] .
             $this->urlUtils->getRequestParamsFromGet($authorizeDto->attributes))->send();
     }
 
     /**
      * 鉴权 - 通过 Authorization Code 获取 Access Token 或刷新 Access Token
      *
+     * @throws Exception
      * @author: lirong
      */
     public function actionToken(): void
     {
-        $tokenDto = new AuthorizeResponseVo();
-        $tokenDto->authorization_code = $this->request->get('authorization_code');
-        //TODO 用于验证
-        $tokenDto->state = $this->request->get('state');
-        $authorizationTokenDto = new AuthorizerTokenDto();
-        $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
-        $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
-        $authorizationTokenDto->grant_type = AuthorizationTokenEnum::AUTHORIZATION_CODE;
-        $authorizationTokenDto->authorization_code = $tokenDto->authorization_code;
-        $authorizationTokenDto->redirect_uri = '????';//TODO 回调地址,没什么用
-        $this->actionCache->cacheToken($this->oauthApi->token($authorizationTokenDto));
+        try {
+            $tokenDto = new AuthorizeResponseVo();
+            $tokenDto->authorization_code = $this->request->get('authorization_code');
+            //TODO 用于验证
+            $tokenDto->state = $this->request->get('state');
+
+            $authorizationTokenDto = new AuthorizerTokenDto();
+            $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
+            $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
+            $authorizationTokenDto->grant_type = AuthorizationTokenEnum::AUTHORIZATION_CODE;
+            $authorizationTokenDto->authorization_code = $tokenDto->authorization_code;
+            $authorizationTokenDto->redirect_uri = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['redirect_uri'];//回调地址
+            $this->actionCache->cacheToken($this->oauthApi->token($authorizationTokenDto));
+        } catch (TencentMarketingApiException|RedisException $e) {
+            throw new Exception($e->getMessage(), [], $e->getCode());
+        }
     }
 }

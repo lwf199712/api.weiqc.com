@@ -4,7 +4,7 @@ namespace app\api\tencentMarketingAPI\oauth\service;
 
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthDto;
 use app\common\exception\TencentMarketingApiException;
-use app\modules\v1\oauth\domain\vo\AuthorizerTokenDto;
+use app\modules\v1\oauth\domain\dto\AuthorizerTokenDto;
 
 /**
  * Interface OauthTokenService

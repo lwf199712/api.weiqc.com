@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\v1\oauth\domain\vo;
+namespace app\modules\v1\oauth\domain\dto;
 
 use yii\base\Model;
 

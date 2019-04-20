@@ -6,6 +6,8 @@
  * @author lirong
  */
 
+use app\api\tencentMarketingAPI\oauth\service\impl\OauthImpl;
+use app\api\tencentMarketingAPI\oauth\service\OauthService;
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
 use app\api\tencentMarketingAPI\userActions\service\impl\UserActionsImpl;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
@@ -56,6 +58,7 @@ $containerList = [
     UserActionCache::class                           => UserActionRedisCacheImpl::class,
     //oauth模块容器
     OauthCacheService::class                         => OauthRedisCacheImpl::class,
+    OauthService::class                              => OauthImpl::class,
 ];
 
 foreach ($containerList as $class => $definition) {
