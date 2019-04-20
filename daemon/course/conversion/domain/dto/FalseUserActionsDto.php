@@ -2,14 +2,14 @@
 
 namespace app\daemon\course\conversion\domain\dto;
 
-use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
 use yii\base\Model;
 
 /**
- * Class UserActionsDto
+ * Class UserActionsActionsRequestDto
  *
  * @property string $message
- * @property UserActionsDto $userActionsDto
+ * @property UserActionsActionsRequestDto $userActionsDto
  * @package app\daemon\course\conversion\domain\dto
  * @author: lirong
  */
@@ -17,7 +17,7 @@ class FalseUserActionsDto extends Model
 {
     /* @var string $message */
     public $message;
-    /* @var UserActionsDto $userActionsDto */
+    /* @var UserActionsActionsRequestDto $userActionsDto */
     public $userActionsDto;
 
 

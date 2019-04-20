@@ -2,24 +2,24 @@
 
 namespace app\api\tencentMarketingApi\userActions\domain\dto;
 
-use app\api\tencentMarketingApi\userActions\enum\ActionTypeEnum;
+use app\api\tencentMarketingApi\userActions\enum\UserActionsTypeEnum;
 use yii\base\Model;
 
 /**
- * Class ActionsDto
+ * Class UserActions2RequestDto
  *
  * @property integer $user_action_set_id 用户行为源 id
  * @property string $url 请求所在url
  * @property integer $action_time 行为发生时，客户端的时间点。 UNIX 时间，单位为秒，如果不填将使用服务端时间填写 最小值 0，最大值 2147483647
- * @property string|ActionTypeEnum $action_type 预定义的行为类型
- * @property TraceDto $trace 跟踪信息
+ * @property string|UserActionsTypeEnum $action_type 预定义的行为类型
+ * @property UserActionsTraceRequestDto $trace 跟踪信息
  * @property array $action_param 行为所带的参数
  * @property string $outer_action_id 字段长度最小 1 字节，长度最大 204800 字节。是去重标识，平台会基于user_action_set_id，outer_action_id 和action_type三个字段做去重 ，如果历史上报数据中存在某条数据的这三个字段与当前上报数据完全一样的，则当前数据会被过滤掉
  *
  * @package app\api\tencentMarketingApi\domain\dto
  * @author: lirong
  */
-class ActionsDto extends Model
+class UserActions2RequestDto extends Model
 {
     /* @var integer $user_action_set_id */
     public $user_action_set_id;
@@ -27,9 +27,9 @@ class ActionsDto extends Model
     public $url;
     /* @var integer $action_time */
     public $action_time;
-    /* @var string|ActionTypeEnum|*enum $action_type */
+    /* @var string|UserActionsTypeEnum|*enum $action_type */
     public $action_type;
-    /* @var TraceDto $trace */
+    /* @var UserActionsTraceRequestDto $trace */
     public $trace;
     /* @var array $action_param */
     public $action_param;

@@ -14,7 +14,7 @@ use yii\base\Model;
  * @package app\api\tencentMarketingApi\oauth\domain\dto
  * @author: lirong
  */
-class AuthorizationInfoDto extends Model
+class AuthorizationResponseDto extends Model
 {
     /* @var integer $account_uin */
     public $account_uin;

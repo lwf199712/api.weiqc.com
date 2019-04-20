@@ -3,10 +3,10 @@
 namespace app\daemon\course\conversion\service\impl;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
-use app\api\tencentMarketingApi\userActions\domain\dto\ActionsDto;
-use app\api\tencentMarketingApi\userActions\domain\dto\TraceDto;
-use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
-use app\api\tencentMarketingApi\userActions\enum\ActionTypeEnum;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsTraceRequestDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
+use app\api\tencentMarketingApi\userActions\enum\UserActionsTypeEnum;
 use app\daemon\common\utils\CommandsBatchInsertUtils;
 use app\daemon\course\conversion\domain\dto\FalseUserActionsDto;
 use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
@@ -131,14 +131,14 @@ class CommandsCourseStaticHitsImpl extends BaseObject implements CourseStaticHit
             //广点通用户行为点击数增加
             $userActionsDtoList = [];
             foreach ($redisAddViewDtoList as $redisAddViewDto) {
-                $userActionsDto = new UserActionsDto();
+                $userActionsDto = new UserActionsActionsRequestDto();
                 $userActionsDto->account_id = $redisAddViewDto->account_id;
-                $userActionsDto->actions = new ActionsDto();
+                $userActionsDto->actions = new UserActionsActionsRequestDto();
                 $userActionsDto->actions->user_action_set_id = $redisAddViewDto->user_action_set_id;
                 $userActionsDto->actions->url = $redisAddViewDto->url;
                 $userActionsDto->actions->action_time = time();
-                $userActionsDto->actions->action_type = ActionTypeEnum::PAGE_VIEW;
-                $userActionsDto->actions->trace = new TraceDto();
+                $userActionsDto->actions->action_type = UserActionsTypeEnum::PAGE_VIEW;
+                $userActionsDto->actions->trace = new UserActionsTraceRequestDto();
                 $userActionsDto->actions->trace->click_id = $redisAddViewDto->click_id;
                 if ($redisAddViewDto->action_param) {
                     $userActionsDto->actions->action_param = $redisAddViewDto->action_param;
