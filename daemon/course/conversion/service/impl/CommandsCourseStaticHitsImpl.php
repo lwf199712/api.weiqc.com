@@ -4,8 +4,8 @@ namespace app\daemon\course\conversion\service\impl;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsRequestDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsTraceRequestDto;
-use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
 use app\api\tencentMarketingApi\userActions\enum\UserActionsTypeEnum;
 use app\daemon\common\utils\CommandsBatchInsertUtils;
 use app\daemon\course\conversion\domain\dto\FalseUserActionsDto;
@@ -131,7 +131,7 @@ class CommandsCourseStaticHitsImpl extends BaseObject implements CourseStaticHit
             //广点通用户行为点击数增加
             $userActionsDtoList = [];
             foreach ($redisAddViewDtoList as $redisAddViewDto) {
-                $userActionsDto = new UserActionsActionsRequestDto();
+                $userActionsDto = new UserActionsRequestDto();
                 $userActionsDto->account_id = $redisAddViewDto->account_id;
                 $userActionsDto->actions = new UserActionsActionsRequestDto();
                 $userActionsDto->actions->user_action_set_id = $redisAddViewDto->user_action_set_id;
