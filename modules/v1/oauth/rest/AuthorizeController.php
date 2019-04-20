@@ -104,10 +104,10 @@ class AuthorizeController extends WebBaseController
     /**
      * 鉴权 - 通过 Authorization Code 获取 Access Token 或刷新 Access Token
      *
-     * @throws Exception
+     * @return mixed
      * @author: lirong
      */
-    public function actionToken(): void
+    public function actionToken()
     {
         try {
             $tokenDto = new AuthorizeResponseVo();
@@ -122,8 +122,9 @@ class AuthorizeController extends WebBaseController
             $authorizationTokenDto->authorization_code = $tokenDto->authorization_code;
             $authorizationTokenDto->redirect_uri = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['redirect_uri'];//回调地址
             $oauthDto = $this->actionCache->cacheToken($this->oauthApi->token($authorizationTokenDto));
+            return $this->render('@app/views/v1/oauth/token', ['oauthDto' => $oauthDto]);
         } catch (TencentMarketingApiException|RedisException|ConnectionException $e) {
-            throw new Exception($e->getMessage(), [], $e->getCode());
+            return $this->render('@app/views/site/error', ['message' => $e->getMessage(), 'name' => 'token获取失败!']);
         }
     }
 }

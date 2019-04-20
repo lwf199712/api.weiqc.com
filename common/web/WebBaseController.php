@@ -8,8 +8,6 @@ use yii\db\Transaction;
 use yii\web\Controller;
 use yii\web\Request;
 use yii\web\Response;
-use yii\rest\OptionsAction;
-use yii\rest\Serializer;
 use yii\web\BadRequestHttpException;
 
 /**
