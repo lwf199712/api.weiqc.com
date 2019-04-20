@@ -2,13 +2,13 @@
 
 namespace app\api\tencentMarketingApi\oauth\api;
 
-use app\api\tencentMarketingApi\oauth\domain\dto\OauthDto;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenRequestDto;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenResponseDto;
 use app\api\tencentMarketingApi\oauth\service\OauthCacheService;
 use app\api\tencentMarketingAPI\oauth\service\OauthService;
 use app\common\api\ApiBaseController;
 use app\common\exception\RedisException;
 use app\common\exception\TencentMarketingApiException;
-use app\modules\v1\oauth\domain\dto\AuthorizerTokenDto;
 use app\modules\v1\oauth\enum\AuthorizationTokenEnum;
 use Predis\Connection\ConnectionException;
 use Yii;
@@ -57,7 +57,7 @@ class OauthApi extends ApiBaseController
     {
         $oauthDto = $this->oauthCacheService->getToken($accountId);
         if (!$oauthDto) {
-            $authorizationTokenDto = new AuthorizerTokenDto();
+            $authorizationTokenDto = new OauthTokenRequestDto();
             $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
             $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
             $authorizationTokenDto->grant_type = AuthorizationTokenEnum::REFRESH_TOKEN;
@@ -76,12 +76,12 @@ class OauthApi extends ApiBaseController
     /**
      * 鉴权api - 通过 Authorization Code 获取 Access Token 或刷新 Access Token
      *
-     * @param AuthorizerTokenDto $authorizationTokenDto
-     * @return OauthDto
+     * @param OauthTokenRequestDto $authorizationTokenDto
+     * @return OauthTokenResponseDto
      * @throws TencentMarketingApiException
      * @author: lirong
      */
-    public function authorizeToken(AuthorizerTokenDto $authorizationTokenDto): OauthDto
+    public function authorizeToken(OauthTokenRequestDto $authorizationTokenDto): OauthTokenResponseDto
     {
         return $this->oauthService->authorizeToken($authorizationTokenDto);
     }
@@ -89,13 +89,13 @@ class OauthApi extends ApiBaseController
     /**
      * 鉴权api - 缓存token至本地系统
      *
-     * @param OauthDto $oauthDto
+     * @param OauthTokenResponseDto $oauthDto
      * @return void
      * @throws ConnectionException
      * @throws RedisException
      * @author: lirong
      */
-    public function cacheToken(OauthDto $oauthDto): void
+    public function cacheToken(OauthTokenResponseDto $oauthDto): void
     {
         $this->oauthCacheService->cacheToken($oauthDto);
     }

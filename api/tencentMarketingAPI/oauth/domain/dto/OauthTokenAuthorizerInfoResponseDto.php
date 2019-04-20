@@ -5,7 +5,6 @@ namespace app\api\tencentMarketingApi\oauth\domain\dto;
 use yii\base\Model;
 
 /**
- * 鉴权token表单返回
  * Class OauthDto
  *
  * @property integer $account_uin 绑定的推广帐号对应的 QQ 号
@@ -14,7 +13,7 @@ use yii\base\Model;
  * @package app\api\tencentMarketingApi\oauth\domain\dto
  * @author: lirong
  */
-class AuthorizationResponseDto extends Model
+class OauthTokenAuthorizerInfoResponseDto extends Model
 {
     /* @var integer $account_uin */
     public $account_uin;

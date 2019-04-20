@@ -2,11 +2,11 @@
 
 namespace app\api\tencentMarketingAPI\userActions\service;
 
-use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsRequestDto;
 use app\common\exception\TencentMarketingApiException;
 
 /**
- * Interface UserActionsService
+ * Interface UserActionSetsService
  *
  * @package app\modules\v1\conversion\service
  * @author: lirong
@@ -16,11 +16,11 @@ interface UserActionsService
     /**
      * 上传用户行为数据
      *
-     * @param UserActionsDto $userActionsDto
+     * @param UserActionsRequestDto $userActionsRequestDto
      * @throws TencentMarketingApiException
      * @author: lirong
      */
-    public function add(UserActionsDto $userActionsDto): void;
+    public function add(UserActionsRequestDto $userActionsRequestDto): void;
 
     /**
      * 批量上传用户行为数据

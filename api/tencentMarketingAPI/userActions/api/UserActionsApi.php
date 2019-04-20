@@ -2,7 +2,8 @@
 
 namespace app\api\tencentMarketingApi\userActions\api;
 
-use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsRequestDto;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
 use app\common\api\ApiBaseController;
 use app\common\exception\TencentMarketingApiException;
@@ -12,7 +13,7 @@ use app\common\exception\TencentMarketingApiException;
  * Class UserActionsController
  *
  * @property UserActionsService $userActionsService
- * @property UserActionsDto $userActionsDto
+ * @property UserActionsActionsRequestDto $userActionsDto
  * @package app\modules\v1\conversion\rest
  * @author: lirong
  */
@@ -36,11 +37,11 @@ class UserActionsApi extends ApiBaseController
     /**
      * 用户行为数据API - 上传用户行为数据
      *
-     * @param UserActionsDto $userActionsDto
+     * @param UserActionsRequestDto $userActionsDto
      * @throws TencentMarketingApiException
      * @author: lirong
      */
-    public function add(UserActionsDto $userActionsDto): void
+    public function add(UserActionsRequestDto $userActionsDto): void
     {
         $this->userActionsService->add($userActionsDto);
     }

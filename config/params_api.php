@@ -10,6 +10,10 @@ return [
                 //上传用户行为数据
                 'add' => 'user_actions/add'
             ],
+            'user_action_sets'=>[
+                //创建用户行为数据源
+                'add'=>'user_action_sets/add'
+            ]
         ]
     ]
 ];

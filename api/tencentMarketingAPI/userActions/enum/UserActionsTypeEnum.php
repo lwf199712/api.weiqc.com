@@ -8,7 +8,7 @@ namespace app\api\tencentMarketingApi\userActions\enum;
  * @package app\api\tencentMarketingApi\userActions\enum
  * @author: lirong
  */
-abstract class UserActionsActionTypeEnum
+abstract class UserActionsTypeEnum
 {
     /* @var string 自定义 */
     public const CUSTOM = 'CUSTOM';

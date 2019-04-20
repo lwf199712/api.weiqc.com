@@ -5,14 +5,14 @@ namespace app\modules\v1\userAction\domain\vo;
 use yii\base\Model;
 
 /**
- * Class ConversionInfo
+ * Class ConversionRequestVo
  *
  * @property string $wxh 微信服务号
  * @property string $token token
  * @package app\modules\v1\domain\vo
  * @author: lirong
  */
-class ConversionInfo extends Model
+class ConversionRequestVo extends Model
 {
     /* @var string wxh */
     public $wxh;

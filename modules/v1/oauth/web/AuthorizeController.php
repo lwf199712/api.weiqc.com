@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\v1\oauth\rest;
+namespace app\modules\v1\oauth\web;
 
 use app\api\tencentMarketingApi\oauth\api\OauthApi;
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenRequestDto;
@@ -18,7 +18,7 @@ use Yii;
 
 /**
  * 鉴权控制器
- * Class AuthorizeController
+ * Class UserActionController
  *
  * @property UrlUtils $urlUtils
  * @property OauthApi $oauthApi
@@ -36,7 +36,7 @@ class AuthorizeController extends WebBaseController
     public $actionSetsApi;
 
     /**
-     * AuthorizeController constructor.
+     * UserActionController constructor.
      *
      * @param $id
      * @param $module
@@ -66,20 +66,6 @@ class AuthorizeController extends WebBaseController
     public function transactionClose(): array
     {
         return ['actionAuthorize', 'actionToken'];
-    }
-
-    /**
-     * Declares the allowed HTTP verbs.
-     *
-     * @return array
-     * @author: lirong
-     */
-    public function verbs(): array
-    {
-        return [
-            'code-user-actions' => ['GET', 'HEAD'],
-            'token'             => ['GET', 'HEAD']
-        ];
     }
 
     /**

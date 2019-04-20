@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\v1\oauth\domain\dto;
+namespace app\api\tencentMarketingApi\oauth\domain\dto;
 
 use yii\base\Model;
 
@@ -17,7 +17,7 @@ use yii\base\Model;
  * @package app\modules\v1\oauth\domain\vo
  * @author: lirong
  */
-class AuthorizerTokenDto extends Model
+class OauthTokenRequestDto extends Model
 {
     /* @var integer $client_id */
     public $client_id;

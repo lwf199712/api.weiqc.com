@@ -5,13 +5,13 @@ namespace app\modules\v1\userAction\domain\vo;
 use yii\base\Model;
 
 /**
- * Class ConversionInfo
+ * Class ConversionRequestVo
  *
  * @property string $token
  * @package app\modules\v1\conversion\domain\vo
  * @author: lirong
  */
-class LinksInfo extends Model
+class LinksRequestVo extends Model
 {
     /* @var string $token */
     public $token;

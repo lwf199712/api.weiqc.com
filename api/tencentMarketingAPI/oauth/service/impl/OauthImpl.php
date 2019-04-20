@@ -2,14 +2,14 @@
 
 namespace app\api\tencentMarketingAPI\oauth\service\impl;
 
-use app\api\tencentMarketingApi\oauth\domain\dto\AuthorizationInfoDto;
-use app\api\tencentMarketingApi\oauth\domain\dto\OauthDto;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenAuthorizerInfoResponseDto;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenRequestDto;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenResponseDto;
 use app\api\tencentMarketingAPI\oauth\service\OauthService;
 use app\common\client\ClientBaseService;
 use app\common\exception\TencentMarketingApiException;
 use app\common\utils\RedisUtils;
 use app\models\dataObject\StaticConversionDo;
-use app\modules\v1\oauth\domain\dto\AuthorizerTokenDto;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Yii;
@@ -41,15 +41,15 @@ class OauthImpl extends ClientBaseService implements OauthService
     /**
      * 通过 Authorization Code 获取 Access Token 或刷新 Access Token
      *
-     * @param AuthorizerTokenDto $authorizationTokenDto
-     * @return OauthDto
+     * @param OauthTokenRequestDto $authorizationTokenDto
+     * @return OauthTokenResponseDto
      * @throws TencentMarketingApiException
      * @author: lirong
      */
-    public function authorizeToken(AuthorizerTokenDto $authorizationTokenDto): OauthDto
+    public function authorizeToken(OauthTokenRequestDto $authorizationTokenDto): OauthTokenResponseDto
     {
-        $oauthDto = new OauthDto();
-        $oauthDto->authorizer_info = new AuthorizationInfoDto();
+        $oauthDto = new OauthTokenResponseDto();
+        $oauthDto->authorizer_info = new OauthTokenAuthorizerInfoResponseDto();
         try {
             $response = $this->client->request('GET', Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['token_url'], [
                 'query' => $authorizationTokenDto->attributes,

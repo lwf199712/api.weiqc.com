@@ -2,7 +2,7 @@
 
 namespace app\api\tencentMarketingApi\oauth\service;
 
-use app\api\tencentMarketingApi\oauth\domain\dto\OauthDto;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenResponseDto;
 use app\common\exception\RedisException;
 use Predis\Connection\ConnectionException;
 
@@ -18,19 +18,19 @@ interface OauthCacheService
     /**
      * 缓存 - 缓存token
      *
-     * @param OauthDto $oauthDto
+     * @param OauthTokenResponseDto $oauthDto
      * @return void
      * @throws RedisException|ConnectionException
      * @author: lirong
      */
-    public function cacheToken(OauthDto $oauthDto): void;
+    public function cacheToken(OauthTokenResponseDto $oauthDto): void;
 
     /**
      * 缓存 - 获得token
      *
      * @param int $accountId
-     * @return OauthDto
+     * @return OauthTokenResponseDto
      * @author: lirong
      */
-    public function getToken(int $accountId): ?OauthDto;
+    public function getToken(int $accountId): ?OauthTokenResponseDto;
 }

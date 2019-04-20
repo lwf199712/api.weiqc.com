@@ -3,17 +3,17 @@
 namespace app\modules\v1\userAction\rest;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
-use app\api\tencentMarketingApi\userActions\domain\dto\ActionsDto;
-use app\api\tencentMarketingApi\userActions\domain\dto\TraceDto;
-use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
-use app\api\tencentMarketingApi\userActions\enum\ActionTypeEnum;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsRequestDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsTraceRequestDto;
+use app\api\tencentMarketingApi\userActions\enum\UserActionsTypeEnum;
 use app\common\exception\RedisException;
 use app\common\rest\RestBaseController;
 use app\common\exception\TencentMarketingApiException;
 use app\common\exception\ValidateException;
 use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
 use app\models\dataObject\StaticConversionDo;
-use app\modules\v1\userAction\domain\vo\ConversionInfo;
+use app\modules\v1\userAction\domain\vo\ConversionRequestVo;
 use app\modules\v1\userAction\service\UserActionCache;
 use app\modules\v1\userAction\service\UserActionStaticConversionService;
 use app\modules\v1\userAction\service\UserActionStaticHitsService;
@@ -137,7 +137,7 @@ class ConversionController extends RestBaseController
     {
         try {
             $this->sourceDetectionUtil->crossDomainDetection();
-            $conversionInfo = new ConversionInfo();
+            $conversionInfo = new ConversionRequestVo();
             $conversionInfo->setAttributes($this->request->post());
             //检查落地页是否存在
             $staticUrl = $this->staticUrlService->findOne(['ident' => $conversionInfo->token]);
@@ -173,14 +173,14 @@ class ConversionController extends RestBaseController
             //系统转化数增加
             $this->staticServiceConversionsService->increasedConversions($staticUrl);
             //广点通用户行为统计接口转化数增加
-            $userActionsDto = new UserActionsDto();
+            $userActionsDto = new UserActionsRequestDto();
             $userActionsDto->account_id = $this->request->post('account_id', -1);
-            $userActionsDto->actions = new ActionsDto();
+            $userActionsDto->actions = new UserActionsActionsRequestDto();
             $userActionsDto->actions->user_action_set_id = $this->request->post('user_action_set_id');
             $userActionsDto->actions->url = $this->request->post('url');
             $userActionsDto->actions->action_time = time();
-            $userActionsDto->actions->action_type = ActionTypeEnum::COMPLETE_ORDER;
-            $userActionsDto->actions->trace = new TraceDto();
+            $userActionsDto->actions->action_type = UserActionsTypeEnum::COMPLETE_ORDER;
+            $userActionsDto->actions->trace = new UserActionsTraceRequestDto();
             $userActionsDto->actions->trace->click_id = $this->request->post('click_id', -1);
             if ($this->request->post('action_param')) {
                 $userActionsDto->actions->action_param = $this->request->post('action_param');

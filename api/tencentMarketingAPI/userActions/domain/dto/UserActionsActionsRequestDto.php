@@ -6,7 +6,7 @@ use app\api\tencentMarketingApi\userActions\enum\UserActionsTypeEnum;
 use yii\base\Model;
 
 /**
- * Class UserActions2RequestDto
+ * Class UserActionsActionsRequestDto
  *
  * @property integer $user_action_set_id 用户行为源 id
  * @property string $url 请求所在url
@@ -19,7 +19,7 @@ use yii\base\Model;
  * @package app\api\tencentMarketingApi\domain\dto
  * @author: lirong
  */
-class UserActions2RequestDto extends Model
+class UserActionsActionsRequestDto extends Model
 {
     /* @var integer $user_action_set_id */
     public $user_action_set_id;

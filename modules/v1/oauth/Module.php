@@ -19,5 +19,5 @@ class Module extends BaseModule
      * @var string $controllerNamespace
      * @author: lirong
      */
-    public $controllerNamespace = 'app\modules\v1\oauth\rest';
+    public $controllerNamespace = 'app\modules\v1\oauth\web';
 }

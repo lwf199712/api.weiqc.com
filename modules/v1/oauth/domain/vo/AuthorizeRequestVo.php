@@ -5,7 +5,6 @@ namespace app\modules\v1\oauth\domain\vo;
 use yii\base\Model;
 
 /**
- * 鉴权表单
  * Class AuthorizeDto
  *
  * @property integer $client_id 应用 id，在开发者官网创建应用后获得，可通过 [应用程序管理页面] 查看

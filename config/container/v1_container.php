@@ -13,6 +13,8 @@ use app\api\tencentMarketingAPI\oauth\service\OauthService;
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
 use app\api\tencentMarketingAPI\userActions\service\impl\UserActionsImpl;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
+use app\api\tencentMarketingApi\userActionSets\service\impl\UserActionSetsImpl;
+use app\api\tencentMarketingApi\userActionSets\service\UserActionSetsService;
 use app\common\utils\UrlUtils;
 use app\models\dataObject\StaticConversionDo;
 use app\models\dataObject\StaticHitsDo;
@@ -60,6 +62,7 @@ $containerList = [
     //tencentMarketingApi - oauth 容器
     OauthCacheService::class                         => OauthRedisCacheImpl::class,
     OauthService::class                              => OauthImpl::class,
+    UserActionSetsService::class                     => UserActionSetsImpl::class,
 ];
 
 foreach ($containerList as $class => $definition) {

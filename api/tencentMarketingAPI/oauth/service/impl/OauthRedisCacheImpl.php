@@ -2,8 +2,8 @@
 
 namespace app\api\tencentMarketingAPI\oauth\service\impl;
 
-use app\api\tencentMarketingApi\oauth\domain\dto\AuthorizationInfoDto;
-use app\api\tencentMarketingApi\oauth\domain\dto\OauthDto;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenAuthorizerInfoResponseDto;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenResponseDto;
 use app\api\tencentMarketingApi\oauth\service\OauthCacheService;
 use app\common\exception\RedisException;
 use app\common\utils\ArrayUtils;
@@ -45,11 +45,11 @@ class OauthRedisCacheImpl extends BaseObject implements OauthCacheService
     /**
      * 缓存 - 缓存token
      *
-     * @param OauthDto $oauthDto
+     * @param OauthTokenResponseDto $oauthDto
      * @throws RedisException|ConnectionException
      * @author: lirong
      */
-    public function cacheToken(OauthDto $oauthDto): void
+    public function cacheToken(OauthTokenResponseDto $oauthDto): void
     {
         $this->redisUtils->getRedis()->hdel(Yii::$app->params['oauth']['tencent_marketing_api']['token_key'], [$oauthDto->authorizer_info->account_id]);
         if (!$this->redisUtils->getRedis()->set(Yii::$app->params['oauth']['tencent_marketing_api']['token_key'] . $oauthDto->authorizer_info->account_id,
@@ -66,20 +66,22 @@ class OauthRedisCacheImpl extends BaseObject implements OauthCacheService
      * 缓存 - 获得token
      *
      * @param int $accountId
-     * @return OauthDto|null
+     * @return OauthTokenResponseDto|null
      * @author: lirong
      */
-    public function getToken(int $accountId): ?OauthDto
+    public function getToken(int $accountId): ?OauthTokenResponseDto
     {
         //从redis中获取token
         $oauthRedisDto = $this->redisUtils->getRedis()->get(Yii::$app->params['oauth']['tencent_marketing_api']['token_key'] . $accountId);
         if ($oauthRedisDto) {
-            $oauthRedisDto = json_decode($oauthRedisDto, false);
-            $oauthDto = new OauthDto();
+            $oauthRedisDto = json_decode($oauthRedisDto, true);
+            $oauthDto = new OauthTokenResponseDto();
             $oauthDto->attributes = $oauthRedisDto;
             if ($oauthRedisDto['authorizer_info'] ?? false) {
-                $oauthDto->authorizer_info = new AuthorizationInfoDto();
-                $oauthDto->authorizer_info->attributes = $oauthRedisDto['authorizer_info'];
+                $oauthDto->authorizer_info = new OauthTokenAuthorizerInfoResponseDto();
+                $oauthDto->authorizer_info->account_uin = $oauthRedisDto['authorizer_info']['account_uin '] ?? '';
+                $oauthDto->authorizer_info->account_id = $oauthRedisDto['authorizer_info']['account_id '] ?? '';
+                $oauthDto->authorizer_info->scope_list = $oauthRedisDto['authorizer_info']['scope_list '] ?? '';
             }
             return $oauthDto;
         }

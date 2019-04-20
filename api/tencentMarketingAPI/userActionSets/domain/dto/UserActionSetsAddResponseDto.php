@@ -5,13 +5,13 @@ namespace app\api\tencentMarketingApi\userActionSets\domain\dto;
 use yii\base\Model;
 
 /**
- * Class TraceDto
+ * Class UserActionsTraceRequestDto
  *
  * @property integer $user_action_set_id 用户行为源 id，通过 [user_action_sets 接口] 创建用户行为源时分配的唯一 id
  * @package app\api\tencentMarketingApi\domain\dto
  * @author: lirong
  */
-class UserActionSetsAdd extends Model
+class UserActionSetsAddResponseDto extends Model
 {
     /* @var string $user_action_set_id */
     public $user_action_set_id;

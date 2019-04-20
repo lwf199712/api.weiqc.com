@@ -3,9 +3,8 @@
 namespace app\api\tencentMarketingAPI\userActions\service\impl;
 
 use app\api\tencentMarketingApi\oauth\api\OauthApi;
-use app\api\tencentMarketingApi\oauth\service\OauthCacheService;
-use app\api\tencentMarketingAPI\oauth\service\OauthService;
-use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsRequestDto;
 use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
 use app\common\client\ClientBaseService;
 use app\common\exception\TencentMarketingApiException;
@@ -51,21 +50,21 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
     /**
      * 上传用户行为数据
      *
-     * @param UserActionsDto $userActionsDto
+     * @param UserActionsRequestDto $userActionsRequestDto
      * @throws TencentMarketingApiException
      * @throws Exception
      * @author: lirong
      */
-    public function add(UserActionsDto $userActionsDto): void
+    public function add(UserActionsRequestDto $userActionsRequestDto): void
     {
         try {
             $response = $this->client->request('POST', Yii::$app->params['api']['tencent_marketing_api']['base_url'] . Yii::$app->params['api']['tencent_marketing_api']['api']['user_actions']['add'], [
                 'query' => [
-                    'access_token' => $this->oauthApi->getToken($userActionsDto->account_id),
+                    'access_token' => $this->oauthApi->getToken($userActionsRequestDto->account_id),
                     'timestamp'    => time(),
                     'nonce'        => uniqid('', false) . time(),
                 ],
-                'json'  => ArrayUtils::attributesAsMap($userActionsDto)
+                'json'  => ArrayUtils::attributesAsMap($userActionsRequestDto)
             ]);
             $response = json_decode($response->getBody()->getContents(), false);
             if (($response->code ?? true) && (int)$response->code !== 0) {
@@ -93,7 +92,7 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
             //创建多个请求
             foreach ($userActionsDtoList as $userActionsDto) {
                 yield function () use ($userActionsDto) {
-                    /* @var $userActionsDto UserActionsDto */
+                    /* @var $userActionsDto UserActionsActionsRequestDto */
                     return $this->client->request('POST', Yii::$app->params['api']['tencent_marketing_api']['base_url'] . Yii::$app->params['api']['tencent_marketing_api']['api']['user_actions']['add'], [
                         'query' => [
                             'access_token' => $this->oauthApi->getToken($userActionsDto->account_id),
