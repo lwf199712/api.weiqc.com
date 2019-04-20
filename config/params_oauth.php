@@ -13,8 +13,8 @@ return [
             'client_secret' => 'IhhA6VLok2qBpLAq',
             //重定向鉴权地址
             'authorize_url' => 'https://developers.e.qq.com/oauth/authorize',
-            //TODO 鉴权跳转地址,本地接收(上线请修改域名)
-            'redirect_uri'  => 'http://api.weiqc.com/v1/oauth/authorize/token',
+            //鉴权跳转地址,本地接收
+            'redirect_uri'  => YII_ENV === 'prod' ? 'http://api.weiqc.so/v1/oauth/authorize/token' : 'http://api.weiqc.com/v1/oauth/authorize/token',
             //token获取地址
             'token_url'     => 'https://api.e.qq.com/oauth/token'
         ]

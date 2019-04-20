@@ -24,15 +24,18 @@ use Yii;
 class OauthImpl extends ClientBaseService implements OauthService
 {
     /**
-     * UserActionsImpl constructor.
+     * OauthImpl constructor.
+     *
+     * @param array $config
      */
-    public function __construct()
+    public function __construct($config = [])
     {
         $this->client = new Client([
             'cookies'  => true,
             'timeout'  => 300,
             'base_uri' => Yii::$app->params['api']['tencent_marketing_api']['base_url']
         ]);
+        parent::__construct($config);
     }
 
     /**

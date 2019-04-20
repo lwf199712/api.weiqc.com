@@ -24,15 +24,19 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
 {
     /**
      * UserActionsImpl constructor.
+     *
+     * @param array $config
      */
-    public function __construct()
+    public function __construct($config = [])
     {
         $this->client = new Client([
             'cookies'  => true,
             'timeout'  => 300,
             'base_uri' => Yii::$app->params['api']['tencent_marketing_api']['base_url']
         ]);
+        parent::__construct($config);
     }
+
 
     /**
      * 上传用户行为数据
@@ -101,7 +105,7 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
                     $falseUserActionsDtoList[] = $falseUserActionsDto;
                 }
             },
-            'rejected'    => static function ($reason, $index) use ($userActionsDtoList, &$falseUserActionsDtoList,$falseUserActionsDtoBase) {
+            'rejected'    => static function ($reason, $index) use ($userActionsDtoList, &$falseUserActionsDtoList, $falseUserActionsDtoBase) {
                 $falseUserActionsDto = clone $falseUserActionsDtoBase;
                 $falseUserActionsDto->message = $reason;
                 $falseUserActionsDto->userActionsDto = $userActionsDtoList[$index];

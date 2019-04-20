@@ -34,7 +34,19 @@ class OauthApi extends ApiBaseController
     }
 
     /**
-     * 通过 Authorization Code 获取 Access Token 或刷新 Access Token
+     * 鉴权api - 通过绑定的推广帐号id获得token
+     *
+     * @param $accountId
+     * @return string
+     * @author: lirong
+     */
+    public function getToken(int $accountId): string
+    {
+//TODO
+    }
+
+    /**
+     * 鉴权api -  通过 Authorization Code 获取 Access Token 或刷新 Access Token
      *
      * @param AuthorizerTokenDto $authorizationTokenDto
      * @return OauthDto

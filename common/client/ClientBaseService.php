@@ -3,6 +3,7 @@
 namespace app\common\client;
 
 use GuzzleHttp\Client;
+use yii\base\BaseObject;
 
 /**
  * Class ClientBaseService
@@ -11,7 +12,7 @@ use GuzzleHttp\Client;
  * @package app\common\client
  * @author: lirong
  */
-abstract class ClientBaseService
+abstract class ClientBaseService extends BaseObject
 {
     /**
      * Guzzle客户端
