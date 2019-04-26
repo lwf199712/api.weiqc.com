@@ -12,7 +12,7 @@ use app\common\exception\TencentMarketingApiException;
  * @package app\modules\v1\oauth\service
  * @author: lirong
  */
-interface OauthService
+interface OauthService2
 {
 
     /**
