@@ -1,11 +1,11 @@
 <?php
 
-namespace app\api\tencentMarketingAPI\userActions\service\impl;
+namespace app\api\tencentMarketingApi\userActions\service\impl;
 
 use app\api\tencentMarketingApi\oauth\api\OauthApi;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsRequestDto;
-use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
+use app\api\tencentMarketingApi\userActions\service\UserActionsService;
 use app\common\client\ClientBaseService;
 use app\common\exception\TencentMarketingApiException;
 use app\common\utils\ArrayUtils;
@@ -21,7 +21,7 @@ use yii\db\Exception;
  * Interface UserActionsImpl
  *
  * @property OauthApi $oauthApi
- * @package app\api\tencentMarketingAPI\userActions\service\impl
+ * @package app\api\tencentMarketingApi\userActions\service\impl
  * @author: lirong
  */
 class UserActionsImpl extends ClientBaseService implements UserActionsService

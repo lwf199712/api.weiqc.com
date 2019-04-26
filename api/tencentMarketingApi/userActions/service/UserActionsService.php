@@ -1,6 +1,6 @@
 <?php
 
-namespace app\api\tencentMarketingAPI\userActions\service;
+namespace app\api\tencentMarketingApi\userActions\service;
 
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsRequestDto;
 use app\common\exception\TencentMarketingApiException;

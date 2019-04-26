@@ -1,6 +1,6 @@
 <?php
 
-namespace app\api\tencentMarketingAPI\oauth\service;
+namespace app\api\tencentMarketingApi\oauth\service;
 
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenRequestDto;
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenResponseDto;

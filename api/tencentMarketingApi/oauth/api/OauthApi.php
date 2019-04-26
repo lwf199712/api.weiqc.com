@@ -5,7 +5,7 @@ namespace app\api\tencentMarketingApi\oauth\api;
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenRequestDto;
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenResponseDto;
 use app\api\tencentMarketingApi\oauth\service\OauthCacheService;
-use app\api\tencentMarketingAPI\oauth\service\OauthService;
+use app\api\tencentMarketingApi\oauth\service\OauthService;
 use app\common\api\ApiBaseController;
 use app\common\exception\RedisException;
 use app\common\exception\TencentMarketingApiException;

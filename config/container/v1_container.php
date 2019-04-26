@@ -6,13 +6,13 @@
  * @author lirong
  */
 
-use app\api\tencentMarketingAPI\oauth\service\impl\OauthImpl;
-use app\api\tencentMarketingAPI\oauth\service\impl\OauthRedisCacheImpl;
+use app\api\tencentMarketingApi\oauth\service\impl\OauthImpl;
+use app\api\tencentMarketingApi\oauth\service\impl\OauthRedisCacheImpl;
 use app\api\tencentMarketingApi\oauth\service\OauthCacheService;
-use app\api\tencentMarketingAPI\oauth\service\OauthService;
+use app\api\tencentMarketingApi\oauth\service\OauthService;
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
-use app\api\tencentMarketingAPI\userActions\service\impl\UserActionsImpl;
-use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
+use app\api\tencentMarketingApi\userActions\service\impl\UserActionsImpl;
+use app\api\tencentMarketingApi\userActions\service\UserActionsService;
 use app\api\tencentMarketingApi\userActionSets\service\impl\UserActionSetsImpl;
 use app\api\tencentMarketingApi\userActionSets\service\UserActionSetsService;
 use app\common\utils\UrlUtils;

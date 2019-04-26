@@ -4,7 +4,7 @@ namespace app\api\tencentMarketingApi\userActions\api;
 
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsRequestDto;
-use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
+use app\api\tencentMarketingApi\userActions\service\UserActionsService;
 use app\common\api\ApiBaseController;
 use app\common\exception\TencentMarketingApiException;
 

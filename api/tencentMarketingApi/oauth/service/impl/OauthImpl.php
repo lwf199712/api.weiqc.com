@@ -1,11 +1,11 @@
 <?php
 
-namespace app\api\tencentMarketingAPI\oauth\service\impl;
+namespace app\api\tencentMarketingApi\oauth\service\impl;
 
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenAuthorizerInfoResponseDto;
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenRequestDto;
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenResponseDto;
-use app\api\tencentMarketingAPI\oauth\service\OauthService;
+use app\api\tencentMarketingApi\oauth\service\OauthService;
 use app\common\client\ClientBaseService;
 use app\common\exception\TencentMarketingApiException;
 use app\common\utils\RedisUtils;

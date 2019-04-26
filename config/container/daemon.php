@@ -5,8 +5,8 @@
  * @author lirong
  */
 
-use app\api\tencentMarketingAPI\userActions\service\impl\UserActionsImpl;
-use app\api\tencentMarketingAPI\userActions\service\UserActionsService;
+use app\api\tencentMarketingApi\userActions\service\impl\UserActionsImpl;
+use app\api\tencentMarketingApi\userActions\service\UserActionsService;
 use app\daemon\common\utils\CommandsBatchInsertUtils;
 use app\daemon\course\conversion\service\CourseStaticHitsService;
 use app\daemon\course\conversion\service\impl\CommandsCourseStaticHitsImpl;
