@@ -3,6 +3,8 @@
 namespace app\modules\v1;
 
 use yii\base\Module as BaseModule;
+use app\modules\v1\userAction\Module as ConversionModule;
+use app\modules\v1\oauth\Module as OauthModule;
 use Yii;
 
 /**
@@ -15,14 +17,6 @@ use Yii;
 class Module extends BaseModule
 {
     /**
-     * the namespace that controller classes are in.
-     *
-     * @var string $controllerNamespace
-     * @author: lirong
-     */
-    public $controllerNamespace = 'app\modules\v1\rest';
-
-    /**
      * Initializes the object.
      *
      * @return mixed|void
@@ -31,8 +25,19 @@ class Module extends BaseModule
     public function init()
     {
         parent::init();
-        //禁用session
+        //Disable session
         Yii::$app->user->enableSession = false;
         Yii::$app->user->loginUrl = null;
+
+        $this->modules = [
+            //上报行为
+            'user-action' => [
+                'class' => ConversionModule::class,
+            ],
+            //鉴权
+            'oauth'       => [
+                'class' => OauthModule::class,
+            ]
+        ];
     }
 }
