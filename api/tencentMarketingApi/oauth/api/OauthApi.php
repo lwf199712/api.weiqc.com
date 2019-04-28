@@ -57,6 +57,7 @@ class OauthApi extends ApiBaseController
     {
         $oauthDto = $this->oauthCacheService->getToken($accountId);
         if (!$oauthDto) {
+            //TODO 好像没有进行时间判断
             $authorizationTokenDto = new OauthTokenRequestDto();
             $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
             $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
