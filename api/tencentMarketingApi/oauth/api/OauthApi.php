@@ -57,18 +57,17 @@ class OauthApi extends ApiBaseController
     {
         $oauthDto = $this->oauthCacheService->getToken($accountId);
         if (!$oauthDto) {
-            $authorizationTokenDto = new OauthTokenRequestDto();
-            $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
-            $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
-            $authorizationTokenDto->grant_type = AuthorizationTokenEnum::REFRESH_TOKEN;
-            $authorizationTokenDto->refresh_token = $oauthDto->refresh_token;
-            //刷新token
-            if (!$this->oauthService->authorizeToken($authorizationTokenDto)) {
-                throw new Exception('刷新token失败!', [], 500);
-            }
-        }
-        if (!$oauthDto) {
             throw new Exception('请重新鉴权!', [], 500);
+        }
+        //TODO 好像没有进行时间判断
+        $authorizationTokenDto = new OauthTokenRequestDto();
+        $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
+        $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
+        $authorizationTokenDto->grant_type = AuthorizationTokenEnum::REFRESH_TOKEN;
+        $authorizationTokenDto->refresh_token = $oauthDto->refresh_token;
+        //刷新token
+        if (!$this->oauthService->authorizeToken($authorizationTokenDto)) {
+            throw new Exception('刷新token失败!', [], 500);
         }
         return $oauthDto->access_token;
     }
