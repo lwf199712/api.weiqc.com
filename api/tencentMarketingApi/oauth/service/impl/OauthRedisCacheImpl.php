@@ -79,9 +79,9 @@ class OauthRedisCacheImpl extends BaseObject implements OauthCacheService
             $oauthDto->attributes = $oauthRedisDto;
             if ($oauthRedisDto['authorizer_info'] ?? false) {
                 $oauthDto->authorizer_info = new OauthTokenAuthorizerInfoResponseDto();
-                $oauthDto->authorizer_info->account_uin = $oauthRedisDto['authorizer_info']['account_uin '] ?? '';
-                $oauthDto->authorizer_info->account_id = $oauthRedisDto['authorizer_info']['account_id '] ?? '';
-                $oauthDto->authorizer_info->scope_list = $oauthRedisDto['authorizer_info']['scope_list '] ?? '';
+                $oauthDto->authorizer_info->account_uin = $oauthRedisDto['authorizer_info']['account_uin'] ?? '';
+                $oauthDto->authorizer_info->account_id = $oauthRedisDto['authorizer_info']['account_id'] ?? '';
+                $oauthDto->authorizer_info->scope_list = $oauthRedisDto['authorizer_info']['scope_list'] ?? '';
             }
             return $oauthDto;
         }
