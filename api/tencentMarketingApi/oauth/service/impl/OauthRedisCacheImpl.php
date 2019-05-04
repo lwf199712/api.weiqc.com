@@ -51,6 +51,7 @@ class OauthRedisCacheImpl extends BaseObject implements OauthCacheService
      */
     public function cacheToken(OauthTokenResponseDto $oauthDto): void
     {
+        $oauthDto->create_at = time();//设置创建时间
         $this->redisUtils->getRedis()->hdel(Yii::$app->params['oauth']['tencent_marketing_api']['token_key'], [$oauthDto->authorizer_info->account_id]);
         if (!$this->redisUtils->getRedis()->set(Yii::$app->params['oauth']['tencent_marketing_api']['token_key'] . $oauthDto->authorizer_info->account_id,
             json_encode(ArrayUtils::attributesAsMap(clone $oauthDto)))) {

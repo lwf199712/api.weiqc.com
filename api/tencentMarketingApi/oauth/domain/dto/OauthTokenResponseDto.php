@@ -12,6 +12,7 @@ use yii\base\Model;
  * @property string $refresh_token 应用 refresh token，当 grant_type=refresh_token 时不返回
  * @property integer $access_token_expires_in access_token 过期时间，单位（秒）
  * @property integer $refresh_token_expires_in refresh_token 过期时间，单位（秒），当 grant_type=refresh_token 时不返回
+ * @property integer $create_at 设置的创建时间
  * @package app\api\tencentMarketingApi\oauth\domain\dto
  * @author: lirong
  */
@@ -27,6 +28,8 @@ class OauthTokenResponseDto extends Model
     public $access_token_expires_in;
     /* @var integer $refresh_token_expires_in */
     public $refresh_token_expires_in;
+    /* @var integer $create_at */
+    public $create_at;
 
     /**
      * Returns the validation rules for attributes.
@@ -37,7 +40,7 @@ class OauthTokenResponseDto extends Model
     public function rules(): array
     {
         return [
-            [['authorization_info', 'access_token', 'refresh_token', 'access_token_expires_in', 'refresh_token_expires_in'], 'safe'],
+            [['create_at', 'authorization_info', 'access_token', 'refresh_token', 'access_token_expires_in', 'refresh_token_expires_in'], 'safe'],
         ];
     }
 
