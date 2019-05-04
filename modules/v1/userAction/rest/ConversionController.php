@@ -218,7 +218,7 @@ class ConversionController extends RestBaseController
             $redisAddViewDto->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
             $redisAddViewDto->url = $this->request->post('url');
             $redisAddViewDto->date = strtotime(date('Y-m-d'));
-            $redisAddViewDto->account_id = $this->request->post('account_id', -1);
+            $redisAddViewDto->account_uin = $this->request->post('account_uin', -1);
             $redisAddViewDto->user_action_set_id = $this->request->post('user_action_set_id');
             $redisAddViewDto->click_id = $this->request->post('click_id', -1);
             $redisAddViewDto->action_param = $this->request->post('action_param');

@@ -17,7 +17,7 @@ use yii\base\Model;
  * @property string $referer 引荐
  * @property string $agent 代理人
  * @property integer $createtime 创建时间
- * @property string $account_id
+ * @property string $account_uin
  * @property string $user_action_set_id
  * @property string $click_id
  * @property string $action_param
@@ -46,8 +46,8 @@ class RedisAddViewDto extends Model
     public $agent;
     /* @var integer $createtime */
     public $createtime;
-    /* @var integer $account_id */
-    public $account_id;
+    /* @var integer $account_uin */
+    public $account_uin;
     /* @var integer $user_action_set_id */
     public $user_action_set_id;
     /* @var string $click_id */
@@ -71,7 +71,7 @@ class RedisAddViewDto extends Model
     public function rules(): array
     {
         return [
-            [['page', 'request_from_mobile', 'token', 'u_id', 'ip', 'country', 'area', 'date', 'referer', 'agent', 'createtime', 'account_id', 'user_action_set_id', 'click_id', 'action_param', 'url',], 'string']
+            [['page', 'request_from_mobile', 'token', 'u_id', 'ip', 'country', 'area', 'date', 'referer', 'agent', 'createtime', 'account_uin', 'user_action_set_id', 'click_id', 'action_param', 'url',], 'string']
         ];
     }
 
@@ -93,7 +93,7 @@ class RedisAddViewDto extends Model
             'referer'             => 'referer',
             'agent'               => 'agent',
             'createtime'          => 'createtime',
-            'account_id'          => 'account_id',
+            'account_uin'         => 'account_uin',
             'user_action_set_id'  => 'user_action_set_id',
             'click_id'            => 'click_id',
             'action_param'        => 'action_param',

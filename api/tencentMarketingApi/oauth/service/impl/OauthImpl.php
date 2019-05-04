@@ -64,8 +64,6 @@ class OauthImpl extends ClientBaseService implements OauthService
             $oauthDto->authorizer_info->account_uin = $response->data->authorizer_info->account_uin ?? '';
             $oauthDto->authorizer_info->account_id = $response->data->authorizer_info->account_id ?? '';
             $oauthDto->authorizer_info->scope_list = $response->data->authorizer_info->scope_list ?? '';
-            var_dump($oauthDto->refresh_token_expires_in );
-            exit;
         } catch (GuzzleException $e) {
             throw new TencentMarketingApiException($e->getMessage(), $e->getCode());
         }
