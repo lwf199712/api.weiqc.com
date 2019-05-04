@@ -3,9 +3,7 @@
 namespace app\daemon\course\conversion\service\impl;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
-use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsRequestDto;
-use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsTraceRequestDto;
 use app\api\tencentMarketingApi\userActions\enum\UserActionsTypeEnum;
 use app\daemon\common\utils\CommandsBatchInsertUtils;
 use app\daemon\course\conversion\domain\dto\FalseUserActionsDto;
@@ -132,13 +130,11 @@ class CommandsCourseStaticHitsImpl extends BaseObject implements CourseStaticHit
             $userActionsDtoList = [];
             foreach ($redisAddViewDtoList as $redisAddViewDto) {
                 $userActionsDto = new UserActionsRequestDto();
-                $userActionsDto->account_id = $redisAddViewDto->account_id;
-                $userActionsDto->actions = new UserActionsActionsRequestDto();
+                $userActionsDto->account_uin = $redisAddViewDto->account_uin;
                 $userActionsDto->actions->user_action_set_id = $redisAddViewDto->user_action_set_id;
                 $userActionsDto->actions->url = $redisAddViewDto->url;
                 $userActionsDto->actions->action_time = time();
                 $userActionsDto->actions->action_type = UserActionsTypeEnum::PAGE_VIEW;
-                $userActionsDto->actions->trace = new UserActionsTraceRequestDto();
                 $userActionsDto->actions->trace->click_id = $redisAddViewDto->click_id;
                 if ($redisAddViewDto->action_param) {
                     $userActionsDto->actions->action_param = $redisAddViewDto->action_param;
@@ -148,8 +144,8 @@ class CommandsCourseStaticHitsImpl extends BaseObject implements CourseStaticHit
                 $userActionsDtoList[] = $userActionsDto;
                 $lastInsertId--;
             }
-            //删除上报失败的记录
             $falseUserActionsDtoList = $this->userActionsApi->batchAdd($userActionsDtoList);
+            //删除上报失败的记录
             if ($falseUserActionsDtoList) {
                 $deleteList = [];
                 foreach ($falseUserActionsDtoList as $falseUserActionsDto) {

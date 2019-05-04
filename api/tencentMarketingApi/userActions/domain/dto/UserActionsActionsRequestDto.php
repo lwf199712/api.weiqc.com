@@ -36,6 +36,25 @@ class UserActionsActionsRequestDto extends Model
     /* @var string $outer_action_id */
     public $outer_action_id;
 
+    public function __construct($config = [])
+    {
+        $this->trace = new UserActionsTraceRequestDto();
+        parent::__construct($config);
+    }
+
+    /**
+     * Returns the validation rules for attributes.
+     *
+     * @return array
+     * @author: lirong
+     */
+    public function rules(): array
+    {
+        return [
+            [['user_action_set_id', 'url', 'action_time', 'action_type', 'trace', 'action_param', 'outer_action_id'], 'safe']
+        ];
+    }
+
     /**
      * Returns the attribute labels.
      *

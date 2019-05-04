@@ -47,29 +47,29 @@ class OauthApi extends ApiBaseController
     /**
      * 鉴权api - 通过绑定的推广帐号id获得token
      *
-     * @param $accountId
-     * @return string
+     * @param $accountUin
+     * @return OauthTokenResponseDto
      * @throws TencentMarketingApiException
      * @throws Exception
      * @author: lirong
      */
-    public function getToken(int $accountId): string
+    public function getToken(int $accountUin): OauthTokenResponseDto
     {
-        $oauthDto = $this->oauthCacheService->getToken($accountId);
+        $oauthDto = $this->oauthCacheService->getToken($accountUin);
         if (!$oauthDto) {
             throw new Exception('请重新鉴权!', [], 500);
         }
-        //TODO 好像没有进行时间判断
-        $authorizationTokenDto = new OauthTokenRequestDto();
-        $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
-        $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
-        $authorizationTokenDto->grant_type = AuthorizationTokenEnum::REFRESH_TOKEN;
-        $authorizationTokenDto->refresh_token = $oauthDto->refresh_token;
-        //刷新token
-        if (!$this->oauthService->authorizeToken($authorizationTokenDto)) {
-            throw new Exception('刷新token失败!', [], 500);
+        if ($oauthDto->access_token_expires_in < time()) {
+            $authorizationTokenDto = new OauthTokenRequestDto();
+            $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
+            $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
+            $authorizationTokenDto->grant_type = AuthorizationTokenEnum::REFRESH_TOKEN;
+            $authorizationTokenDto->refresh_token = $oauthDto->refresh_token;   //刷新token
+            if (!$this->oauthService->authorizeToken($authorizationTokenDto)) {
+                throw new Exception('刷新token失败!', [], 500);
+            }
         }
-        return $oauthDto->access_token;
+        return $oauthDto;
     }
 
     /**
