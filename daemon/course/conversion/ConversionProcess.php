@@ -28,7 +28,7 @@ class ConversionProcess
      * @var integer APPEAR_NUMBER
      * @author lirong
      */
-    private const APPEAR_NUMBER = 1;
+    private const APPEAR_NUMBER = 500;
 
     /**
      * 定时器调用的静态方法
