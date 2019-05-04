@@ -36,6 +36,12 @@ class UserActionsActionsRequestDto extends Model
     /* @var string $outer_action_id */
     public $outer_action_id;
 
+    public function __construct($config = [])
+    {
+        $this->trace = new UserActionsTraceRequestDto();
+        parent::__construct($config);
+    }
+
     /**
      * Returns the attribute labels.
      *

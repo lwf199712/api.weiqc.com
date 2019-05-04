@@ -49,7 +49,6 @@ class OauthImpl extends ClientBaseService implements OauthService
     public function authorizeToken(OauthTokenRequestDto $authorizationTokenDto): OauthTokenResponseDto
     {
         $oauthDto = new OauthTokenResponseDto();
-        $oauthDto->authorizer_info = new OauthTokenAuthorizerInfoResponseDto();
         try {
             $response = $this->client->request('GET', Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['token_url'], [
                 'query' => $authorizationTokenDto->attributes,
@@ -65,6 +64,8 @@ class OauthImpl extends ClientBaseService implements OauthService
             $oauthDto->authorizer_info->account_uin = $response->data->authorizer_info->account_uin ?? '';
             $oauthDto->authorizer_info->account_id = $response->data->authorizer_info->account_id ?? '';
             $oauthDto->authorizer_info->scope_list = $response->data->authorizer_info->scope_list ?? '';
+            var_dump($oauthDto->refresh_token_expires_in );
+            exit;
         } catch (GuzzleException $e) {
             throw new TencentMarketingApiException($e->getMessage(), $e->getCode());
         }
