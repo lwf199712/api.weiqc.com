@@ -3,6 +3,7 @@
 namespace app\daemon\course\conversion\service\impl;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsRequestDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsTraceRequestDto;
 use app\api\tencentMarketingApi\userActions\enum\UserActionsTypeEnum;

@@ -3,6 +3,7 @@
 namespace app\api\tencentMarketingApi\userActions\service\impl;
 
 use app\api\tencentMarketingApi\oauth\api\OauthApi;
+use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsRequestDto;
 use app\api\tencentMarketingApi\userActions\service\UserActionsService;
 use app\common\client\ClientBaseService;
@@ -112,6 +113,8 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
                     $falseUserActionsDto = clone $falseUserActionsDtoBase;
                     $falseUserActionsDto->message = $contents['message'];
                     $falseUserActionsDto->userActionsDto = $userActionsDtoList[$index];
+                    $falseUserActionsDto->userActionsDto->actions = new UserActionsActionsRequestDto;
+                    $falseUserActionsDto->userActionsDto->actions->attributes = $userActionsDtoList[$index]['actions'] ?? [];
                     $falseUserActionsDtoList[] = $falseUserActionsDto;
                 }
             },
@@ -119,6 +122,8 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
                 $falseUserActionsDto = clone $falseUserActionsDtoBase;
                 $falseUserActionsDto->message = $reason;
                 $falseUserActionsDto->userActionsDto = $userActionsDtoList[$index];
+                $falseUserActionsDto->userActionsDto->actions = new UserActionsActionsRequestDto;
+                $falseUserActionsDto->userActionsDto->actions->attributes = $userActionsDtoList[$index]['actions'] ?? [];
                 $falseUserActionsDtoList[] = $falseUserActionsDto;
             },
         ];

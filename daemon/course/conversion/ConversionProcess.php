@@ -28,7 +28,7 @@ class ConversionProcess
      * @var integer APPEAR_NUMBER
      * @author lirong
      */
-    private const APPEAR_NUMBER = 5;
+    private const APPEAR_NUMBER = 1;
 
     /**
      * 定时器调用的静态方法
@@ -72,6 +72,7 @@ class ConversionProcess
                             }
                         }
                     } catch (Exception $e) {
+                        echo $e->getMessage()."\n";
                         Yii::error($e->getMessage() . $e->getCode(), 'daemon');
                     }
                     unset($conversionController);
