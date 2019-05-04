@@ -48,12 +48,12 @@ class OauthApi extends ApiBaseController
      * 鉴权api - 通过绑定的推广帐号id获得token
      *
      * @param $accountUin
-     * @return string
+     * @return OauthTokenResponseDto
      * @throws TencentMarketingApiException
      * @throws Exception
      * @author: lirong
      */
-    public function getToken(int $accountUin): string
+    public function getToken(int $accountUin): OauthTokenResponseDto
     {
         $oauthDto = $this->oauthCacheService->getToken($accountUin);
         if (!$oauthDto) {
@@ -69,7 +69,7 @@ class OauthApi extends ApiBaseController
                 throw new Exception('刷新token失败!', [], 500);
             }
         }
-        return $oauthDto->access_token;
+        return $oauthDto;
     }
 
     /**

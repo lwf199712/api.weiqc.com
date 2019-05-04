@@ -3,6 +3,7 @@
 namespace app\api\tencentMarketingApi\userActions\service\impl;
 
 use app\api\tencentMarketingApi\oauth\api\OauthApi;
+use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenResponseDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsRequestDto;
 use app\api\tencentMarketingApi\userActions\service\UserActionsService;
@@ -57,10 +58,12 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
      */
     public function add(UserActionsRequestDto $userActionsRequestDto): void
     {
+        $oauthTokenResponseDto = $this->oauthApi->getToken($userActionsRequestDto->account_uin);
+        $userActionsRequestDto->account_id = $oauthTokenResponseDto->authorizer_info->account_id;
         try {
             $response = $this->client->request('POST', Yii::$app->params['api']['tencent_marketing_api']['base_url'] . Yii::$app->params['api']['tencent_marketing_api']['api']['user_actions']['add'], [
                 'query' => [
-                    'access_token' => $this->oauthApi->getToken($userActionsRequestDto->account_uin),
+                    'access_token' => $oauthTokenResponseDto->access_token,
                     'timestamp'    => time(),
                     'nonce'        => uniqid('', false) . time(),
                 ],
@@ -93,13 +96,15 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
             foreach ($userActionsDtoList as $userActionsDto) {
                 yield function () use ($userActionsDto) {
                     /* @var $userActionsDto UserActionsRequestDto */
+                    $oauthTokenResponseDto = $this->oauthApi->getToken($userActionsDto->account_uin);
+                    $userActionsDto->account_id = $oauthTokenResponseDto->authorizer_info->account_id;
                     return $this->client->request('POST', Yii::$app->params['api']['tencent_marketing_api']['base_url'] . Yii::$app->params['api']['tencent_marketing_api']['api']['user_actions']['add'], [
                         'query' => [
-                            'access_token' => $this->oauthApi->getToken($userActionsDto->account_uin),
+                            'access_token' => $oauthTokenResponseDto->access_token,
                             'timestamp'    => time(),
                             'nonce'        => uniqid('', false) . time(),
                         ],
-                        'json'  => ArrayUtils::attributesAsMap($userActionsDto)
+                        'json'  => ArrayUtils::attributesAsMap(clone $userActionsDto)
                     ]);
                 };
             }
@@ -110,20 +115,22 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
                 /* @var $response Request */
                 $contents = json_decode($response->getBody()->getContents(), true);
                 if (($contents['code'] ?? true) && (int)$contents['code'] !== 0) {
+                    /* @var $userActionsDto UserActionsRequestDto */
+                    $userActionsDto = $userActionsDtoList[$index];
                     $falseUserActionsDto = clone $falseUserActionsDtoBase;
                     $falseUserActionsDto->message = $contents['message'];
-                    $falseUserActionsDto->userActionsDto = $userActionsDtoList[$index];
-                    $falseUserActionsDto->userActionsDto->actions = new UserActionsActionsRequestDto;
-                    $falseUserActionsDto->userActionsDto->actions->attributes = $userActionsDtoList[$index]['actions'] ?? [];
+                    $falseUserActionsDto->userActionsDto = $userActionsDto;
+                    $falseUserActionsDto->userActionsDto->actions = current($falseUserActionsDto->userActionsDto->actions);
                     $falseUserActionsDtoList[] = $falseUserActionsDto;
                 }
             },
             'rejected'    => static function ($reason, $index) use ($userActionsDtoList, &$falseUserActionsDtoList, $falseUserActionsDtoBase) {
+                /* @var $userActionsDto UserActionsRequestDto */
+                $userActionsDto = $userActionsDtoList[$index];
                 $falseUserActionsDto = clone $falseUserActionsDtoBase;
                 $falseUserActionsDto->message = $reason;
-                $falseUserActionsDto->userActionsDto = $userActionsDtoList[$index];
-                $falseUserActionsDto->userActionsDto->actions = new UserActionsActionsRequestDto;
-                $falseUserActionsDto->userActionsDto->actions->attributes = $userActionsDtoList[$index]['actions'] ?? [];
+                $falseUserActionsDto->userActionsDto = $userActionsDto;
+                $falseUserActionsDto->userActionsDto->actions = current($falseUserActionsDto->userActionsDto->actions);
                 $falseUserActionsDtoList[] = $falseUserActionsDto;
             },
         ];

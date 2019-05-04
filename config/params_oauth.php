@@ -10,7 +10,7 @@ return [
             //应用id
             'client_id'     => 1108793948,
             //应用 secret
-            'client_secret' => 'IhhA6VLok2qBpLAq',
+            'client_secret' => 'e94dc8b5d9c675e81fd3f34952404367',
             //重定向鉴权地址
             'authorize_url' => 'https://developers.e.qq.com/oauth/authorize',
             //鉴权跳转地址,本地接收
