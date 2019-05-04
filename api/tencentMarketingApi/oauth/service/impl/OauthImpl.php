@@ -49,7 +49,6 @@ class OauthImpl extends ClientBaseService implements OauthService
     public function authorizeToken(OauthTokenRequestDto $authorizationTokenDto): OauthTokenResponseDto
     {
         $oauthDto = new OauthTokenResponseDto();
-        $oauthDto->authorizer_info = new OauthTokenAuthorizerInfoResponseDto();
         try {
             $response = $this->client->request('GET', Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['token_url'], [
                 'query' => $authorizationTokenDto->attributes,

@@ -28,6 +28,12 @@ class OauthTokenResponseDto extends Model
     /* @var integer $refresh_token_expires_in */
     public $refresh_token_expires_in;
 
+    public function __construct($config = [])
+    {
+        $this->authorizer_info = new OauthTokenAuthorizerInfoResponseDto();
+        parent::__construct($config);
+    }
+
     /**
      * Returns the validation rules for attributes.
      *
@@ -37,7 +43,7 @@ class OauthTokenResponseDto extends Model
     public function rules(): array
     {
         return [
-            [['authorization_info', 'access_token', 'refresh_token', 'access_token_expires_in', 'refresh_token_expires_in'], 'safe'],
+            [['create_at', 'authorization_info', 'access_token', 'refresh_token', 'access_token_expires_in', 'refresh_token_expires_in'], 'safe'],
         ];
     }
 

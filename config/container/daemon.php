@@ -5,6 +5,10 @@
  * @author lirong
  */
 
+use app\api\tencentMarketingApi\oauth\service\impl\OauthImpl;
+use app\api\tencentMarketingApi\oauth\service\impl\OauthRedisCacheImpl;
+use app\api\tencentMarketingApi\oauth\service\OauthCacheService;
+use app\api\tencentMarketingApi\oauth\service\OauthService;
 use app\api\tencentMarketingApi\userActions\service\impl\UserActionsImpl;
 use app\api\tencentMarketingApi\userActions\service\UserActionsService;
 use app\daemon\common\utils\CommandsBatchInsertUtils;
@@ -21,6 +25,8 @@ $containerList = [
     CourseStaticHitsService::class  => CommandsCourseStaticHitsImpl::class,
     CommandsStaticUrlService::class => CommandsStaticUrlImpl::class,
     UserActionsService::class       => UserActionsImpl::class,
+    OauthService::class             => OauthImpl::class,
+    OauthCacheService::class        => OauthRedisCacheImpl::class,
     //工具
     ArrayUtils::class               => ArrayUtils::class,
     RedisUtils::class               => RedisUtils::class,

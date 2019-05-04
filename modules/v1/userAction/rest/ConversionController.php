@@ -174,13 +174,11 @@ class ConversionController extends RestBaseController
             $this->staticServiceConversionsService->increasedConversions($staticUrl);
             //广点通用户行为统计接口转化数增加
             $userActionsDto = new UserActionsRequestDto();
-            $userActionsDto->account_id = $this->request->post('account_id', -1);
-            $userActionsDto->actions = new UserActionsActionsRequestDto();
+            $userActionsDto->account_uin = $this->request->post('account_uin', -1);
             $userActionsDto->actions->user_action_set_id = $this->request->post('user_action_set_id');
             $userActionsDto->actions->url = $this->request->post('url');
             $userActionsDto->actions->action_time = time();
             $userActionsDto->actions->action_type = UserActionsTypeEnum::COMPLETE_ORDER;
-            $userActionsDto->actions->trace = new UserActionsTraceRequestDto();
             $userActionsDto->actions->trace->click_id = $this->request->post('click_id', -1);
             if ($this->request->post('action_param')) {
                 $userActionsDto->actions->action_param = $this->request->post('action_param');
@@ -220,7 +218,7 @@ class ConversionController extends RestBaseController
             $redisAddViewDto->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
             $redisAddViewDto->url = $this->request->post('url');
             $redisAddViewDto->date = strtotime(date('Y-m-d'));
-            $redisAddViewDto->account_id = $this->request->post('account_id', -1);
+            $redisAddViewDto->account_uin = $this->request->post('account_uin', -1);
             $redisAddViewDto->user_action_set_id = $this->request->post('user_action_set_id');
             $redisAddViewDto->click_id = $this->request->post('click_id', -1);
             $redisAddViewDto->action_param = $this->request->post('action_param');

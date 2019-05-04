@@ -99,7 +99,6 @@ class AuthorizeController extends WebBaseController
             $tokenDto->authorization_code = $this->request->get('authorization_code');
             //TODO 用于验证
             $tokenDto->state = $this->request->get('state');
-
             $authorizationTokenDto = new OauthTokenRequestDto();
             $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
             $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];

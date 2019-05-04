@@ -20,6 +20,11 @@ class FalseUserActionsDto extends Model
     /* @var UserActionsRequestDto $userActionsDto */
     public $userActionsDto;
 
+    public function __construct($config = [])
+    {
+        $this->userActionsDto = new UserActionsRequestDto;
+        parent::__construct($config);
+    }
 
     /**
      * Returns the validation rules for attributes.

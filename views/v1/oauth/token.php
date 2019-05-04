@@ -15,5 +15,4 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <div>请保管好如下信息,并交给开发人员</div>
     <div>绑定的推广帐号对应的QQ号 : <?= $oauthDto->authorizer_info->account_uin ?></div>
-    <div>绑定的推广帐号 id (account_id) : <?= $oauthDto->authorizer_info->account_id ?></div>
 </div>
