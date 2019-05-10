@@ -20,7 +20,7 @@ if ($httpOrigin) {
     $httpOrigin = stringUtil::cutOutFormer($httpOrigin, '.');
     if (in_array($httpOrigin, Yii::$app->params['cross_domain'], false)) {
         header('Access-Control-Allow-Origin:' . $httpOrigin);
-        header('Access-Control-Allow-Headers:' . $httpOrigin);
+        header('Access-Control-Allow-Headers:*');
     }
 }
 
