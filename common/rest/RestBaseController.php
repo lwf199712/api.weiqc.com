@@ -57,7 +57,6 @@ abstract class RestBaseController extends ActiveController
      */
     public function actions()
     {
-        header('Access-Control-Allow-Origin:' .  $_SERVER['HTTP_ORIGIN']);
         $parent = parent::actions();
         //Unified processing of cross-domain authentication interfaces
         $parent['options'] = [
