@@ -24,4 +24,5 @@ return [
     '179t.com',
     'wteamweb.com',
     'mu-ke.com',
+    'b.meitegou.com',
 ];
