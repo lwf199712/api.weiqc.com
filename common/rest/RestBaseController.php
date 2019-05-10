@@ -57,6 +57,15 @@ abstract class RestBaseController extends ActiveController
      */
     public function actions()
     {
+        //TODO
+        $httpOrigin = $_SERVER['HTTP_ORIGIN'] ?? '';
+        if ($httpOrigin) {
+            $httpOrigin = $this->stringUtil::cutOutLater($httpOrigin, '://');
+            $httpOrigin = $this->stringUtil::cutOutFormer($httpOrigin, ':/');
+            if (in_array($httpOrigin, Yii::$app->params['cross_domain'], false)) {
+                header('Access-Control-Allow-Origin:' . $httpOrigin);
+            }
+        }
         $parent = parent::actions();
         //Unified processing of cross-domain authentication interfaces
         $parent['options'] = [

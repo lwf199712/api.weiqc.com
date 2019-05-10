@@ -33,9 +33,6 @@ class SourceDetectionUtil extends BaseObject
     {
         $httpOrigin = $_SERVER['HTTP_ORIGIN'] ?? '';
         if ($httpOrigin) {
-            echo 1;
-            var_dump($httpOrigin);
-            exit;
             $httpOrigin = $this->stringUtil::cutOutLater($httpOrigin, '://');
             $httpOrigin = $this->stringUtil::cutOutFormer($httpOrigin, ':/');
             if (in_array($httpOrigin, Yii::$app->params['cross_domain'], false)) {
