@@ -16,14 +16,14 @@ use app\models\User;
 use yii\caching\FileCache;
 
 $params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/db.php';
+$db     = require __DIR__ . '/db.php';
 //v1容器注册
 require_once __DIR__ . '/container/v1_container.php';
 
 $config = [
     'id'         => 'basic',
     'basePath'   => dirname(__DIR__),
-    'bootstrap'  => ['log'],
+    'bootstrap'  => [ 'log' ],
     'aliases'    => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -32,7 +32,7 @@ $config = [
         //load conversion modules
         'v1' => [
             'class' => V1Module::class,
-        ]
+        ],
     ],
     'components' => [
         'request'      => [
@@ -41,22 +41,21 @@ $config = [
             'parsers'             => [
                 //receive form-data to receive json data
                 'application/json' => JsonParser::class,
-            ]
+            ],
         ],
         'response'     => [
             'class'         => Response::class,
             'on beforeSend' => static function ($event) {
                 $response = $event->sender;
-                $actionId = Yii::$app->controller->action->id;
-                if ($response->data !== null && $event->sender->format === 'json' && !in_array($actionId, ['index', 'prepareDataProvider'], false)) {
-                    $responseData = $response->data;
-                    $message = array_shift($responseData);
-                    $code = array_shift($responseData);
-                    $data = array_shift($responseData);
+                if ($response->data !== null && $event->sender->format === 'json') {
+                    $responseData   = $response->data;
+                    $message        = array_shift($responseData);
+                    $code           = array_shift($responseData);
+                    $data           = array_shift($responseData);
                     $response->data = [
-                        'message' => (string)$message,
-                        'code'    => (int)$code,
-                        'data'    => is_string($data) ? [$data] : $data,
+                        'message' => (string) $message,
+                        'code'    => (int) $code,
+                        'data'    => is_string($data) ? [ $data ] : $data,
                     ];
                     ksort($response->data);
                 }
@@ -91,7 +90,7 @@ $config = [
             'targets'    => [
                 [
                     'class'  => FileTarget::class,
-                    'levels' => ['error', 'warning'],
+                    'levels' => [ 'error', 'warning' ],
                 ],
             ],
         ],
@@ -108,14 +107,14 @@ $config = [
 
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
-    $config['bootstrap'][] = 'debug';
+    $config['bootstrap'][]      = 'debug';
     $config['modules']['debug'] = [
         'class' => DebugModule::class,
         // uncomment the following to add your IP if you are not connecting from localhost.
         //'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 
-    $config['bootstrap'][] = 'gii';
+    $config['bootstrap'][]    = 'gii';
     $config['modules']['gii'] = [
         'class' => GiiModule::class,
         // uncomment the following to add your IP if you are not connecting from localhost.
