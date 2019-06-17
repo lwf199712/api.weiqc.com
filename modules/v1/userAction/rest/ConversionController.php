@@ -142,14 +142,14 @@ class ConversionController extends RestBaseController
             //检查落地页是否存在
             $staticUrl = $this->staticUrlService->findOne(['ident' => $conversionInfo->token]);
             if (!$staticUrl) {
-                return [false, 'Token不存在', 500];
+                return ['Token不存在', 500];
             }
             if ($this->staticConversionService->exists([
                 'ip'   => $this->responseUtils->ipToInt($this->request->getUserIP()),
                 'date' => strtotime(date('Y-m-d')),
                 'u_id' => $staticUrl->id
             ])) {
-                return [false, 'Ip已经被记录', 500];
+                return ['Ip已经被记录', 500];
             }
             //访问记录
             $staticConversionPo = new StaticConversionDo();
@@ -186,9 +186,9 @@ class ConversionController extends RestBaseController
             $userActionsDto->actions->outer_action_id = $staticConversionId;
             $userActionsDto->actions = [$userActionsDto->actions];
             $this->userActionsApi->add($userActionsDto);
-            return [true, '操作成功!', 200];
+            return ['操作成功!', 200];
         } catch (ValidateException|Exception|TencentMarketingApiException $e) {
-            return [false, $e->getMessage(), $e->getCode()];
+            return [$e->getMessage(), $e->getCode()];
         }
     }
 
@@ -224,9 +224,9 @@ class ConversionController extends RestBaseController
             $redisAddViewDto->action_param = $this->request->post('action_param');
             $redisAddViewDto->request_from_mobile = $this->requestUtils->requestFromMobile();
             $this->userActionCache->addViews($redisAddViewDto);
-            return [true, '操作成功!', 200];
+            return ['操作成功!', 200];
         } catch (Exception|RedisException $e) {
-            return [false, $e->getMessage(), $e->getCode()];
+            return [$e->getMessage(), $e->getCode()];
         }
     }
 

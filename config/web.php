@@ -47,18 +47,18 @@ $config = [
             'class'         => Response::class,
             'on beforeSend' => static function ($event) {
                 $response = $event->sender;
-                if ($response->data !== null && $event->sender->format === 'json') {
-                    $data = array_values($response->data);
+                $actionId = Yii::$app->controller->action->id;
+                if ($response->data !== null && $event->sender->format === 'json' && !in_array($actionId, ['index', 'prepareDataProvider'], false)) {
+                    $responseData = $response->data;
+                    $message = array_shift($responseData);
+                    $code = array_shift($responseData);
+                    $data = array_shift($responseData);
                     $response->data = [
-                        'success' => $response->isSuccessful,
-                        'data'    => [
-                            'status'  => array_shift($data),
-                            'message' => array_shift($data),
-                            'code'    => array_shift($data),
-                            'data'    => array_shift($data)
-                        ],
+                        'message' => (string)$message,
+                        'code'    => (int)$code,
+                        'data'    => is_string($data) ? [$data] : $data,
                     ];
-                    $response->statusCode = 200;
+                    ksort($response->data);
                 }
             },
         ],
