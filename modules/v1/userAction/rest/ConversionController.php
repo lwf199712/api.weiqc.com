@@ -96,18 +96,18 @@ class ConversionController extends RestBaseController
                                 UserActionCache $userActionCache,
                                 $config = [])
     {
-        $this->staticHitsService = $staticHitsService;
-        $this->staticUrlService = $staticUrlService;
-        $this->staticConversionService = $staticConversionApi;
+        $this->staticHitsService               = $staticHitsService;
+        $this->staticUrlService                = $staticUrlService;
+        $this->staticConversionService         = $staticConversionApi;
         $this->staticServiceConversionsService = $staticServiceConversionsService;
-        $this->userActionsApi = $userActionsApi;
-        $this->userActionCache = $userActionCache;
+        $this->userActionsApi                  = $userActionsApi;
+        $this->userActionCache                 = $userActionCache;
         //工具类
-        $this->responseUtils = $responseUtils;
+        $this->responseUtils       = $responseUtils;
         $this->sourceDetectionUtil = $sourceDetectionUtil;
-        $this->ipLocationUtils = $ipLocationUtils;
-        $this->requestUtils = $requestUtils;
-        $this->responseUtils = $responseUtils;
+        $this->ipLocationUtils     = $ipLocationUtils;
+        $this->requestUtils        = $requestUtils;
+        $this->responseUtils       = $responseUtils;
 
         parent::__construct($id, $module, $config);
     }
@@ -121,8 +121,8 @@ class ConversionController extends RestBaseController
     public function verbs(): array
     {
         return [
-            'add-conversion' => ['POST', 'HEAD'],
-            'add-view'       => ['POST', 'HEAD']
+            'add-conversion' => [ 'POST', 'HEAD' ],
+            'add-view'       => [ 'POST', 'HEAD' ],
         ];
     }
 
@@ -140,55 +140,55 @@ class ConversionController extends RestBaseController
             $conversionInfo = new ConversionRequestVo();
             $conversionInfo->setAttributes($this->request->post());
             //检查落地页是否存在
-            $staticUrl = $this->staticUrlService->findOne(['ident' => $conversionInfo->token]);
+            $staticUrl = $this->staticUrlService->findOne([ 'ident' => $conversionInfo->token ]);
             if (!$staticUrl) {
-                return ['Token不存在', 500];
+                return [ 'Token不存在', 500 ];
             }
             if ($this->staticConversionService->exists([
                 'ip'   => $this->responseUtils->ipToInt($this->request->getUserIP()),
                 'date' => strtotime(date('Y-m-d')),
-                'u_id' => $staticUrl->id
+                'u_id' => $staticUrl->id,
             ])) {
-                return ['Ip已经被记录', 500];
+                return [ 'Ip已经被记录', 500 ];
             }
             //访问记录
-            $staticConversionPo = new StaticConversionDo();
-            $staticConversionPo->wxh = $conversionInfo->wxh;
+            $staticConversionPo      = new StaticConversionDo();
+            $staticConversionPo->wxh = $conversionInfo->wxh ? : '';
             if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER']) {
                 $staticConversionPo->referer = $_SERVER['HTTP_REFERER'];
             }
-            $staticConversionPo->agent = $_SERVER['HTTP_USER_AGENT'];
+            $staticConversionPo->agent      = $_SERVER['HTTP_USER_AGENT'];
             $staticConversionPo->createtime = $_SERVER['REQUEST_TIME'];
-            $staticConversionPo->ip = $this->responseUtils->ipToInt($this->request->getUserIP());
-            $ipLocationUtils = $this->ipLocationUtils->getlocation(long2ip($staticConversionPo->ip));
-            $staticConversionPo->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
-            $staticConversionPo->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
-            $staticConversionPo->date = strtotime(date('Y-m-d'));
-            $staticConversionPo->page = $staticUrl->url;
+            $staticConversionPo->ip         = $this->responseUtils->ipToInt($this->request->getUserIP());
+            $ipLocationUtils                = $this->ipLocationUtils->getlocation(long2ip($staticConversionPo->ip));
+            $staticConversionPo->country    = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ? : '';
+            $staticConversionPo->area       = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ? : '';
+            $staticConversionPo->date       = strtotime(date('Y-m-d'));
+            $staticConversionPo->page       = $staticUrl->url;
             if ($staticUrl->pcurl && !$this->requestUtils->requestFromMobile()) {
                 $staticConversionPo->page = $staticUrl->pcurl;
             }
             $staticConversionPo->u_id = $staticUrl->id;
-            $staticConversionId = $this->staticConversionService->insert($staticConversionPo);
+            $staticConversionId       = $this->staticConversionService->insert($staticConversionPo);
             //系统转化数增加
             $this->staticServiceConversionsService->increasedConversions($staticUrl);
             //广点通用户行为统计接口转化数增加
-            $userActionsDto = new UserActionsRequestDto();
-            $userActionsDto->account_uin = $this->request->post('account_uin', -1);
+            $userActionsDto                              = new UserActionsRequestDto();
+            $userActionsDto->account_uin                 = $this->request->post('account_uin', -1);
             $userActionsDto->actions->user_action_set_id = $this->request->post('user_action_set_id');
-            $userActionsDto->actions->url = $this->request->post('url');
-            $userActionsDto->actions->action_time = time();
-            $userActionsDto->actions->action_type = UserActionsTypeEnum::COMPLETE_ORDER;
-            $userActionsDto->actions->trace->click_id = $this->request->post('click_id', -1);
+            $userActionsDto->actions->url                = $this->request->post('url');
+            $userActionsDto->actions->action_time        = time();
+            $userActionsDto->actions->action_type        = UserActionsTypeEnum::COMPLETE_ORDER;
+            $userActionsDto->actions->trace->click_id    = $this->request->post('click_id', -1);
             if ($this->request->post('action_param')) {
                 $userActionsDto->actions->action_param = $this->request->post('action_param');
             }
             $userActionsDto->actions->outer_action_id = $staticConversionId;
-            $userActionsDto->actions = [$userActionsDto->actions];
+            $userActionsDto->actions                  = [ $userActionsDto->actions ];
             $this->userActionsApi->add($userActionsDto);
-            return ['操作成功!', 200];
+            return [ '操作成功!', 200 ];
         } catch (ValidateException|Exception|TencentMarketingApiException $e) {
-            return [$e->getMessage(), $e->getCode()];
+            return [ $e->getMessage(), $e->getCode() ];
         }
     }
 
@@ -204,29 +204,29 @@ class ConversionController extends RestBaseController
     {
         try {
             //点击数(存储在redis)
-            $redisAddViewDto = new RedisAddViewDto();
-            $redisAddViewDto->token = $this->request->post('token');
+            $redisAddViewDto          = new RedisAddViewDto();
+            $redisAddViewDto->token   = $this->request->post('token');
             $redisAddViewDto->referer = '';
             if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER']) {
                 $redisAddViewDto->referer = $_SERVER['HTTP_REFERER'];
             }
-            $redisAddViewDto->ip = long2ip($this->responseUtils->ipToInt($this->request->getUserIP()));
-            $redisAddViewDto->agent = addslashes($_SERVER['HTTP_USER_AGENT']);
-            $redisAddViewDto->createtime = $_SERVER['REQUEST_TIME'];
-            $ipLocationUtils = $this->ipLocationUtils->getlocation(long2ip($this->responseUtils->ipToInt($this->request->getUserIP())));
-            $redisAddViewDto->country = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ?: '';
-            $redisAddViewDto->area = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ?: '';
-            $redisAddViewDto->url = $this->request->post('url');
-            $redisAddViewDto->date = strtotime(date('Y-m-d'));
-            $redisAddViewDto->account_uin = $this->request->post('account_uin', -1);
-            $redisAddViewDto->user_action_set_id = $this->request->post('user_action_set_id');
-            $redisAddViewDto->click_id = $this->request->post('click_id', -1);
-            $redisAddViewDto->action_param = $this->request->post('action_param');
+            $redisAddViewDto->ip                  = long2ip($this->responseUtils->ipToInt($this->request->getUserIP()));
+            $redisAddViewDto->agent               = addslashes($_SERVER['HTTP_USER_AGENT']);
+            $redisAddViewDto->createtime          = $_SERVER['REQUEST_TIME'];
+            $ipLocationUtils                      = $this->ipLocationUtils->getlocation(long2ip($this->responseUtils->ipToInt($this->request->getUserIP())));
+            $redisAddViewDto->country             = iconv('gbk', 'utf-8', $ipLocationUtils['country']) ? : '';
+            $redisAddViewDto->area                = iconv('gbk', 'utf-8', $ipLocationUtils['area']) ? : '';
+            $redisAddViewDto->url                 = $this->request->post('url');
+            $redisAddViewDto->date                = strtotime(date('Y-m-d'));
+            $redisAddViewDto->account_uin         = $this->request->post('account_uin', -1);
+            $redisAddViewDto->user_action_set_id  = $this->request->post('user_action_set_id');
+            $redisAddViewDto->click_id            = $this->request->post('click_id', -1);
+            $redisAddViewDto->action_param        = $this->request->post('action_param');
             $redisAddViewDto->request_from_mobile = $this->requestUtils->requestFromMobile();
             $this->userActionCache->addViews($redisAddViewDto);
-            return ['操作成功!', 200];
+            return [ '操作成功!', 200 ];
         } catch (Exception|RedisException $e) {
-            return [$e->getMessage(), $e->getCode()];
+            return [ $e->getMessage(), $e->getCode() ];
         }
     }
 
@@ -238,6 +238,6 @@ class ConversionController extends RestBaseController
      */
     protected function transactionClose(): array
     {
-        return ['actionAddViews'];
+        return [ 'actionAddViews' ];
     }
 }
