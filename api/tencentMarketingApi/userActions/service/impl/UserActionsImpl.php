@@ -39,10 +39,10 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
     public function __construct(OauthApi $oauthApi, $config = [])
     {
         $this->oauthApi = $oauthApi;
-        $this->client = new Client([
+        $this->client   = new Client([
             'cookies'  => true,
             'timeout'  => 300,
-            'base_uri' => Yii::$app->params['api']['tencent_marketing_api']['base_url']
+            'base_uri' => Yii::$app->params['api']['tencent_marketing_api']['base_url'],
         ]);
         parent::__construct($config);
     }
@@ -58,8 +58,11 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
      */
     public function add(UserActionsRequestDto $userActionsRequestDto): void
     {
-        $oauthTokenResponseDto = $this->oauthApi->getToken($userActionsRequestDto->account_uin);
+        $oauthTokenResponseDto             = $this->oauthApi->getToken($userActionsRequestDto->account_uin);
         $userActionsRequestDto->account_id = $oauthTokenResponseDto->authorizer_info->account_id;
+        //TODO 调试用,使用完毕请删除
+        Yii::info(json_encode(ArrayUtils::attributesAsMap(clone $userActionsRequestDto)), 'api_params');
+        Yii::info(json_encode(Yii::$app->request->post()), 'post_params');
         try {
             $response = $this->client->request('POST', Yii::$app->params['api']['tencent_marketing_api']['base_url'] . Yii::$app->params['api']['tencent_marketing_api']['api']['user_actions']['add'], [
                 'query' => [
@@ -67,10 +70,10 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
                     'timestamp'    => time(),
                     'nonce'        => uniqid('', false) . time(),
                 ],
-                'json'  => ArrayUtils::attributesAsMap($userActionsRequestDto)
+                'json'  => ArrayUtils::attributesAsMap($userActionsRequestDto),
             ]);
             $response = json_decode($response->getBody()->getContents(), false);
-            if (($response->code ?? true) && (int)$response->code !== 0) {
+            if (($response->code ?? true) && (int) $response->code !== 0) {
                 throw new TencentMarketingApiException('上传用户行为数据失败,接口返回错误:' . $response->message, $response->code ?? 500);
             }
         } catch (GuzzleException $e) {
@@ -90,13 +93,13 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
         //失败返回的数组
         $falseUserActionsDtoList = [];
         $falseUserActionsDtoBase = new FalseUserActionsDto();
-        $userActionsDtoList = array_values($userActionsDtoList);
-        $requests = function () use ($userActionsDtoList) {
+        $userActionsDtoList      = array_values($userActionsDtoList);
+        $requests                = function () use ($userActionsDtoList) {
             //创建多个请求
             foreach ($userActionsDtoList as $userActionsDto) {
                 yield function () use ($userActionsDto) {
                     /* @var $userActionsDto UserActionsRequestDto */
-                    $oauthTokenResponseDto = $this->oauthApi->getToken($userActionsDto->account_uin);
+                    $oauthTokenResponseDto      = $this->oauthApi->getToken($userActionsDto->account_uin);
                     $userActionsDto->account_id = $oauthTokenResponseDto->authorizer_info->account_id;
                     return $this->client->request('POST', Yii::$app->params['api']['tencent_marketing_api']['base_url'] . Yii::$app->params['api']['tencent_marketing_api']['api']['user_actions']['add'], [
                         'query' => [
@@ -104,34 +107,34 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
                             'timestamp'    => time(),
                             'nonce'        => uniqid('', false) . time(),
                         ],
-                        'json'  => ArrayUtils::attributesAsMap(clone $userActionsDto)
+                        'json'  => ArrayUtils::attributesAsMap(clone $userActionsDto),
                     ]);
                 };
             }
         };
-        $config = [
+        $config                  = [
             'concurrency' => 20, //并发请求数
             'fulfilled'   => static function ($response, $index) use ($userActionsDtoList, &$falseUserActionsDtoList, $falseUserActionsDtoBase) {
                 /* @var $response Request */
                 $contents = json_decode($response->getBody()->getContents(), true);
-                if (($contents['code'] ?? true) && (int)$contents['code'] !== 0) {
+                if (($contents['code'] ?? true) && (int) $contents['code'] !== 0) {
                     /* @var $userActionsDto UserActionsRequestDto */
-                    $userActionsDto = $userActionsDtoList[$index];
-                    $falseUserActionsDto = clone $falseUserActionsDtoBase;
-                    $falseUserActionsDto->message = $contents['message'];
-                    $falseUserActionsDto->userActionsDto = $userActionsDto;
+                    $userActionsDto                               = $userActionsDtoList[$index];
+                    $falseUserActionsDto                          = clone $falseUserActionsDtoBase;
+                    $falseUserActionsDto->message                 = $contents['message'];
+                    $falseUserActionsDto->userActionsDto          = $userActionsDto;
                     $falseUserActionsDto->userActionsDto->actions = current($falseUserActionsDto->userActionsDto->actions);
-                    $falseUserActionsDtoList[] = $falseUserActionsDto;
+                    $falseUserActionsDtoList[]                    = $falseUserActionsDto;
                 }
             },
             'rejected'    => static function ($reason, $index) use ($userActionsDtoList, &$falseUserActionsDtoList, $falseUserActionsDtoBase) {
                 /* @var $userActionsDto UserActionsRequestDto */
-                $userActionsDto = $userActionsDtoList[$index];
-                $falseUserActionsDto = clone $falseUserActionsDtoBase;
-                $falseUserActionsDto->message = $reason;
-                $falseUserActionsDto->userActionsDto = $userActionsDto;
+                $userActionsDto                               = $userActionsDtoList[$index];
+                $falseUserActionsDto                          = clone $falseUserActionsDtoBase;
+                $falseUserActionsDto->message                 = $reason;
+                $falseUserActionsDto->userActionsDto          = $userActionsDto;
                 $falseUserActionsDto->userActionsDto->actions = current($falseUserActionsDto->userActionsDto->actions);
-                $falseUserActionsDtoList[] = $falseUserActionsDto;
+                $falseUserActionsDtoList[]                    = $falseUserActionsDto;
             },
         ];
         (new Pool($this->client, $requests(), $config))->promise()->wait();

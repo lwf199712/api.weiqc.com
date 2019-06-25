@@ -16,14 +16,14 @@ use app\models\User;
 use yii\caching\FileCache;
 
 $params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/db.php';
+$db     = require __DIR__ . '/db.php';
 //v1容器注册
 require_once __DIR__ . '/container/v1_container.php';
 
 $config = [
     'id'         => 'basic',
     'basePath'   => dirname(__DIR__),
-    'bootstrap'  => ['log'],
+    'bootstrap'  => [ 'log' ],
     'aliases'    => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -32,7 +32,7 @@ $config = [
         //load conversion modules
         'v1' => [
             'class' => V1Module::class,
-        ]
+        ],
     ],
     'components' => [
         'request'      => [
@@ -41,24 +41,25 @@ $config = [
             'parsers'             => [
                 //receive form-data to receive json data
                 'application/json' => JsonParser::class,
-            ]
+            ],
         ],
         'response'     => [
             'class'         => Response::class,
             'on beforeSend' => static function ($event) {
                 $response = $event->sender;
-                if ($response->data !== null && $event->sender->format === 'json') {
-                    $data = array_values($response->data);
-                    $response->data = [
-                        'success' => $response->isSuccessful,
-                        'data'    => [
-                            'status'  => array_shift($data),
-                            'message' => array_shift($data),
-                            'code'    => array_shift($data),
-                            'data'    => array_shift($data)
-                        ],
-                    ];
-                    $response->statusCode = 200;
+                if ($event->sender->statusCode !== 500) {
+                    if ($response->data !== null && $event->sender->format === 'json') {
+                        $responseData   = $response->data;
+                        $message        = array_shift($responseData);
+                        $code           = array_shift($responseData);
+                        $data           = array_shift($responseData);
+                        $response->data = [
+                            'message' => (string) $message,
+                            'code'    => (int) $code,
+                            'data'    => is_string($data) ? [ $data ] : $data,
+                        ];
+                        ksort($response->data);
+                    }
                 }
             },
         ],
@@ -91,7 +92,27 @@ $config = [
             'targets'    => [
                 [
                     'class'  => FileTarget::class,
-                    'levels' => ['error', 'warning'],
+                    'levels' => [ 'error', 'warning', 'info', 'trace' ],
+                ],
+                //TODO 自定义info日志,用于记录post参数(线上调试用,调试完请删除)
+                [
+                    'class'       => FileTarget::class,
+                    'levels'      => [ 'info' ],
+                    'categories'  => [ 'post_params' ],
+                    'logFile'     => '@app/runtime/logs/post_params.log',
+                    'logVars'     => [ '*' ],
+                    'maxFileSize' => 1024 * 2,
+                    'maxLogFiles' => 20,
+                ],
+                //TODO 自定义info日志,用于记录api参数(线上调试用,调试完请删除)
+                [
+                    'class'       => FileTarget::class,
+                    'levels'      => [ 'info' ],
+                    'categories'  => [ 'api_params' ],
+                    'logFile'     => '@app/runtime/logs/api_params.log',
+                    'logVars'     => [ '*' ],
+                    'maxFileSize' => 1024 * 2,
+                    'maxLogFiles' => 20,
                 ],
             ],
         ],
@@ -108,14 +129,14 @@ $config = [
 
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
-    $config['bootstrap'][] = 'debug';
+    $config['bootstrap'][]      = 'debug';
     $config['modules']['debug'] = [
         'class' => DebugModule::class,
         // uncomment the following to add your IP if you are not connecting from localhost.
         //'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 
-    $config['bootstrap'][] = 'gii';
+    $config['bootstrap'][]    = 'gii';
     $config['modules']['gii'] = [
         'class' => GiiModule::class,
         // uncomment the following to add your IP if you are not connecting from localhost.

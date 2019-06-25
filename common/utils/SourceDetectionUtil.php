@@ -33,8 +33,9 @@ class SourceDetectionUtil extends BaseObject
     {
         $httpOrigin = $_SERVER['HTTP_ORIGIN'] ?? '';
         if ($httpOrigin) {
-            $httpOrigin = $this->stringUtil::cutOutLater($httpOrigin, '://');
-            $httpOrigin = $this->stringUtil::cutOutFormer($httpOrigin, ':/');
+            $httpOrigin = $this->stringUtil::cutOutLater($httpOrigin, 'https://');
+            $httpOrigin = $this->stringUtil::cutOutFormer($httpOrigin, 'http://');
+            $httpOrigin = $this->stringUtil::cutOutFormer($httpOrigin, '.');
             if (in_array($httpOrigin, Yii::$app->params['cross_domain'], false)) {
                 header('Access-Control-Allow-Origin:' . $httpOrigin);
                 header('Access-Control-Allow-Headers:' . $httpOrigin);
