@@ -28,12 +28,6 @@ add('writable_dirs', [
     'web/uploads/temp',
 ]);
 
-
-// Hosts
-
-host('project.com')
-    ->set('deploy_path', '~/{{application}}');
-
 // Tasks
 
 // Hosts 防真环境服务器配置
