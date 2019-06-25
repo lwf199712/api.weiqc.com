@@ -43,6 +43,15 @@
     "process-timeout": 1800,
     "fxp-asset": {
       "enabled": false
+    },
+    "process-timeout": 1800,
+    "preferred-install": "dist",
+    "github-protocols": [
+      "https",
+      "http"
+    ],
+    "github-oauth": {
+      "github.com": "1c997f0dbf668c4745b8966df4ae31a8fc23a6e2"
     }
   },
   "scripts": {
@@ -74,7 +83,7 @@
   "repositories": [
     {
       "type": "composer",
-      "url": "https://asset-packagist.org"
+      "url": "https://packagist.laravel-china.org"
     }
   ]
 }
