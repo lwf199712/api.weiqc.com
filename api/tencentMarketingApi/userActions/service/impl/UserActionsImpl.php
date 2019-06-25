@@ -60,8 +60,9 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
     {
         $oauthTokenResponseDto             = $this->oauthApi->getToken($userActionsRequestDto->account_uin);
         $userActionsRequestDto->account_id = $oauthTokenResponseDto->authorizer_info->account_id;
-        Yii::info(json_encode(ArrayUtils::attributesAsMap(clone $userActionsRequestDto), 256), 'post_api');
-        Yii::info(json_encode(Yii::$app->request->get(), 256), 'get_params');
+        //TODO 调试用,使用完毕请删除
+        Yii::info(json_encode(ArrayUtils::attributesAsMap(clone $userActionsRequestDto)), 'api_params');
+        Yii::info(json_encode(Yii::$app->request->post()), 'post_params');
         try {
             $response = $this->client->request('POST', Yii::$app->params['api']['tencent_marketing_api']['base_url'] . Yii::$app->params['api']['tencent_marketing_api']['api']['user_actions']['add'], [
                 'query' => [

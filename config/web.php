@@ -92,7 +92,27 @@ $config = [
             'targets'    => [
                 [
                     'class'  => FileTarget::class,
-                    'levels' => [ 'error', 'warning' ],
+                    'levels' => [ 'error', 'warning', 'info', 'trace' ],
+                ],
+                //TODO 自定义info日志,用于记录post参数(线上调试用,调试完请删除)
+                [
+                    'class'       => FileTarget::class,
+                    'levels'      => [ 'info' ],
+                    'categories'  => [ 'post_params' ],
+                    'logFile'     => '@app/runtime/logs/post_params.log',
+                    'logVars'     => [ '*' ],
+                    'maxFileSize' => 1024 * 2,
+                    'maxLogFiles' => 20,
+                ],
+                //TODO 自定义info日志,用于记录api参数(线上调试用,调试完请删除)
+                [
+                    'class'       => FileTarget::class,
+                    'levels'      => [ 'info' ],
+                    'categories'  => [ 'api_params' ],
+                    'logFile'     => '@app/runtime/logs/api_params.log',
+                    'logVars'     => [ '*' ],
+                    'maxFileSize' => 1024 * 2,
+                    'maxLogFiles' => 20,
                 ],
             ],
         ],
