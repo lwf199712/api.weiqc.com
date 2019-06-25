@@ -24,6 +24,7 @@ use app\common\utils\ResponseUtils;
 use app\common\utils\SourceDetectionUtil;
 use app\common\utils\RequestUtils;
 use Exception;
+use Yii;
 
 /**
  * 上报用户行为控制器

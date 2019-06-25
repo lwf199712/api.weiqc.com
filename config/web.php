@@ -47,17 +47,19 @@ $config = [
             'class'         => Response::class,
             'on beforeSend' => static function ($event) {
                 $response = $event->sender;
-                if ($response->data !== null && $event->sender->format === 'json') {
-                    $responseData   = $response->data;
-                    $message        = array_shift($responseData);
-                    $code           = array_shift($responseData);
-                    $data           = array_shift($responseData);
-                    $response->data = [
-                        'message' => (string) $message,
-                        'code'    => (int) $code,
-                        'data'    => is_string($data) ? [ $data ] : $data,
-                    ];
-                    ksort($response->data);
+                if ($event->sender->statusCode !== 500) {
+                    if ($response->data !== null && $event->sender->format === 'json') {
+                        $responseData   = $response->data;
+                        $message        = array_shift($responseData);
+                        $code           = array_shift($responseData);
+                        $data           = array_shift($responseData);
+                        $response->data = [
+                            'message' => (string) $message,
+                            'code'    => (int) $code,
+                            'data'    => is_string($data) ? [ $data ] : $data,
+                        ];
+                        ksort($response->data);
+                    }
                 }
             },
         ],
@@ -90,7 +92,27 @@ $config = [
             'targets'    => [
                 [
                     'class'  => FileTarget::class,
-                    'levels' => [ 'error', 'warning' ],
+                    'levels' => [ 'error', 'warning', 'info', 'trace' ],
+                ],
+                //TODO 自定义info日志,用于记录post参数(线上调试用,调试完请删除)
+                [
+                    'class'       => FileTarget::class,
+                    'levels'      => [ 'info' ],
+                    'categories'  => [ 'post_params' ],
+                    'logFile'     => '@app/runtime/logs/post_params.log',
+                    'logVars'     => [ '*' ],
+                    'maxFileSize' => 1024 * 2,
+                    'maxLogFiles' => 20,
+                ],
+                //TODO 自定义info日志,用于记录api参数(线上调试用,调试完请删除)
+                [
+                    'class'       => FileTarget::class,
+                    'levels'      => [ 'info' ],
+                    'categories'  => [ 'api_params' ],
+                    'logFile'     => '@app/runtime/logs/api_params.log',
+                    'logVars'     => [ '*' ],
+                    'maxFileSize' => 1024 * 2,
+                    'maxLogFiles' => 20,
                 ],
             ],
         ],
