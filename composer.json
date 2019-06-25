@@ -41,10 +41,6 @@
   },
   "config": {
     "process-timeout": 1800,
-    "fxp-asset": {
-      "enabled": false
-    },
-    "process-timeout": 1800,
     "preferred-install": "dist",
     "github-protocols": [
       "https",
