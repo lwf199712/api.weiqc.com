@@ -2,6 +2,7 @@
 
 namespace app\common\exception;
 
+
 use yii\base\Exception;
 
 /**
