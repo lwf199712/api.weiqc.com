@@ -47,17 +47,19 @@ $config = [
             'class'         => Response::class,
             'on beforeSend' => static function ($event) {
                 $response = $event->sender;
-                if ($response->data !== null && $event->sender->format === 'json') {
-                    $responseData   = $response->data;
-                    $message        = array_shift($responseData);
-                    $code           = array_shift($responseData);
-                    $data           = array_shift($responseData);
-                    $response->data = [
-                        'message' => (string) $message,
-                        'code'    => (int) $code,
-                        'data'    => is_string($data) ? [ $data ] : $data,
-                    ];
-                    ksort($response->data);
+                if ($event->sender->statusCode !== 500) {
+                    if ($response->data !== null && $event->sender->format === 'json') {
+                        $responseData   = $response->data;
+                        $message        = array_shift($responseData);
+                        $code           = array_shift($responseData);
+                        $data           = array_shift($responseData);
+                        $response->data = [
+                            'message' => (string) $message,
+                            'code'    => (int) $code,
+                            'data'    => is_string($data) ? [ $data ] : $data,
+                        ];
+                        ksort($response->data);
+                    }
                 }
             },
         ],
