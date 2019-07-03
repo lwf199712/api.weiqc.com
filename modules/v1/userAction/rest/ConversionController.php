@@ -3,9 +3,7 @@
 namespace app\modules\v1\userAction\rest;
 
 use app\api\tencentMarketingApi\userActions\api\UserActionsApi;
-use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsActionsRequestDto;
 use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsRequestDto;
-use app\api\tencentMarketingApi\userActions\domain\dto\UserActionsTraceRequestDto;
 use app\api\tencentMarketingApi\userActions\enum\UserActionsTypeEnum;
 use app\common\exception\RedisException;
 use app\common\rest\RestBaseController;
@@ -24,7 +22,6 @@ use app\common\utils\ResponseUtils;
 use app\common\utils\SourceDetectionUtil;
 use app\common\utils\RequestUtils;
 use Exception;
-use Yii;
 
 /**
  * 上报用户行为控制器

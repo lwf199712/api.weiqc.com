@@ -114,6 +114,16 @@ $config = [
                     'maxFileSize' => 1024 * 2,
                     'maxLogFiles' => 20,
                 ],
+                //TODO 自定义info日志,用于记录api参数响应值
+                [
+                    'class'       => FileTarget::class,
+                    'levels'      => [ 'info' ],
+                    'categories'  => [ 'api_response' ],
+                    'logFile'     => '@app/runtime/logs/api_response.log',
+                    'logVars'     => [ '*' ],
+                    'maxFileSize' => 1024 * 2,
+                    'maxLogFiles' => 20,
+                ],
             ],
         ],
         //路由美化

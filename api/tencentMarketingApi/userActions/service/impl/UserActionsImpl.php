@@ -73,10 +73,12 @@ class UserActionsImpl extends ClientBaseService implements UserActionsService
                 'json'  => ArrayUtils::attributesAsMap($userActionsRequestDto),
             ]);
             $response = json_decode($response->getBody()->getContents(), false);
+            Yii::info(json_encode($response, 'api_response'));
             if (($response->code ?? true) && (int) $response->code !== 0) {
                 throw new TencentMarketingApiException('上传用户行为数据失败,接口返回错误:' . $response->message, $response->code ?? 500);
             }
         } catch (GuzzleException $e) {
+            Yii::info(json_encode(json_encode([ 'message' => $e->getMessage(), 'code' => $e->getCode() ]), 'api_response'));
             throw new TencentMarketingApiException($e->getMessage(), $e->getCode());
         }
     }
