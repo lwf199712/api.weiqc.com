@@ -147,12 +147,6 @@ class UrlConvertController extends RestBaseController
                 }
                 $this->userActionCache->addUrConvertVisit($redisUrlConvertDto);
 
-                if (strpos($linkUrl, '?') === false) {
-                    $linkUrl .= '?token=' . $staticUrl->ident;
-                } else {
-                    $linkUrl .= '&token=' . $staticUrl->ident;
-                }
-
                 $linkUrl .= (strpos($linkUrl, '?') === false ? '?token=' : '&token=') . $staticUrl->ident;
 
                 $this->response->redirect($linkUrl);
