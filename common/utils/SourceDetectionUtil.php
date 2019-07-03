@@ -42,4 +42,45 @@ class SourceDetectionUtil extends BaseObject
             }
         }
     }
+
+    /**
+     * url device detection
+     * return true if is mobile phone request
+     * @return bool
+     */
+    public function mobileDetection(): bool
+    {
+        $mobileBrowserList = Yii::$app->params['mobile'];
+        $useragent         = strtolower($_SERVER['HTTP_USER_AGENT']);
+        if (($this->dstrpos($useragent, $mobileBrowserList))) {
+            return true;
+        }
+
+        $browser = array('mozilla', 'chrome', 'safari', 'opera', 'm3gate', 'winwap', 'openwave', 'myop');
+        if($this->dstrpos($useragent, $browser)) {
+            return false;
+        }
+
+//        if($_GET['mobile'] === 'yes') {
+//            return true;
+//        } else {
+//            return false;
+//        }
+    }
+
+
+
+    private function dstrpos($string, &$arr, $returnValue = false)
+    {
+        if (empty($string)) {
+            return false;
+        }
+        foreach ((array)$arr as $v) {
+            if (strpos($string, $v) !== false) {
+                $return = $returnValue ? $v : true;
+                return $return;
+            }
+        }
+        return false;
+    }
 }
