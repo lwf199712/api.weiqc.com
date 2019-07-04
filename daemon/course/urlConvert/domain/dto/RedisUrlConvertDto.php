@@ -7,7 +7,6 @@ use yii\base\Model;
 /**
  * Class RedisAddViewDto
  *
- * @property string $token token
  * @property integer $u_id
  * @property integer $ip IP地址
  * @property string $country 国家
@@ -23,8 +22,6 @@ use yii\base\Model;
  */
 class RedisUrlConvertDto extends Model
 {
-    /* @var string $token */
-    public $token;
     /* @var integer $u_id */
     public $u_id;
     /* @var integer $ip */
@@ -35,14 +32,15 @@ class RedisUrlConvertDto extends Model
     public $area;
     /* @var string $date */
     public $date;
+    /** @var string $page */
+    public $page;
     /* @var string $referer */
     public $referer;
     /* @var string $agent */
     public $agent;
     /* @var integer $createtime */
     public $createtime;
-    /** @var string $page */
-    public $page;
+
 
     /**
      * Returns the validation rules for attributes.
@@ -53,7 +51,7 @@ class RedisUrlConvertDto extends Model
     public function rules(): array
     {
         return [
-            [['page', 'request_from_mobile', 'token', 'u_id', 'ip', 'country', 'area', 'date', 'referer', 'agent', 'createtime',], 'string']
+            [['u_id', 'ip', 'country', 'area', 'date', 'page','referer', 'agent', 'createtime',], 'string']
         ];
     }
 
@@ -66,16 +64,15 @@ class RedisUrlConvertDto extends Model
     public function attributeLabels(): array
     {
         return [
-            'token'               => 'token',
             'u_id'                => 'u_id',
             'ip'                  => 'ip',
             'country'             => 'country',
             'area'                => 'area',
+            'page'                => 'page',
             'date'                => 'date',
             'referer'             => 'referer',
             'agent'               => 'agent',
             'createtime'          => 'createtime',
-            'page'                => 'page',
         ];
     }
 }

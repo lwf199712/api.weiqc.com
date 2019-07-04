@@ -21,6 +21,8 @@ use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;
 
 $containerList = [
+    //urlConvert模块容器
+    CommandUrlConvertService::class => CommandUrlConvertImpl::class,
     //conversion模块容器
     CourseStaticHitsService::class  => CommandsCourseStaticHitsImpl::class,
     CommandsStaticUrlService::class => CommandsStaticUrlImpl::class,
