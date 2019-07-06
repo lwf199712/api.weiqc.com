@@ -3,6 +3,8 @@
 
 namespace app\models\dataObject;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "{{%statis_client}}".
  *
@@ -17,7 +19,7 @@ namespace app\models\dataObject;
  * @property string $agent
  * @property int $createtime
  */
-class StaticClientDo
+class StaticClientDo extends ActiveRecord
 {
     /**
      * {@inheritdoc}

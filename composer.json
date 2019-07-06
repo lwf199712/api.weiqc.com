@@ -27,7 +27,8 @@
     "yiisoft/yii2-bootstrap": "~2.0.0",
     "yiisoft/yii2-swiftmailer": "~2.1.0",
     "guzzlehttp/guzzle": "~6.0",
-    "workerman/workerman": "^3.5"
+    "workerman/workerman": "^3.5",
+    "symfony/event-dispatcher": "^4.2"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.1.0",

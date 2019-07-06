@@ -35,8 +35,10 @@ use app\common\utils\RedisUtils;
 use app\common\utils\RequestUtils;
 use app\common\utils\ResponseUtils;
 use app\common\utils\SourceDetectionUtil;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 $containerList = [
+
     //公共容器:工具类
     SourceDetectionUtil::class                       => SourceDetectionUtil::class,
     ResponseUtils::class                             => ResponseUtils::class,
@@ -51,6 +53,8 @@ $containerList = [
     StaticHitsDo::class                              => StaticHitsDo::class,
     StaticUrlDo::class                               => StaticUrlDo::class,
     RedisUtils::class                                => RedisUtils::class,
+    //公共容器:事件派遣
+    EventDispatcher::class                           => EventDispatcher::class,
     //userAction模块容器
     UserActionStaticUrlService::class                => UserActionUserActionStaticUrlImpl::class,
     UserActionStaticConversionService::class         => UserActionUserActionStaticConversionImpl::class,

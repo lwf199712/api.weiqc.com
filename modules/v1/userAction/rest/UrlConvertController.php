@@ -23,11 +23,12 @@ use yii\web\Cookie;
  * 短链转长链接口
  * Class UrlConvertController
  * @property UserActionStaticHitsService $staticHitsService
- * @property UserActionCache userActionCache
- * @property IpLocationUtils $ipLocationUtils
- * @property RequestUtils $requestUtils
- * @property ResponseUtils $responseUtils
- * @property SourceDetectionUtil $sourceDetectionUtil
+ * @property  UserActionStaticUrlService $staticUrlService,
+ * @property UserActionCache             userActionCache
+ * @property IpLocationUtils             $ipLocationUtils
+ * @property RequestUtils                $requestUtils
+ * @property ResponseUtils               $responseUtils
+ * @property SourceDetectionUtil         $sourceDetectionUtil
  * @package app\modules\v1\userAction\rest
  */
 class UrlConvertController extends RestBaseController
@@ -49,16 +50,16 @@ class UrlConvertController extends RestBaseController
 
     /**
      * UrlConvertController constructor.
-     * @param $id
-     * @param $module
+     * @param                             $id
+     * @param                             $module
      * @param UserActionStaticHitsService $staticHitsService
-     * @param UserActionStaticUrlService $staticUrlService
-     * @param UserActionCache $userActionCache ,
-     * @param SourceDetectionUtil $sourceDetectionUtil
-     * @param ResponseUtils $responseUtils
-     * @param IpLocationUtils $ipLocationUtils
-     * @param RequestUtils $requestUtils
-     * @param $config
+     * @param UserActionStaticUrlService  $staticUrlService
+     * @param UserActionCache             $userActionCache ,
+     * @param SourceDetectionUtil         $sourceDetectionUtil
+     * @param ResponseUtils               $responseUtils
+     * @param IpLocationUtils             $ipLocationUtils
+     * @param RequestUtils                $requestUtils
+     * @param                             $config
      */
     public function __construct($id, $module,
                                 UserActionStaticHitsService $staticHitsService,
@@ -71,7 +72,7 @@ class UrlConvertController extends RestBaseController
                                 $config = [])
     {
         $this->staticHitsService = $staticHitsService;
-        $this->$staticUrlService = $staticUrlService;
+        $this->staticUrlService  = $staticUrlService;
         $this->userActionCache   = $userActionCache;
         //工具类
         $this->responseUtils       = $responseUtils;
@@ -126,7 +127,7 @@ class UrlConvertController extends RestBaseController
                 }
                 $cookie = $this->response->cookies;
                 $cookie->add(new Cookie([
-                    'name' => $cookieName,
+                    'name'  => $cookieName,
                     'value' => $redisUrlConvertDto,
                 ]));
 
