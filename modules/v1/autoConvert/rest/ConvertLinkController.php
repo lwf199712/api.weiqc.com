@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use app\common\rest\RestBaseController;
 use app\common\utils\RedisUtils;
@@ -8,25 +8,27 @@ use app\common\utils\ResponseUtils;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
- * @property RequestUtils  $requestUtils
- * @property ResponseUtils $responseUtils
- * @property RedisUtils    $redisUtils
- * @property EventDispatcher dispatcher
- * @property string $distribute
- * @property string $stopSupport
- * @property string $whiteList
+ * @property CalculateLackFansRateService $calculateLackFansRateService
+ * @property RequestUtils                 $requestUtils
+ * @property ResponseUtils                $responseUtils
+ * @property RedisUtils                   $redisUtils
+ * @property EventDispatcher              dispatcher
+ * @property string                       $distribute
+ * @property string                       $stopSupport
+ * @property string                       $whiteList
  * Class ConvertLinkController
  */
 class ConvertLinkController extends RestBaseController
 {
-
+    /** @var CalculateLackFansRateService */
+    protected $calculateLackFansRateService;
     /* @var RequestUtils */
     protected $requestUtils;
     /* @var ResponseUtils */
     protected $responseUtils;
     /** @var  RedisUtils */
     protected $redisUtils;
-    /** @var EventDispatcher  */
+    /** @var EventDispatcher */
     protected $dispatcher;
     /** @var string $distribute 是否可分配 */
     protected $distribute;
@@ -36,8 +38,8 @@ class ConvertLinkController extends RestBaseController
     protected $whiteList;
 
 
-
     public function __construct($id, $module,
+                                CalculateLackFansRateService $calculateLackFansRateService,
                                 RequestUtils $requestUtils,
                                 ResponseUtils $responseUtils,
                                 EventDispatcher $dispatcher,
@@ -45,10 +47,11 @@ class ConvertLinkController extends RestBaseController
                                 $config = [])
     {
         //工具类
-        $this->requestUtils  = $requestUtils;
-        $this->responseUtils = $responseUtils;
-        $this->redisUtils    = $redisUtils;
-        $this->dispatcher    = $dispatcher;
+        $this->calculateLackFansRateService = $calculateLackFansRateService;
+        $this->requestUtils                 = $requestUtils;
+        $this->responseUtils                = $responseUtils;
+        $this->redisUtils                   = $redisUtils;
+        $this->dispatcher                   = $dispatcher;
         parent::__construct($id, $module, $config);
     }
 
@@ -66,14 +69,14 @@ class ConvertLinkController extends RestBaseController
         ];
     }
 
-    public function convert() : void
+    public function convert(): void
     {
         $convertRequestInfo = new ConvertRequestVo();
         $convertRequestInfo->setAttributes($this->request->get());
-        $autoConvertService  = new AutoConvertService($this->redisUtils,$convertRequestInfo);
+        $autoConvertService = new AutoConvertService($this->redisUtils, $convertRequestInfo,$this->calculateLackFansRateService);
         $autoConvertService->prepareData();
         $autoConvertService->initDept();
-        $redis  = $this->redisUtils->getRedis();
+        $redis = $this->redisUtils->getRedis();
         //是否可分配
         $this->distribute = $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department, SectionRealtimeMsgEnum::getIsDistribute(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
         //是否停止供粉
@@ -82,14 +85,14 @@ class ConvertLinkController extends RestBaseController
         $this->whiteList = $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department, SectionRealtimeMsgEnum::getWhiteList(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
 
         $autoConvertSubscriber = new AutoConvertSubscriber();
-        $autoConvertEvent = new AutoConvertEvent($convertRequestInfo,$autoConvertService,$this->redisUtils,$this->distribute,$this->stopSupport,$this->whiteList);
+        $autoConvertEvent      = new AutoConvertEvent($convertRequestInfo, $autoConvertService, $this->redisUtils, $this->distribute, $this->stopSupport, $this->whiteList);
         $this->dispatcher->addSubscriber($autoConvertSubscriber);
-        $this->dispatcher->dispatch(AutoConvertEvent::NAME,$autoConvertEvent);
+        $this->dispatcher->dispatch(AutoConvertEvent::NAME, $autoConvertEvent);
         $changeDept = $autoConvertEvent->getReturnDept();
-        if ($changeDept === null){
-            return ;
+        if ($changeDept === null) {
+            return;
         }
-        $autoConvertService->changeService();
+        $autoConvertService->changeService($changeDept);
     }
 
 

@@ -61,6 +61,8 @@ $containerList = [
     UserActionStaticServiceConversionsService::class => UserActionUserActionStaticServiceConversionsImpl::class,
     UserActionsService::class                        => UserActionsImpl::class,
     UserActionStaticHitsService::class               => UserActionUserActionStaticHitsImpl::class,
+    //autoConvert模块容器
+    CalculateLackFansRateService::class              => CalculateLackFansRateServiceImpl::class,
     //oauth模块容器
     UserActionCache::class                           => UserActionRedisCacheImpl::class,
     //tencentMarketingApi - oauth 容器

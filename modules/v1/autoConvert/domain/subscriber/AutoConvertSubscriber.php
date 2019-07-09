@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use app\models\dataObject\SectionRealtimeMsgDo;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -10,10 +11,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * 3.判断是否停止供粉
  * 4.判断是否达到供粉目标
  * 5.计算转粉公众号
- *
+ * 6.满粉处理
+ *   ① 全体增量百分之十
+ *   ② 判断是否满粉，不满粉则切换
+ *   ③ 满粉则计算最高缺粉率部门
  * @version 1.0
  * @property bool $inTimeRange
- * @author zhuozhen
+ * @author  zhuozhen
  */
 class AutoConvertSubscriber implements EventSubscriberInterface
 {
@@ -42,12 +46,15 @@ class AutoConvertSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            AutoConvertEvent::NAME => [
+            AutoConvertEvent::NAME          => [     //默认进粉事件
                 ['init', 1],
                 ['deptRule', 2],
                 ['supportRule', 3],
                 ['convertAim', 4],
                 ['calculateDisparity', 5],
+                ['raiseConvertAim', 6],
+                ['fullFansConvertAim', 7],
+                ['fullFansCalculateDisparity', 8],
             ],
         ];
     }
@@ -61,7 +68,7 @@ class AutoConvertSubscriber implements EventSubscriberInterface
     {
         $redis             = $event->redisUtils->getRedis();
         $timeStamp         = $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE));
-        $timeRange         = $event->autoConvertService->getTimeRange($timeStamp);
+        $timeRange         = $event->autoConvertService->getTimeRange((int)$timeStamp);
         $nowTime           = time();
         $todayEndTime      = mktime(23, 59, 59, date('m'), date('d'), date('Y'));
         $this->inTimeRange = true;
@@ -86,7 +93,7 @@ class AutoConvertSubscriber implements EventSubscriberInterface
     public function deptRule(AutoConvertEvent $event): void
     {
         if (empty($event->whiteList) && $event->distribute === 'no') {
-            $event->setReturnDept(null);
+            $event->setReturnDept();
             $event->stopPropagation();
         }
     }
@@ -99,7 +106,7 @@ class AutoConvertSubscriber implements EventSubscriberInterface
     public function supportRule(AutoConvertEvent $event): void
     {
         if ($event->stopSupport === 'yes') {
-            $event->setReturnDept(null);
+            $event->setReturnDept();
             $event->stopPropagation();
         }
     }
@@ -111,21 +118,91 @@ class AutoConvertSubscriber implements EventSubscriberInterface
      */
     public function convertAim(AutoConvertEvent $event): void
     {
-        $redis   = $event->redisUtils->getRedis();
-        $diffVal = $event->convertRequestInfo->fansCount - $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE));
-        $thirtyMinFansTarget = $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE  . $event->convertRequestInfo->department, SectionRealtimeMsgEnum::getThirtyMinFansTarget(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
-        if ($diffVal <= $thirtyMinFansTarget){
-            $event->setReturnDept(null);
+        $redis               = $event->redisUtils->getRedis();
+        $diffVal             = $event->convertRequestInfo->fansCount - $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE));
+        $thirtyMinFansTarget = $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department, SectionRealtimeMsgEnum::getThirtyMinFansTarget(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
+        if ($diffVal <= $thirtyMinFansTarget) {
+            $event->setReturnDept();
             $event->stopPropagation();
         }
     }
 
     /**
-     * 计算分部间的差距以选出需转入的分部
+     * 计算缺粉率以选出需转入的分部
      * @param AutoConvertEvent $event
      * @author zhuozhen
      */
     public function calculateDisparity(AutoConvertEvent $event): void
     {
+        $lackRateAndDept = $event->autoConvertService->calculateLackFansRateService->calculateLackFansRate($event,false);
+        if ($lackRateAndDept === null) {
+            $event->setReturnDept();
+            $event->stopPropagation();
+        }
+        if ($lackRateAndDept['lackFansRate'] > 0) {
+            //切换公众号
+            $event->setReturnDept($lackRateAndDept['lackFansDept']);
+            $event->stopPropagation();
+        }
+        //公众号都已满粉
     }
+
+    /**
+     * 全部满粉，增量百分之十
+     * @param AutoConvertEvent $event
+     * @author zhuozhen
+     */
+    public function raiseConvertAim(AutoConvertEvent $event): void
+    {
+        //更新缓存中满粉目标数，在原有基础上增加10%
+        $availableDept = SectionRealtimeMsgDo::find()->select('current_dept,thirty_min_fans_target')->asArray()->all();
+
+        foreach ($availableDept as $v) {
+            $oldFullFansCount = $event->redisUtils->getRedis()->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $v['current_dept'], 'fullFansCount');
+            if ($oldFullFansCount !== null) {
+                $newFullFansCount = (int)$oldFullFansCount + ceil($v['thirty_min_fans_target'] * 0.1);
+                $event->redisUtils->getRedis()->hSet(MessageEnum::DC_REAL_TIME_MESSAGE . $v['current_dept'], 'fullFansCount', $newFullFansCount);
+            }
+        }
+    }
+
+    /**
+     * 计算增量后是否满粉
+     * @param AutoConvertEvent $event
+     * @author zhuozhen
+     */
+    public function fullFansConvertAim(AutoConvertEvent $event): void
+    {
+        $redis               = $event->redisUtils->getRedis();
+        $diffVal             = $event->convertRequestInfo->fansCount - $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department, 'fullFansCount');
+        if ($diffVal <= 0) {
+            $event->setReturnDept($event->convertRequestInfo->department);
+            $event->stopPropagation();
+        }
+    }
+
+    /**
+     * 满粉后计算最高缺粉率部门
+     * @param AutoConvertEvent $event
+     * @author zhuozhen
+     */
+    public function fullFansCalculateDisparity(AutoConvertEvent $event) : void
+    {
+        $lackRateAndDept = $event->autoConvertService->calculateLackFansRateService->calculateLackFansRate($event,true);
+        if ($lackRateAndDept === null) {
+            $event->setReturnDept();
+            $event->stopPropagation();
+        }
+        if ($lackRateAndDept['lackFansRate'] > 0) {
+            //切换公众号
+            $event->setReturnDept($lackRateAndDept['lackFansDept']);
+            $event->stopPropagation();
+        }else{
+            $event->setReturnDept();
+            $event->stopPropagation();
+        }
+
+    }
+
+
 }

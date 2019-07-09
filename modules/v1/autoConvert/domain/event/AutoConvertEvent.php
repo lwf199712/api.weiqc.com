@@ -13,24 +13,24 @@ use Symfony\Component\EventDispatcher\Event;
  * @property string             $whiteList
  * Class AutoConvertEvent
  */
-class AutoConvertEvent extends Event
+class AutoConvertEvent extends Event implements AutoConvertEventInterface
 {
     public const NAME = 'AutoConvertEvent';
 
     /** @var ConvertRequestVo */
-    protected $convertRequestInfo;
+    public $convertRequestInfo;
     /** @var  RedisUtils */
-    protected $redisUtils;
+    public $redisUtils;
     /** @var AutoConvertService */
-    protected $autoConvertService;
-    /** @var array */
-    protected $returnDept;
+    public $autoConvertService;
+    /** @var string */
+    public $returnDept;
     /** @var string $distribute 是否可分配 */
-    protected $distribute;
+    public $distribute;
     /** @var string $stopSupport 是否停止供粉 */
-    protected $stopSupport;
+    public $stopSupport;
     /** @var string $whiteList 白名单 */
-    protected $whiteList;
+    public $whiteList;
 
     public function __construct(ConvertRequestVo $convertRequestInfo,
                                 AutoConvertService $autoConvertService,
@@ -50,23 +50,22 @@ class AutoConvertEvent extends Event
 
     /**
      * 获取粉丝需转移到的分部
-     * @return array
+     * @return string || null
      * @author zhuozhen
      */
-    public function getReturnDept(): array
+    public function getReturnDept() :? string
     {
         return $this->returnDept;
     }
 
+
     /**
      * 设置粉丝需转移到的分部
-     * @param array $returnDept
+     * @param string $dept
      * @author zhuozhen
      */
-    public function setReturnDept(array $returnDept): void
+    public function setReturnDept(string $dept = null): void
     {
-        $this->returnDept = $returnDept;
+        $this->returnDept = $dept;
     }
-
-
 }
