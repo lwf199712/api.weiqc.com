@@ -20,6 +20,12 @@ use app\models\dataObject\StaticConversionDo;
 use app\models\dataObject\StaticHitsDo;
 use app\models\dataObject\StaticServiceConversionsDo;
 use app\models\dataObject\StaticUrlDo;
+use app\modules\v1\autoConvert\service\AutoConvertStaticUrlService;
+use app\modules\v1\autoConvert\service\CalculateLackFansRateService;
+use app\modules\v1\autoConvert\service\ChangeService;
+use app\modules\v1\autoConvert\service\impl\AutoConvertStaticUrlServiceImpl;
+use app\modules\v1\autoConvert\service\impl\CalculateLackFansRateServiceImpl;
+use app\modules\v1\autoConvert\service\impl\ChangeServiceImpl;
 use app\modules\v1\userAction\service\impl\UserActionRedisCacheImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticConversionImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticHitsImpl;
@@ -63,6 +69,8 @@ $containerList = [
     UserActionStaticHitsService::class               => UserActionUserActionStaticHitsImpl::class,
     //autoConvert模块容器
     CalculateLackFansRateService::class              => CalculateLackFansRateServiceImpl::class,
+    ChangeService::class                             => ChangeServiceImpl::class,
+    AutoConvertStaticUrlService::class               => AutoConvertStaticUrlServiceImpl::class,
     //oauth模块容器
     UserActionCache::class                           => UserActionRedisCacheImpl::class,
     //tencentMarketingApi - oauth 容器

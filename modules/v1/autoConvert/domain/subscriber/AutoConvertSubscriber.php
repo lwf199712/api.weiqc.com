@@ -1,7 +1,12 @@
 <?php
 declare(strict_types=1);
+namespace app\modules\v1\autoConvert\subscriber;
 
 use app\models\dataObject\SectionRealtimeMsgDo;
+use app\modules\v1\autoConvert\enum\MessageEnum;
+use app\modules\v1\autoConvert\enum\SectionRealtimeMsgEnum;
+use app\modules\v1\autoConvert\event\AutoConvertEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -46,7 +51,7 @@ class AutoConvertSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            AutoConvertEvent::NAME          => [     //默认进粉事件
+            AutoConvertEvent::DEFAULT_SCENE          => [     //默认进粉事件
                 ['init', 1],
                 ['deptRule', 2],
                 ['supportRule', 3],
@@ -56,6 +61,11 @@ class AutoConvertSubscriber implements EventSubscriberInterface
                 ['fullFansConvertAim', 7],
                 ['fullFansCalculateDisparity', 8],
             ],
+            AutoConvertEvent::FULL_FANS_SCENE       => [       //满粉循环
+                ['raiseConvertAim', 1],
+                ['fullFansConvertAim', 2],
+                ['fullFansCalculateDisparity', 3],
+            ]
         ];
     }
 
@@ -198,7 +208,10 @@ class AutoConvertSubscriber implements EventSubscriberInterface
             $event->setReturnDept($lackRateAndDept['lackFansDept']);
             $event->stopPropagation();
         }else{
-            $event->setReturnDept();
+            $autoConvertSubscriber = new self();
+            $dispatcher = new EventDispatcher();
+            $dispatcher->addSubscriber($autoConvertSubscriber);
+            $dispatcher->dispatch(AutoConvertEvent::FULL_FANS_SCENE, $event);
             $event->stopPropagation();
         }
 

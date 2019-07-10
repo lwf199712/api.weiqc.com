@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace app\modules\v1\userAction\rest;
 
@@ -112,7 +112,7 @@ class UrlConvertController extends RestBaseController
             $redisUrlConvertDto->createtime = $_SERVER['REQUEST_TIME'];
 
             if ($redisUrlConvertDto->ip) {
-                $today    = strtotime(date('Y-m-d', time()));
+                $today    = strtotime(date('Y-m-d'));
                 $checkIp  = $this->staticHitsService->findOne(['ip' => $redisUrlConvertDto->ip, 'date' => $today, 'u_id' => $redisUrlConvertDto->u_id]);
                 $verifyIp = $checkIp ? false : true;
 
@@ -120,8 +120,8 @@ class UrlConvertController extends RestBaseController
                 $cookieName = 'static_url_' . $staticUrl->ident;
                 $cookie     = $this->request->cookies->get($cookieName);
                 if ($cookie) {
-                    $visitDate    = strtotime(date("Y-m-d", $cookie->createtime));
-                    $verifyCookie = ($cookie->createtime > 0 && $today > $visitDate) ? true : false;
+                    $visitDate    = strtotime(date('Y-m-d', $cookie->createtime));
+                    $verifyCookie = ($cookie->createtime > 0 && $today > $visitDate);
                 } else {
                     $verifyCookie = true;
                 }
@@ -132,8 +132,8 @@ class UrlConvertController extends RestBaseController
                 ]));
 
                 $ipLocationUtils            = $this->ipLocationUtils->getlocation(long2ip($redisUrlConvertDto->ip));
-                $ipLocationUtils['country'] = iconv("gbk", "utf-8", $ipLocationUtils['country']);
-                $ipLocationUtils['area']    = iconv("gbk", "utf-8", $ipLocationUtils['area']);
+                $ipLocationUtils['country'] = iconv('gbk', 'utf-8', $ipLocationUtils['country']);
+                $ipLocationUtils['area']    = iconv('gbk', 'utf-8', $ipLocationUtils['area']);
 
                 $redisUrlConvertDto->country = $ipLocationUtils['country'] ? addslashes($ipLocationUtils['country']) : '';
                 $redisUrlConvertDto->area    = $ipLocationUtils['area'] ? addslashes($ipLocationUtils['area']) : '';

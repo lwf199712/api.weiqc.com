@@ -1,8 +1,12 @@
 <?php
 declare(strict_types=1);
 
+namespace app\modules\v1\autoConvert\event;
+
 use app\common\utils\RedisUtils;
-use Symfony\Component\EventDispatcher\Event;
+use app\modules\v1\autoConvert\service\AutoConvertService;
+use app\modules\v1\autoConvert\vo\ConvertRequestVo;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @property ConvertRequestVo   $convertRequestInfo
@@ -13,9 +17,11 @@ use Symfony\Component\EventDispatcher\Event;
  * @property string             $whiteList
  * Class AutoConvertEvent
  */
-class AutoConvertEvent extends Event implements AutoConvertEventInterface
+class AutoConvertEvent extends Event
 {
-    public const NAME = 'AutoConvertEvent';
+    public const DEFAULT_SCENE = 'DefaultScene';
+
+    public const FULL_FANS_SCENE = 'FullFansScene';
 
     /** @var ConvertRequestVo */
     public $convertRequestInfo;

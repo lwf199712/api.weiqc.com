@@ -1,5 +1,10 @@
 <?php
 
+namespace app\modules\v1\autoConvert\service;
+
+
+use app\modules\v1\autoConvert\event\AutoConvertEvent;
+
 interface CalculateLackFansRateService
 {
     /**

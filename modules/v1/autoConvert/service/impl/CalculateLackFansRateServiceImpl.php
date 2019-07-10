@@ -1,11 +1,20 @@
 <?php
 declare(strict_types=1);
 
+namespace app\modules\v1\autoConvert\service\impl;
+
 use app\common\utils\ArrayUtils;
 use app\models\dataObject\SectionRealtimeMsgDo;
+use app\modules\v1\autoConvert\enum\MessageEnum;
+use app\modules\v1\autoConvert\enum\SectionRealtimeMsgEnum;
+use app\modules\v1\autoConvert\event\AutoConvertEvent;
+use app\modules\v1\autoConvert\service\AutoConvertService;
+use app\modules\v1\autoConvert\service\CalculateLackFansRateService;
+use app\modules\v1\autoConvert\vo\ConvertRequestVo;
 use Predis\Client;
+use yii\base\BaseObject;
 
-class CalculateLackFansRateServiceImpl implements CalculateLackFansRateService
+class CalculateLackFansRateServiceImpl extends BaseObject implements CalculateLackFansRateService
 {
 
     /**
@@ -16,7 +25,7 @@ class CalculateLackFansRateServiceImpl implements CalculateLackFansRateService
      * @return array|null ['lackFansDept' => 'xxx' , 'lackFansRate' => 'xxx' , 'availableDept' => 'xxx']. null will return  while not need change service
      * @author zhuozhen
      */
-    public function calculateLackFansRate(AutoConvertEvent $event,bool $isFullFans): ?array
+    public function calculateLackFansRate(AutoConvertEvent $event, bool $isFullFans): ?array
     {
         [$availableWhiteListDept, $lackFansRate, $lackFansDept, $whiteListLackFansFlag] = [[], 0, '', false];
         if ($event->whiteList !== null) {
@@ -34,8 +43,8 @@ class CalculateLackFansRateServiceImpl implements CalculateLackFansRateService
                 if ($stopSupport === 'yes') {
                     continue;
                 }
-                if ($isFullFans === true){      //如果是全部满粉后重新计算，则将增量后目标数作为三十分钟内目标数
-                    $thirtyMinFansTarget = $event->redisUtils->getRedis()->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department, 'fullFansCount');
+                if ($isFullFans === true) {      //如果是全部满粉后重新计算，则将增量后目标数作为三十分钟内目标数
+                    $thirtyMinFansTarget = $event->redisUtils->getRedis()->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $dept, 'fullFansCount');
                 }
                 /** 白名单中满足进粉的分部 */
                 $availableWhiteListDept[$dept]['thirty_min_fans_target'] = $thirtyMinFansTarget;

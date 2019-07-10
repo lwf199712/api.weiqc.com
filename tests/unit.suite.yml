@@ -9,3 +9,7 @@ modules:
       - Asserts
       - Yii2:
             part: [orm, email, fixtures]
+      - Db:
+            dsn: 'mysql:host=192.168.1.200;dbname=weiqc_dc;'
+            user: 'root'
+            password: 'root'

@@ -1,83 +1,33 @@
 <?php
 declare(strict_types=1);
 
-use app\common\utils\ArrayUtils;
+namespace app\modules\v1\autoConvert\service;
+
 use app\common\utils\RedisUtils;
-use app\models\dataObject\SectionRealtimeMsgDo;
+use app\models\dataObject\StaticUrlDo;
+use app\modules\v1\autoConvert\vo\ConvertRequestVo;
 use Predis\Client;
 
 /**
+ * @property StaticUrlDo                  $staticUrlDo
  * @property RedisUtils                   $redisUtils
  * @property ConvertRequestVo             $convertRequestInfo
  * @property CalculateLackFansRateService $calculateLackFansRateService
  * Class AutoConvertService
  */
-class AutoConvertService
+interface AutoConvertService
 {
-    /** @var RedisUtils */
-    protected $redisUtils;
-    /** @var  ConvertRequestVo */
-    protected $convertRequestInfo;
-    /** @var CalculateLackFansRateService */
-    protected $calculateLackFansRateService;
-
-
-    public function __construct(RedisUtils $redisUtils, ConvertRequestVo $convertRequestInfo, CalculateLackFansRateService $calculateLackFansRateService)
-    {
-        $this->redisUtils                   = $redisUtils;
-        $this->convertRequestInfo           = $convertRequestInfo;
-        $this->calculateLackFansRateService = $calculateLackFansRateService;
-    }
-
-
     /**
      * 判断当前公众号的上次的时间戳和粉丝数是否存在redis中
      * 不存在则证明该公众号第一次进粉
      */
-    public function prepareData(): void
-    {
-        $redis         = $this->redisUtils->getRedis();
-        $timeStampBool = $redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE));
-        $fansCountBool = $redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE) . $this->convertRequestInfo->department . MessageEnum::getCurrent(MessageEnum::DC_REAL_TIME_MESSAGE);
-        $todayEndTime  = mktime(23, 59, 59, date('m'), date('d'), date('Y'));
-        if ((bool)$timeStampBool === false && (bool)$fansCountBool === false) {
-            //当前粉丝数时间戳
-            $redis->set(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE), time());                //当前粉丝数
-            $redis->set(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getCurrent(MessageEnum::DC_REAL_TIME_MESSAGE), $this->convertRequestInfo->fansCount);
-            //当前30分钟粉丝数初始值
-            $redis->set(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE), 0);
-            //设置过期时间
-            $redis->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE), $todayEndTime);
-            $redis->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getCurrent(MessageEnum::DC_REAL_TIME_MESSAGE), $todayEndTime);
-            $redis->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE), $todayEndTime);
-        }
-    }
+    public function prepareData(): void;
 
     /**
      * 初始化部门信息
      * @author zhuozhen
      */
-    public function initDept(): void
-    {
-        $redis = $this->redisUtils->getRedis();
-        if ($redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department) === false ||
-            $redis->hexists(MessageEnum::DC_REAL_TIME_MESSAGE, SectionRealtimeMsgEnum::getCurrentDept(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG)) === false)
-        {
-            $sectionRealtimeMsgInfo = SectionRealtimeMsgDo::findOne(['=', 'BINARY current_dept', $this->convertRequestInfo->department]);
-            if ($sectionRealtimeMsgInfo === null) {
-                return;
-            }
-            $redis->hMSet(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department, ArrayUtils::attributesAsMap($sectionRealtimeMsgInfo));
-
-            //设置当前半小时的最后一秒为过期时间
-            $expirationTime = $this->getTimeRange(time());
-            $redis->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department, $expirationTime['endTime']);
-
-        }
-        $redis->hSet(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department, 'todayFansCount', $this->convertRequestInfo->fansCount);
-
-    }
-
+    public function initDept(): void;
 
     /**
      * 获取公众号已存储时间戳的分钟数所属半小时范围
@@ -86,21 +36,7 @@ class AutoConvertService
      * @author dengkai
      * @date   2019/4/19
      */
-    public function getTimeRange(int $timeStamp): array
-    {
-        $minute = (int)date('i', $timeStamp);
-        if ($minute < 30) {
-            $beginTime = mktime(date('H', $timeStamp), 0, 0, date('m', $timeStamp), date('d', $timeStamp), date('Y', $timeStamp));
-            $endTime   = mktime(date('H', $timeStamp), 30, 0, date('m', $timeStamp), date('d', $timeStamp), date('Y', $timeStamp));
-
-            return ['beginTime' => $beginTime, 'endTime' => $endTime];
-        }
-
-        $beginTime = mktime(date('H', $timeStamp), 30, 0, date('m', $timeStamp), date('d', $timeStamp), date('Y', $timeStamp));
-        $endTime   = mktime(date('H', $timeStamp), 59, 59, date('m', $timeStamp), date('d', $timeStamp), date('Y', $timeStamp));
-
-        return ['beginTime' => $beginTime, 'endTime' => $endTime];
-    }
+    public function getTimeRange(int $timeStamp): array;
 
 
     /**
@@ -112,29 +48,6 @@ class AutoConvertService
      * @author dengkai
      * @date   2019/4/19
      */
-    public function getThirtyMinFans(Client $redis, ConvertRequestVo $convertRequestInfo): int
-    {
-        if ($redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE))) {
-            $timeStamp = $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE));
-            $timeRange = $this->getTimeRange((int)$timeStamp);
-            $nowTime   = time();
-            if ($timeRange['beginTime'] <= $nowTime && $nowTime <= $timeRange['endTime']) {
-                $currentFansCount        = $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getCurrent(MessageEnum::DC_REAL_TIME_MESSAGE));
-                $currentThirtyMinInitVal = $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE));
-                return (int)$currentFansCount - (int)$currentThirtyMinInitVal;
-            }
-            return 0;
-        }
-        return 0;
-    }
+    public function getThirtyMinFans(Client $redis, ConvertRequestVo $convertRequestInfo): int;
 
-    /**
-     * 转换公众号
-     * @param string $Dept
-     * @author zhuozhen
-     */
-    public function changeService(string $Dept) : void
-    {
-
-    }
 }
