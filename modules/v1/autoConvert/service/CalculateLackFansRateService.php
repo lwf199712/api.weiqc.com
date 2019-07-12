@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace app\modules\v1\autoConvert\service;
 
 
-use app\modules\v1\autoConvert\event\AutoConvertEvent;
+use app\modules\v1\autoConvert\domain\event\AutoConvertEvent;
 
 interface CalculateLackFansRateService
 {

@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace app\modules\v1\autoConvert\event;
+namespace app\modules\v1\autoConvert\domain\event;
 
 use app\common\utils\RedisUtils;
+use app\modules\v1\autoConvert\domain\vo\ConvertRequestVo;
 use app\modules\v1\autoConvert\service\AutoConvertService;
-use app\modules\v1\autoConvert\vo\ConvertRequestVo;
-use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * @property ConvertRequestVo   $convertRequestInfo
@@ -37,6 +37,8 @@ class AutoConvertEvent extends Event
     public $stopSupport;
     /** @var string $whiteList 白名单 */
     public $whiteList;
+    /** @var array $nodeInfo 节点信息 */
+    protected  $nodeInfo;
 
     public function __construct(ConvertRequestVo $convertRequestInfo,
                                 AutoConvertService $autoConvertService,
@@ -73,5 +75,25 @@ class AutoConvertEvent extends Event
     public function setReturnDept(string $dept = null): void
     {
         $this->returnDept = $dept;
+    }
+
+    /**
+     * 返回调用节点信息
+     * @return array
+     * @author zhuozhen
+     */
+    public function getNodeInfo() : array
+    {
+        return $this->nodeInfo;
+    }
+
+    /**
+     * 设置当前调用节点信息
+     * @param array $nodeInfo
+     * @author zhuozhen
+     */
+    public function setNodeInfo(array $nodeInfo) : void
+    {
+        $this->nodeInfo = $nodeInfo;
     }
 }

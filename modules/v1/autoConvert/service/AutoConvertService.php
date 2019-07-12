@@ -5,13 +5,12 @@ namespace app\modules\v1\autoConvert\service;
 
 use app\common\utils\RedisUtils;
 use app\models\dataObject\StaticUrlDo;
-use app\modules\v1\autoConvert\vo\ConvertRequestVo;
+use app\modules\v1\autoConvert\domain\vo\ConvertRequestVo;
 use Predis\Client;
 
 /**
  * @property StaticUrlDo                  $staticUrlDo
  * @property RedisUtils                   $redisUtils
- * @property ConvertRequestVo             $convertRequestInfo
  * @property CalculateLackFansRateService $calculateLackFansRateService
  * Class AutoConvertService
  */
@@ -20,14 +19,16 @@ interface AutoConvertService
     /**
      * 判断当前公众号的上次的时间戳和粉丝数是否存在redis中
      * 不存在则证明该公众号第一次进粉
+     * @param ConvertRequestVo $convertRequestInfo
      */
-    public function prepareData(): void;
+    public function prepareData(ConvertRequestVo $convertRequestInfo): void;
 
     /**
      * 初始化部门信息
+     * @param ConvertRequestVo $convertRequestInfo
      * @author zhuozhen
      */
-    public function initDept(): void;
+    public function initDept(ConvertRequestVo $convertRequestInfo): void;
 
     /**
      * 获取公众号已存储时间戳的分钟数所属半小时范围

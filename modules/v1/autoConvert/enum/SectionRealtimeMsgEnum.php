@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace app\modules\v1\autoConvert\enum;
 
-use app\components\core\BaseEnum;
+use app\common\core\BaseEnum;
 
 /**
  * Class SectionRealtimeMsgEnum

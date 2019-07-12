@@ -6,28 +6,25 @@ namespace app\modules\v1\autoConvert\service\impl;
 use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;
 use app\models\dataObject\SectionRealtimeMsgDo;
-use app\models\dataObject\StaticUrlDo;
+use app\modules\v1\autoConvert\domain\vo\ConvertRequestVo;
 use app\modules\v1\autoConvert\enum\MessageEnum;
 use app\modules\v1\autoConvert\enum\SectionRealtimeMsgEnum;
 use app\modules\v1\autoConvert\service\AutoConvertService;
 use app\modules\v1\autoConvert\service\CalculateLackFansRateService;
-use app\modules\v1\autoConvert\vo\ConvertRequestVo;
 use Predis\Client;
 use yii\base\BaseObject;
 
 /**
  * @property RedisUtils                   $redisUtils
- * @property ConvertRequestVo             $convertRequestInfo
  * @property CalculateLackFansRateService $calculateLackFansRateService
  * Class AutoConvertService
  */
 class AutoConvertServiceImpl extends BaseObject implements AutoConvertService
 {
     /** @var RedisUtils */
-    protected $redisUtils;
+    public $redisUtils;
     /** @var CalculateLackFansRateService */
-    protected $calculateLackFansRateService;
-
+    public $calculateLackFansRateService;
 
     public function __construct(RedisUtils $redisUtils,
                                 CalculateLackFansRateService $calculateLackFansRateService,
@@ -42,48 +39,51 @@ class AutoConvertServiceImpl extends BaseObject implements AutoConvertService
     /**
      * 判断当前公众号的上次的时间戳和粉丝数是否存在redis中
      * 不存在则证明该公众号第一次进粉
+     * @param ConvertRequestVo $convertRequestInfo
      */
-    public function prepareData(): void
+    public function prepareData(ConvertRequestVo $convertRequestInfo): void
     {
         $redis         = $this->redisUtils->getRedis();
-        $timeStampBool = $redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE));
-        $fansCountBool = $redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE) . $this->convertRequestInfo->department . MessageEnum::getCurrent(MessageEnum::DC_REAL_TIME_MESSAGE);
-        $todayEndTime  = mktime(23, 59, 59, date('m'), date('d'), date('Y'));
+        $timeStampBool = $redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE));
+        $fansCountBool = $redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getCurrent(MessageEnum::DC_REAL_TIME_MESSAGE));
+        $todayEndTime  = mktime(23, 59, 59, (int)date('m'), (int)date('d'), (int)date('Y'));
+
         if ((bool)$timeStampBool === false && (bool)$fansCountBool === false) {
             //当前粉丝数时间戳
-            $redis->set(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE), time());                //当前粉丝数
-            $redis->set(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getCurrent(MessageEnum::DC_REAL_TIME_MESSAGE), $this->convertRequestInfo->fansCount);
+            $redis->set(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE), time());                //当前粉丝数
+            $redis->set(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getCurrent(MessageEnum::DC_REAL_TIME_MESSAGE), $convertRequestInfo->fansCount);
             //当前30分钟粉丝数初始值
-            $redis->set(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE), 0);
+            $redis->set(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE), 0);
             //设置过期时间
-            $redis->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE), $todayEndTime);
-            $redis->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getCurrent(MessageEnum::DC_REAL_TIME_MESSAGE), $todayEndTime);
-            $redis->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE), $todayEndTime);
+            $redis->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE), $todayEndTime);
+            $redis->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getCurrent(MessageEnum::DC_REAL_TIME_MESSAGE), $todayEndTime);
+            $redis->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE), $todayEndTime);
         }
     }
 
     /**
      * 初始化部门信息
+     * @param ConvertRequestVo $convertRequestInfo
      * @author zhuozhen
      */
-    public function initDept(): void
+    public function initDept(ConvertRequestVo $convertRequestInfo): void
     {
         $redis = $this->redisUtils->getRedis();
-        if ($redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department) === false ||
-            $redis->hexists(MessageEnum::DC_REAL_TIME_MESSAGE, SectionRealtimeMsgEnum::getCurrentDept(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG)) === false)
+        if ((bool)$redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department) === false ||
+            (bool)$redis->hexists(MessageEnum::DC_REAL_TIME_MESSAGE, SectionRealtimeMsgEnum::getCurrentDept(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG)) === false)
         {
-            $sectionRealtimeMsgInfo = SectionRealtimeMsgDo::findOne(['=', 'BINARY current_dept', $this->convertRequestInfo->department]);
+            $sectionRealtimeMsgInfo = SectionRealtimeMsgDo::find()->where('BINARY current_dept = :current_dept', [':current_dept' => $convertRequestInfo->department])->one();
             if ($sectionRealtimeMsgInfo === null) {
                 return;
             }
-            $redis->hMSet(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department, ArrayUtils::attributesAsMap($sectionRealtimeMsgInfo));
+            $redis->hMSet(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department, ArrayUtils::attributesAsMap($sectionRealtimeMsgInfo));
 
             //设置当前半小时的最后一秒为过期时间
             $expirationTime = $this->getTimeRange(time());
-            $redis->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department, $expirationTime['endTime']);
+            $redis->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department, $expirationTime['endTime']);
 
         }
-        $redis->hSet(MessageEnum::DC_REAL_TIME_MESSAGE . $this->convertRequestInfo->department, 'todayFansCount', $this->convertRequestInfo->fansCount);
+        $redis->hSet(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department, 'todayFansCount', $convertRequestInfo->fansCount);
 
     }
 
@@ -99,14 +99,14 @@ class AutoConvertServiceImpl extends BaseObject implements AutoConvertService
     {
         $minute = (int)date('i', $timeStamp);
         if ($minute < 30) {
-            $beginTime = mktime(date('H', $timeStamp), 0, 0, date('m', $timeStamp), date('d', $timeStamp), date('Y', $timeStamp));
-            $endTime   = mktime(date('H', $timeStamp), 30, 0, date('m', $timeStamp), date('d', $timeStamp), date('Y', $timeStamp));
+            $beginTime = mktime((int)date('H', $timeStamp), 0, 0, (int)date('m', $timeStamp), (int)date('d', $timeStamp), (int)date('Y', $timeStamp));
+            $endTime   = mktime((int)date('H', $timeStamp), 30, 0, (int)date('m', $timeStamp), (int)date('d', $timeStamp), (int)date('Y', $timeStamp));
 
             return ['beginTime' => $beginTime, 'endTime' => $endTime];
         }
 
-        $beginTime = mktime(date('H', $timeStamp), 30, 0, date('m', $timeStamp), date('d', $timeStamp), date('Y', $timeStamp));
-        $endTime   = mktime(date('H', $timeStamp), 59, 59, date('m', $timeStamp), date('d', $timeStamp), date('Y', $timeStamp));
+        $beginTime = mktime((int)date('H', $timeStamp), 30, 0, (int)date('m', $timeStamp), (int)date('d', $timeStamp), (int)date('Y', $timeStamp));
+        $endTime   = mktime((int)date('H', $timeStamp), 59, 59, (int)date('m', $timeStamp), (int)date('d', $timeStamp), (int)date('Y', $timeStamp));
 
         return ['beginTime' => $beginTime, 'endTime' => $endTime];
     }

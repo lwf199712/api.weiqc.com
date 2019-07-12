@@ -3,24 +3,21 @@ declare(strict_types=1);
 
 namespace app\modules\v1\autoConvert\rest;
 
-
 use app\common\rest\RestBaseController;
 use app\common\utils\RedisUtils;
 use app\common\utils\RequestUtils;
 use app\common\utils\ResponseUtils;
+use app\modules\v1\autoConvert\domain\event\AutoConvertEvent;
+use app\modules\v1\autoConvert\domain\subscriber\AutoConvertSubscriber;
+use app\modules\v1\autoConvert\domain\vo\ConvertRequestVo;
 use app\modules\v1\autoConvert\enum\MessageEnum;
 use app\modules\v1\autoConvert\enum\SectionRealtimeMsgEnum;
-use app\modules\v1\autoConvert\event\AutoConvertEvent;
 use app\modules\v1\autoConvert\service\AutoConvertService;
 use app\modules\v1\autoConvert\service\AutoConvertStaticConversionService;
 use app\modules\v1\autoConvert\service\AutoConvertStaticUrlService;
 use app\modules\v1\autoConvert\service\CalculateLackFansRateService;
 use app\modules\v1\autoConvert\service\ChangeService;
-use app\modules\v1\autoConvert\subscriber\AutoConvertSubscriber;
-use app\modules\v1\autoConvert\vo\ConvertRequestVo;
-use phpDocumentor\Reflection\Types\Callable_;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use yii\helpers\Json;
 
 /**
  * @property AutoConvertStaticUrlService        $autoConvertStaticUrlService
@@ -102,16 +99,16 @@ class ConvertLinkController extends RestBaseController
     public function verbs(): array
     {
         return [
-            'convert' => ['GET', 'HEAD'],
+            'convert' => [ 'GET', 'HEAD' ],
         ];
     }
 
-    public function convert() : array
+    public function actionConvert() : array
     {
         $convertRequestInfo = new ConvertRequestVo();
         $convertRequestInfo->setAttributes($this->request->get());
-        $this->autoConvertService->prepareData();
-        $this->autoConvertService->initDept();
+        $this->autoConvertService->prepareData($convertRequestInfo);
+        $this->autoConvertService->initDept($convertRequestInfo);
         $redis = $this->redisUtils->getRedis();
         //是否可分配
         $this->distribute = $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department, SectionRealtimeMsgEnum::getIsDistribute(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
@@ -126,11 +123,11 @@ class ConvertLinkController extends RestBaseController
         $this->dispatcher->dispatch(AutoConvertEvent::DEFAULT_SCENE, $autoConvertEvent);
         $changeDept = $autoConvertEvent->getReturnDept();
         if ($changeDept === null) {
-            return [ '操作成功!暂时没有转换链接', 200 ];
+            return [ '操作成功!暂时没有转换链接', 200 , $changeDept];
         }
         /** @var ChangeService __invoke */
         ($this->changeService)($convertRequestInfo->department, $changeDept, $this->autoConvertStaticUrlService,$this->autoConvertStaticConversionService);
-        return [ '操作成功!已转换链接', 200 ];
+        return [ '操作成功!已转换链接', 200 ,$changeDept];
 
     }
 

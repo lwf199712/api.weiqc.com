@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
-namespace app\modules\v1\autoConvert\subscriber;
+
+namespace app\modules\v1\autoConvert\domain\subscriber;
 
 use app\models\dataObject\SectionRealtimeMsgDo;
+use app\modules\v1\autoConvert\domain\event\AutoConvertEvent;
 use app\modules\v1\autoConvert\enum\MessageEnum;
 use app\modules\v1\autoConvert\enum\SectionRealtimeMsgEnum;
-use app\modules\v1\autoConvert\event\AutoConvertEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -51,21 +52,21 @@ class AutoConvertSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            AutoConvertEvent::DEFAULT_SCENE          => [     //默认进粉事件
-                ['init', 1],
-                ['deptRule', 2],
-                ['supportRule', 3],
-                ['convertAim', 4],
-                ['calculateDisparity', 5],
-                ['raiseConvertAim', 6],
-                ['fullFansConvertAim', 7],
-                ['fullFansCalculateDisparity', 8],
+            AutoConvertEvent::DEFAULT_SCENE   => [     //默认进粉事件
+                ['init', -1],
+                ['deptRule', -2],
+                ['supportRule', -3],
+                ['convertAim', -4],
+                ['calculateDisparity', -5],
+                ['raiseConvertAim', -6],
+                ['fullFansConvertAim', -7],
+                ['fullFansCalculateDisparity', -8],
             ],
-            AutoConvertEvent::FULL_FANS_SCENE       => [       //满粉循环
-                ['raiseConvertAim', 1],
-                ['fullFansConvertAim', 2],
-                ['fullFansCalculateDisparity', 3],
-            ]
+            AutoConvertEvent::FULL_FANS_SCENE => [       //满粉循环
+                ['raiseConvertAim', -1],
+                ['fullFansConvertAim', -2],
+                ['fullFansCalculateDisparity', -3],
+            ],
         ];
     }
 
@@ -76,11 +77,13 @@ class AutoConvertSubscriber implements EventSubscriberInterface
      */
     public function init(AutoConvertEvent $event): void
     {
+        $event->setNodeInfo(['dept' => 1, 'method' => __FUNCTION__]);
+
         $redis             = $event->redisUtils->getRedis();
         $timeStamp         = $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE));
         $timeRange         = $event->autoConvertService->getTimeRange((int)$timeStamp);
         $nowTime           = time();
-        $todayEndTime      = mktime(23, 59, 59, date('m'), date('d'), date('Y'));
+        $todayEndTime      = mktime(23, 59, 59, (int)date('m'), (int)date('d'), (int)date('Y'));
         $this->inTimeRange = true;
         if ($timeRange['beginTime'] > $nowTime || $nowTime >= $timeRange['endTime']) {
             $currentThirtyMinInitVal = $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department . MessageEnum::getCurrent(MessageEnum::DC_REAL_TIME_MESSAGE));
@@ -102,6 +105,8 @@ class AutoConvertSubscriber implements EventSubscriberInterface
      */
     public function deptRule(AutoConvertEvent $event): void
     {
+        $event->setNodeInfo(['dept' => 2, 'method' => __FUNCTION__]);
+
         if (empty($event->whiteList) && $event->distribute === 'no') {
             $event->setReturnDept();
             $event->stopPropagation();
@@ -115,6 +120,8 @@ class AutoConvertSubscriber implements EventSubscriberInterface
      */
     public function supportRule(AutoConvertEvent $event): void
     {
+        $event->setNodeInfo(['dept' => 3, 'method' => __FUNCTION__]);
+
         if ($event->stopSupport === 'yes') {
             $event->setReturnDept();
             $event->stopPropagation();
@@ -128,9 +135,12 @@ class AutoConvertSubscriber implements EventSubscriberInterface
      */
     public function convertAim(AutoConvertEvent $event): void
     {
+        $event->setNodeInfo(['dept' => 4, 'method' => __FUNCTION__]);
+
         $redis               = $event->redisUtils->getRedis();
         $diffVal             = $event->convertRequestInfo->fansCount - $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE));
         $thirtyMinFansTarget = $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department, SectionRealtimeMsgEnum::getThirtyMinFansTarget(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
+
         if ($diffVal <= $thirtyMinFansTarget) {
             $event->setReturnDept();
             $event->stopPropagation();
@@ -144,7 +154,9 @@ class AutoConvertSubscriber implements EventSubscriberInterface
      */
     public function calculateDisparity(AutoConvertEvent $event): void
     {
-        $lackRateAndDept = $event->autoConvertService->calculateLackFansRateService->calculateLackFansRate($event,false);
+        $event->setNodeInfo(['dept' => 5, 'method' => __FUNCTION__]);
+
+        $lackRateAndDept = $event->autoConvertService->calculateLackFansRateService->calculateLackFansRate($event, false);
         if ($lackRateAndDept === null) {
             $event->setReturnDept();
             $event->stopPropagation();
@@ -164,6 +176,8 @@ class AutoConvertSubscriber implements EventSubscriberInterface
      */
     public function raiseConvertAim(AutoConvertEvent $event): void
     {
+        $event->setNodeInfo(['dept' => 6, 'method' => __FUNCTION__]);
+
         //更新缓存中满粉目标数，在原有基础上增加10%
         $availableDept = SectionRealtimeMsgDo::find()->select('current_dept,thirty_min_fans_target')->asArray()->all();
 
@@ -183,8 +197,10 @@ class AutoConvertSubscriber implements EventSubscriberInterface
      */
     public function fullFansConvertAim(AutoConvertEvent $event): void
     {
-        $redis               = $event->redisUtils->getRedis();
-        $diffVal             = $event->convertRequestInfo->fansCount - $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department, 'fullFansCount');
+        $event->setNodeInfo(['dept' => 7, 'method' => __FUNCTION__]);
+
+        $redis   = $event->redisUtils->getRedis();
+        $diffVal = $event->convertRequestInfo->fansCount - $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department, 'fullFansCount');
         if ($diffVal <= 0) {
             $event->setReturnDept($event->convertRequestInfo->department);
             $event->stopPropagation();
@@ -196,9 +212,11 @@ class AutoConvertSubscriber implements EventSubscriberInterface
      * @param AutoConvertEvent $event
      * @author zhuozhen
      */
-    public function fullFansCalculateDisparity(AutoConvertEvent $event) : void
+    public function fullFansCalculateDisparity(AutoConvertEvent $event): void
     {
-        $lackRateAndDept = $event->autoConvertService->calculateLackFansRateService->calculateLackFansRate($event,true);
+        $event->setNodeInfo(['dept' => 8, 'method' => __FUNCTION__]);
+
+        $lackRateAndDept = $event->autoConvertService->calculateLackFansRateService->calculateLackFansRate($event, true);
         if ($lackRateAndDept === null) {
             $event->setReturnDept();
             $event->stopPropagation();
@@ -207,9 +225,9 @@ class AutoConvertSubscriber implements EventSubscriberInterface
             //切换公众号
             $event->setReturnDept($lackRateAndDept['lackFansDept']);
             $event->stopPropagation();
-        }else{
+        } else {
             $autoConvertSubscriber = new self();
-            $dispatcher = new EventDispatcher();
+            $dispatcher            = new EventDispatcher();
             $dispatcher->addSubscriber($autoConvertSubscriber);
             $dispatcher->dispatch(AutoConvertEvent::FULL_FANS_SCENE, $event);
             $event->stopPropagation();

@@ -5,12 +5,12 @@ namespace app\modules\v1\autoConvert\service\impl;
 
 use app\common\utils\ArrayUtils;
 use app\models\dataObject\SectionRealtimeMsgDo;
+use app\modules\v1\autoConvert\domain\event\AutoConvertEvent;
+use app\modules\v1\autoConvert\domain\vo\ConvertRequestVo;
 use app\modules\v1\autoConvert\enum\MessageEnum;
 use app\modules\v1\autoConvert\enum\SectionRealtimeMsgEnum;
-use app\modules\v1\autoConvert\event\AutoConvertEvent;
 use app\modules\v1\autoConvert\service\AutoConvertService;
 use app\modules\v1\autoConvert\service\CalculateLackFansRateService;
-use app\modules\v1\autoConvert\vo\ConvertRequestVo;
 use Predis\Client;
 use yii\base\BaseObject;
 
@@ -35,8 +35,8 @@ class CalculateLackFansRateServiceImpl extends BaseObject implements CalculateLa
                     $thirtyMinFansTarget = $event->redisUtils->getRedis()->hget(MessageEnum::DC_REAL_TIME_MESSAGE . $dept, SectionRealtimeMsgEnum::getThirtyMinFansTarget(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
                     $currentDept         = $event->redisUtils->getRedis()->hget(MessageEnum::DC_REAL_TIME_MESSAGE . $dept, SectionRealtimeMsgEnum::getCurrentDept(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
                 } else {
-                    $record              = ArrayUtils::attributesAsMap(SectionRealtimeMsgDo::findOne(['=', 'BINARY current_dept', $dept]));
-                    $stopSupport         = $record['stopSupport'];
+                    $record              = ArrayUtils::attributesAsMap(SectionRealtimeMsgDo::find()->where('BINARY current_dept = :current_dept', [':current_dept' => $dept])->one());
+                    $stopSupport         = $record['is_stop_support_fans'];
                     $thirtyMinFansTarget = $record['thirty_min_fans_target'];
                     $currentDept         = $record['current_dept'];
                 }

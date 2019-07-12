@@ -1,5 +1,5 @@
 <?php
-namespace app\modules\v1\autoConvert\vo;
+namespace app\modules\v1\autoConvert\domain\vo;
 
 use yii\base\Model;
 

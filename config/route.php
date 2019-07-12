@@ -14,6 +14,7 @@ return [
         'class'         => UrlRule::class,
         'controller'    => [
             'v1/userAction/rest',
+            'v1/autoConvert/rest',
         ],
         //统一处理OPTIONS请求
         'extraPatterns' => [

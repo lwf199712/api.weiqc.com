@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\components\core;
+namespace app\common\core;
 
 use ReflectionClass;
 

@@ -5,7 +5,6 @@ namespace app\modules\v1\autoConvert\service\impl;
 
 use app\models\dataObject\StaticServiceConversionsDo;
 use app\modules\v1\autoConvert\service\AutoConvertStaticConversionService;
-use phpDocumentor\Reflection\Types\Boolean;
 use Yii;
 use yii\base\BaseObject;
 use yii\db\Exception;

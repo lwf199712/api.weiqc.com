@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace app\modules\v1\autoConvert\enum;
 
 
-use app\components\core\BaseEnum;
+use app\common\core\BaseEnum;
 
 /**
  * @time     粉丝进入的当前时间戳
@@ -21,7 +21,7 @@ class MessageEnum extends BaseEnum
      * @current('_currentFansCount')
      * @halfHour('_currentThirtyMinInitVal')
      */
-    public const DC_REAL_TIME_MESSAGE = 'dc_real_time_message';
+    public const DC_REAL_TIME_MESSAGE = 'dc_real_time_message_';
 
 
 }

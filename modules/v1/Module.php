@@ -5,6 +5,7 @@ namespace app\modules\v1;
 use yii\base\Module as BaseModule;
 use app\modules\v1\userAction\Module as ConversionModule;
 use app\modules\v1\oauth\Module as OauthModule;
+use app\modules\v1\autoConvert\Module as AutoConvertModule;
 use Yii;
 
 /**
@@ -37,6 +38,10 @@ class Module extends BaseModule
             //鉴权
             'oauth'       => [
                 'class' => OauthModule::class,
+            ],
+            //自动转粉
+            'auto-convert'       => [
+                'class' => AutoConvertModule::class,
             ]
         ];
     }
