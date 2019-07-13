@@ -52,12 +52,12 @@ interface AutoConvertService
     /**
      * 获取当前30分钟的粉丝数
      * exp:如果现在是25分，则当前三十分钟是指0—30分。
-     * @param $redis              Client
-     * @param $convertRequestInfo ConvertRequestVo
+     * @param        $redis              Client
+     * @param string $dept
      * @return int
      * @author dengkai
      * @date   2019/4/19
      */
-    public function getThirtyMinFans(Client $redis, ConvertRequestVo $convertRequestInfo): int;
+    public function getThirtyMinFans(Client $redis, string $dept): int;
 
 }

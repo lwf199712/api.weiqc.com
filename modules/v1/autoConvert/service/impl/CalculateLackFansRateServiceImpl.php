@@ -51,10 +51,10 @@ class CalculateLackFansRateServiceImpl extends BaseObject implements CalculateLa
                 $availableWhiteListDept[$dept]['current_dept']           = $currentDept;
                 $whiteListLackFansFlag                                   = true;
             }
-            [$lackFansDept, $lackFansRate, $availableDept] = array_values($this->getLackFansRateAndDept($availableWhiteListDept, $event->redisUtils->getRedis(), $event->autoConvertService, $event->convertRequestInfo));
+            [$lackFansDept, $lackFansRate, $availableDept,$allLackFansRate] = array_values($this->getLackFansRateAndDept($availableWhiteListDept, $event->redisUtils->getRedis(), $event->autoConvertService));
             /** 白名单不满粉,返回最高缺粉率分部 */
             if ($availableDept !== null && $lackFansRate !== 0 && $lackFansDept !== '') {
-                return ['lackFansDept' => $lackFansDept, 'lackFansRate' => $lackFansRate, 'availableDept' => $availableDept];
+                return ['lackFansDept' => $lackFansDept, 'lackFansRate' => $lackFansRate, 'availableDept' => $availableDept,'allLackFansRate' => $allLackFansRate];
             }
         }
 
@@ -68,13 +68,13 @@ class CalculateLackFansRateServiceImpl extends BaseObject implements CalculateLa
 
         /** 白名单满粉且白名单外无可用分部 */
         if ($availableDept === null && $availableWhiteListDept !== null && $lackFansRate === 0 && $lackFansDept === '' && $whiteListLackFansFlag) {
-            return ['lackFansDept' => $lackFansDept, 'lackFansRate' => $lackFansRate, 'availableDept' => array_merge($availableWhiteListDept, $event->convertRequestInfo->department)];
+            return ['lackFansDept' => $lackFansDept, 'lackFansRate' => $lackFansRate, 'availableDept' => array_merge($availableWhiteListDept, $event->convertRequestInfo->department), 'allLackFansRate' => $allLackFansRate ?? []];
         }
         /** 白名单无可用或无白名单 且 白名单外部无可用*/
         if ($availableDept === null && $whiteListLackFansFlag === false) {
             return null;
         }
-        return $this->getLackFansRateAndDept($availableDept, $event->redisUtils->getRedis(), $event->autoConvertService, $event->convertRequestInfo);
+        return $this->getLackFansRateAndDept($availableDept, $event->redisUtils->getRedis(), $event->autoConvertService);
     }
 
     /**
@@ -82,18 +82,17 @@ class CalculateLackFansRateServiceImpl extends BaseObject implements CalculateLa
      * @param array              $availableDept
      * @param Client             $redis
      * @param AutoConvertService $autoConvertService
-     * @param ConvertRequestVo   $convertRequestInfo
      * @return array
      * @author zhuozhen
      */
-    private function getLackFansRateAndDept(array $availableDept, Client $redis, AutoConvertService $autoConvertService, ConvertRequestVo $convertRequestInfo): array
+    private function getLackFansRateAndDept(array $availableDept, Client $redis, AutoConvertService $autoConvertService): array
     {
-        [$lackFansRate, $lackFansDept] = [0, ''];
+        [$lackFansRate, $lackFansDept,$allLackFansRate] = [0, '',[]];
         foreach ($availableDept as $dept) {
             //如果当前分部（公众号）存在redis中
             if ($redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE . $dept['current_dept'])) {
                 //获取该分部当前30分钟的实际进粉数
-                $thirtyMinFans = $autoConvertService->getThirtyMinFans($redis, $convertRequestInfo);
+                $thirtyMinFans = $autoConvertService->getThirtyMinFans($redis, $dept['current_dept']);
                 //当前分部缺粉率（30分钟供粉目标-30分钟实际进粉数）/30分钟供粉目标
                 $lackRate                                = ($dept['thirty_min_fans_target'] - $thirtyMinFans) / $dept['thirty_min_fans_target'];
                 $deptLackFansRate[$dept['current_dept']] = round($lackRate, 2);
@@ -101,12 +100,16 @@ class CalculateLackFansRateServiceImpl extends BaseObject implements CalculateLa
                 //该分部不存在redis中，说明该服务号还未进粉，缺粉率为100%
                 $deptLackFansRate[$dept['current_dept']] = 1;
             }
+            //存储所有部门缺粉率
+            $allLackFansRate[$dept['current_dept']] =  isset($thirtyMinFans) ?
+                '('. $dept['thirty_min_fans_target'] .' - '.$thirtyMinFans . ') /  '.  $dept['thirty_min_fans_target'] .' = '.$deptLackFansRate[$dept['current_dept']] : 1;
+
             //存储缺粉率及缺粉率最高的部门
             if ($lackFansRate < $deptLackFansRate[$dept['current_dept']]) {
                 $lackFansRate = $deptLackFansRate[$dept['current_dept']];
                 $lackFansDept = $dept['current_dept'];
             }
         }
-        return ['lackFansDept' => $lackFansDept, 'lackFansRate' => $lackFansRate, 'availableDept' => $availableDept];
+        return ['lackFansDept' => $lackFansDept, 'lackFansRate' => $lackFansRate, 'availableDept' => $availableDept, 'allLackFansRate' => $allLackFansRate];
     }
 }

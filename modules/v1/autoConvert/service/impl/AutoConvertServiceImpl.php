@@ -126,21 +126,21 @@ class AutoConvertServiceImpl extends BaseObject implements AutoConvertService
     /**
      * 获取当前30分钟的粉丝数
      * exp:如果现在是25分，则当前三十分钟是指0—30分。
-     * @param $redis              Client
-     * @param $convertRequestInfo ConvertRequestVo
+     * @param        $redis              Client
+     * @param string $dept
      * @return int
      * @author dengkai
      * @date   2019/4/19
      */
-    public function getThirtyMinFans(Client $redis, ConvertRequestVo $convertRequestInfo): int
+    public function getThirtyMinFans(Client $redis, string $dept): int
     {
-        if ($redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE))) {
-            $timeStamp = $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE));
+        if ($redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE . $dept . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE))) {
+            $timeStamp = $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $dept . MessageEnum::getTime(MessageEnum::DC_REAL_TIME_MESSAGE));
             $timeRange = $this->getTimeRange((int)$timeStamp);
             $nowTime   = time();
             if ($timeRange['beginTime'] <= $nowTime && $nowTime <= $timeRange['endTime']) {
-                $currentFansCount        = $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getCurrent(MessageEnum::DC_REAL_TIME_MESSAGE));
-                $currentThirtyMinInitVal = $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE));
+                $currentFansCount        = $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $dept . MessageEnum::getCurrent(MessageEnum::DC_REAL_TIME_MESSAGE));
+                $currentThirtyMinInitVal = $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $dept . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE));
                 return (int)$currentFansCount - (int)$currentThirtyMinInitVal;
             }
             return 0;
