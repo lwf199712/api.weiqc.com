@@ -28,7 +28,7 @@ class CalculateLackFansRateServiceImpl extends BaseObject implements CalculateLa
     public function calculateLackFansRate(AutoConvertEvent $event, bool $isFullFans): ?array
     {
         [$availableWhiteListDept, $lackFansRate, $lackFansDept, $whiteListLackFansFlag] = [[], 0, '', false];
-        if ($event->whiteList !== null) {
+        if (!empty($event->whiteList)) {
             foreach (explode(',', $event->whiteList) as $dept) {
                 if ($event->redisUtils->getRedis()->exists(MessageEnum::DC_REAL_TIME_MESSAGE . $dept)) {
                     $stopSupport         = $event->redisUtils->getRedis()->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $dept, SectionRealtimeMsgEnum::getIsStopSupportFans(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
