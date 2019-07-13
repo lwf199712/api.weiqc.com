@@ -153,9 +153,9 @@ class AutoConvertSubscriber implements EventSubscriberInterface
      */
     public function calculateDisparity(AutoConvertEvent $event): void
     {
-        $event->setNodeInfo(['dept' => 5, 'method' => __FUNCTION__]);
-
         $lackRateAndDept = $event->autoConvertService->calculateLackFansRateService->calculateLackFansRate($event, false);
+        $event->setNodeInfo(['dept' => 5, 'method' => __FUNCTION__ , 'info' => $lackRateAndDept]);
+
         if ($lackRateAndDept === null) {
             $event->setReturnDept();
             $event->stopPropagation();
@@ -213,9 +213,11 @@ class AutoConvertSubscriber implements EventSubscriberInterface
      */
     public function fullFansCalculateDisparity(AutoConvertEvent $event): void
     {
-        $event->setNodeInfo(['dept' => 8, 'method' => __FUNCTION__]);
 
         $lackRateAndDept = $event->autoConvertService->calculateLackFansRateService->calculateLackFansRate($event, true);
+        $event->setNodeInfo(['dept' => 8, 'method' => __FUNCTION__, 'info' => $lackRateAndDept]);
+
+
         if ($lackRateAndDept === null) {
             $event->setReturnDept();
             $event->stopPropagation();

@@ -132,6 +132,7 @@ class ConvertLinkController extends RestBaseController
         }
         /** @var ChangeService __invoke */
         ($this->changeService)($convertRequestInfo->department, $changeDept, $this->autoConvertStaticUrlService,$this->autoConvertStaticConversionService);
+
         return [ '操作成功!已转换链接', 200 ,[$changeDept,$autoConvertEvent->getNodeInfo()]];
 
     }

@@ -34,14 +34,11 @@ class ChangeServiceImpl extends BaseObject implements ChangeService
         foreach ($urlSet as $key => $value){
             $url = $value['url'];
             $pcUrl = $value['pcurl'];
-            if (strpos($url, 'wxh')) {
+            if (strpos($url, 'wxh') && strpos($pcUrl, 'wxh')) {
                 $url = substr($url, 0, strrpos($url, '?'));
-            }
-            $url = $url . '?wxh=' . $lackFansDept;
-
-            if (strpos($pcUrl, 'wxh')) {
                 $pcUrl = substr($pcUrl, 0, strrpos($pcUrl, '?'));
             }
+            $url = $url . '?wxh=' . $lackFansDept;
             $pcUrl = $pcUrl . '?wxh=' . $lackFansDept;
 
             $transaction = Yii::$app->db->beginTransaction();
