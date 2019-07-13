@@ -7,6 +7,7 @@ use app\models\dataObject\StaticServiceConversionsDo;
 use app\models\dataObject\StaticUrlDo;
 use app\modules\v1\autoConvert\service\AutoConvertStaticUrlService;
 use Exception;
+use RuntimeException;
 use yii\base\BaseObject;
 
 /**
@@ -38,7 +39,7 @@ class AutoConvertStaticUrlServiceImpl extends BaseObject implements AutoConvertS
         $urlSet     = $this->staticUrlDo::find()
             ->alias('u')
             ->select('u.id as url_id,s.id as service_id,s.service,u.url,u.pcurl')
-            ->leftJoin(StaticServiceConversionsDo::tableName() . 'as s', 'u.id = s.u_id')
+            ->leftJoin(StaticServiceConversionsDo::tableName() . ' as s', 'u.id = s.u_id')
             ->where(['s.pattern' => 3, 's.service' => $currentDept])
             ->andWhere(['between', 's.conversions_time', $todayBegin, $todayEnd])
             ->asArray()
@@ -53,15 +54,16 @@ class AutoConvertStaticUrlServiceImpl extends BaseObject implements AutoConvertS
      * @param string $pcUrl
      * @param string $oldDept
      * @param string $newDept
-     * @return array
+     * @return int
      * @throws Exception
      * @author zhuozhen
      */
-    public function updateUrl(int $id, string $url, string $pcUrl, string $oldDept, string $newDept): array
+    public function updateUrl(int $id, string $url, string $pcUrl, string $oldDept, string $newDept): int
     {
         $row = $this->staticUrlDo::updateAll(['url' => $url, 'pcurl' => $pcUrl], ['id' => $id]);
         if ($row < 1) {
-            throw new Exception("tatis_url表将公众号 $oldDept 切换为 $newDept 时出错，url和pcurl字段更新失败！");
+            throw new RuntimeException("tatis_url表将公众号 $oldDept 切换为 $newDept 时出错，url和pcurl字段更新失败！");
         }
+        return $row;
     }
 }

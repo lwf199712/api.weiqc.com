@@ -27,9 +27,9 @@ interface AutoConvertStaticUrlService
      * @param string $pcUrl
      * @param string $oldDept
      * @param string $newDept
-     * @return array
+     * @return int
      * @author zhuozhen
      */
-    public function updateUrl(int $id, string $url, string $pcUrl, string $oldDept, string $newDept): array;
+    public function updateUrl(int $id, string $url, string $pcUrl, string $oldDept, string $newDept): int ;
 
 }

@@ -128,11 +128,11 @@ class ConvertLinkController extends RestBaseController
         $changeDept = $autoConvertEvent->getReturnDept();
 
         if ($changeDept === null) {
-            return [ '操作成功!暂时没有转换链接', 200 , $changeDept];
+            return [ '操作成功!暂时没有转换链接', 200 , [$changeDept,$autoConvertEvent->getNodeInfo()]];
         }
         /** @var ChangeService __invoke */
         ($this->changeService)($convertRequestInfo->department, $changeDept, $this->autoConvertStaticUrlService,$this->autoConvertStaticConversionService);
-        return [ '操作成功!已转换链接', 200 ,$changeDept];
+        return [ '操作成功!已转换链接', 200 ,[$changeDept,$autoConvertEvent->getNodeInfo()]];
 
     }
 
