@@ -107,6 +107,10 @@ class ConvertLinkController extends RestBaseController
     {
         $convertRequestInfo = new ConvertRequestVo();
         $convertRequestInfo->setAttributes($this->request->get());
+        $deptIsExists =  $this->autoConvertService->checkDeptExists($convertRequestInfo);
+        if ($deptIsExists === false){
+            return ['操作失败！当前公众号不存在',406];
+        }
         $this->autoConvertService->prepareData($convertRequestInfo);
         $this->autoConvertService->initDept($convertRequestInfo);
         $redis = $this->redisUtils->getRedis();
@@ -122,6 +126,7 @@ class ConvertLinkController extends RestBaseController
         $this->dispatcher->addSubscriber($autoConvertSubscriber);
         $this->dispatcher->dispatch(AutoConvertEvent::DEFAULT_SCENE, $autoConvertEvent);
         $changeDept = $autoConvertEvent->getReturnDept();
+
         if ($changeDept === null) {
             return [ '操作成功!暂时没有转换链接', 200 , $changeDept];
         }

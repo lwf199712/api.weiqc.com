@@ -35,6 +35,17 @@ class AutoConvertServiceImpl extends BaseObject implements AutoConvertService
         parent::__construct($config);
     }
 
+    /**
+     * 检查公众号是否存在
+     * @param ConvertRequestVo $convertRequestInfo
+     * @return bool
+     * @author zhuozhen
+     */
+    public function checkDeptExists(ConvertRequestVo $convertRequestInfo): bool
+    {
+        return in_array($convertRequestInfo->department,['IRYfamily', 'IRYclub', 'irylover', 'iryskin', 'irycore'], true);
+    }
+
 
     /**
      * 判断当前公众号的上次的时间戳和粉丝数是否存在redis中
@@ -136,5 +147,6 @@ class AutoConvertServiceImpl extends BaseObject implements AutoConvertService
         }
         return 0;
     }
+
 
 }

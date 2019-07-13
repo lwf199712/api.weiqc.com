@@ -16,6 +16,15 @@ use Predis\Client;
  */
 interface AutoConvertService
 {
+
+    /**
+     * 检查公众号是否存在
+     * @param ConvertRequestVo $convertRequestInfo
+     * @return bool
+     * @author zhuozhen
+     */
+    public function checkDeptExists(ConvertRequestVo $convertRequestInfo): bool;
+
     /**
      * 判断当前公众号的上次的时间戳和粉丝数是否存在redis中
      * 不存在则证明该公众号第一次进粉
