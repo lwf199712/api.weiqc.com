@@ -12,6 +12,8 @@ use app\common\core\BaseEnum;
  * @method static getIsStopSupportFans(string $SECTION_REALTIME_MSG)
  * @method static getWhiteList(string $SECTION_REALTIME_MSG)
  * @method static getThirtyMinFansTarget(string $SECTION_REALTIME_MSG)
+ * @method static getTodaySupportFans(string $SECTION_REALTIME_MSG)
+ * @method static getIsMsgInform(string $SECTION_REALTIME_MSG)
  */
 class SectionRealtimeMsgEnum extends BaseEnum
 {

@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace app\modules\v1\autoConvert\service;
 
+use app\common\infrastructure\service\SMS;
 use app\common\utils\RedisUtils;
 use app\models\dataObject\StaticUrlDo;
 use app\modules\v1\autoConvert\domain\vo\ConvertRequestVo;
-use Predis\Client;
 
 /**
  * @property StaticUrlDo                  $staticUrlDo
@@ -52,12 +52,21 @@ interface AutoConvertService
     /**
      * 获取当前30分钟的粉丝数
      * exp:如果现在是25分，则当前三十分钟是指0—30分。
-     * @param        $redis              Client
      * @param string $dept
      * @return int
      * @author dengkai
      * @date   2019/4/19
      */
-    public function getThirtyMinFans(Client $redis, string $dept): int;
+    public function getThirtyMinFans(string $dept): int;
+
+    /**
+     * 今日进粉数达到设置的今日供粉数时发送信息
+     * @param ConvertRequestVo                     $convertRequestInfo
+     * @param SMS                                  $SMS
+     * @param AutoConvertSectionRealtimeMsgService $autoConvertSectionRealtimeMsgService
+     * @author zhuozhen
+     */
+    public function sendMessageWhenArriveTodayFansCount(ConvertRequestVo $convertRequestInfo,SMS $SMS,AutoConvertSectionRealtimeMsgService $autoConvertSectionRealtimeMsgService) :void ;
+
 
 }

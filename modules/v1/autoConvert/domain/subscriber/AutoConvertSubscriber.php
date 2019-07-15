@@ -3,12 +3,16 @@ declare(strict_types=1);
 
 namespace app\modules\v1\autoConvert\domain\subscriber;
 
+use app\common\infrastructure\dto\SingleMessageDto;
 use app\models\dataObject\SectionRealtimeMsgDo;
 use app\modules\v1\autoConvert\domain\event\AutoConvertEvent;
 use app\modules\v1\autoConvert\enum\MessageEnum;
 use app\modules\v1\autoConvert\enum\SectionRealtimeMsgEnum;
+use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Yii;
+use yii\base\Exception;
 
 /**
  * Class AutoConvertSubscriber
@@ -143,6 +147,25 @@ class AutoConvertSubscriber implements EventSubscriberInterface
         if ($diffVal <= $thirtyMinFansTarget) {
             $event->setReturnDept();
             $event->stopPropagation();
+        } else {
+            //发送短信
+            try {
+                $currentDeptId            = $event->redisUtils->getRedis()->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department, 'id');
+                $currentDeptInfo          = $event->autoConvertSectionRealtimeMsgService->findOne(['id' => $currentDeptId]);
+                $singleMessageDto         = new SingleMessageDto();
+                $singleMessageDto->text   = '【供粉系统通知】您好，供粉超出目标量！当前30分钟' . $currentDeptInfo['currentDept'] . '分部的供粉量已经达到指定供粉量，请及时调整广告减少供粉量，避免分部粉丝供应过多，谢谢！';
+                $singleMessageDto->mobile = $currentDeptInfo['control_member_phone'];
+                $singleMessageDto->apikey = Yii::$app->params['api']['yunpian_api']['apikey'];
+                $event->SMS->singleSendMsg($singleMessageDto);
+                if ($currentDeptInfo['control_member_phone'] !== $currentDeptInfo['adminstrator_phone']) {
+                    $singleMessageDto->phone = $currentDeptInfo['adminstrator_phone'];
+                    $event->SMS->singleSendMsg($singleMessageDto);
+                }
+            } catch (Exception $exception) {
+                Yii::info($exception->getMessage());
+            } catch (GuzzleException $exception) {
+                Yii::info($exception->getMessage());
+            }
         }
     }
 
@@ -154,7 +177,7 @@ class AutoConvertSubscriber implements EventSubscriberInterface
     public function calculateDisparity(AutoConvertEvent $event): void
     {
         $lackRateAndDept = $event->autoConvertService->calculateLackFansRateService->calculateLackFansRate($event, false);
-        $event->setNodeInfo(['dept' => 5, 'method' => __FUNCTION__ , 'info' => $lackRateAndDept]);
+        $event->setNodeInfo(['dept' => 5, 'method' => __FUNCTION__, 'info' => $lackRateAndDept]);
 
         if ($lackRateAndDept === null) {
             $event->setReturnDept();

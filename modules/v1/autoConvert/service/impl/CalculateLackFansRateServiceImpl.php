@@ -6,7 +6,6 @@ namespace app\modules\v1\autoConvert\service\impl;
 use app\common\utils\ArrayUtils;
 use app\models\dataObject\SectionRealtimeMsgDo;
 use app\modules\v1\autoConvert\domain\event\AutoConvertEvent;
-use app\modules\v1\autoConvert\domain\vo\ConvertRequestVo;
 use app\modules\v1\autoConvert\enum\MessageEnum;
 use app\modules\v1\autoConvert\enum\SectionRealtimeMsgEnum;
 use app\modules\v1\autoConvert\service\AutoConvertService;
@@ -92,7 +91,7 @@ class CalculateLackFansRateServiceImpl extends BaseObject implements CalculateLa
             //如果当前分部（公众号）存在redis中
             if ($redis->exists(MessageEnum::DC_REAL_TIME_MESSAGE . $dept['current_dept'])) {
                 //获取该分部当前30分钟的实际进粉数
-                $thirtyMinFans = $autoConvertService->getThirtyMinFans($redis, $dept['current_dept']);
+                $thirtyMinFans = $autoConvertService->getThirtyMinFans($dept['current_dept']);
                 //当前分部缺粉率（30分钟供粉目标-30分钟实际进粉数）/30分钟供粉目标
                 $lackRate                                = ($dept['thirty_min_fans_target'] - $thirtyMinFans) / $dept['thirty_min_fans_target'];
                 $deptLackFansRate[$dept['current_dept']] = round($lackRate, 2);

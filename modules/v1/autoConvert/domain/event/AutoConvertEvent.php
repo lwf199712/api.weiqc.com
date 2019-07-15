@@ -3,18 +3,22 @@ declare(strict_types=1);
 
 namespace app\modules\v1\autoConvert\domain\event;
 
+use app\common\infrastructure\service\SMS;
 use app\common\utils\RedisUtils;
 use app\modules\v1\autoConvert\domain\vo\ConvertRequestVo;
+use app\modules\v1\autoConvert\service\AutoConvertSectionRealtimeMsgService;
 use app\modules\v1\autoConvert\service\AutoConvertService;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * @property ConvertRequestVo   $convertRequestInfo
- * @property AutoConvertService $autoConvertService
- * @property RedisUtils         $redisUtils
- * @property string             $distribute
- * @property string             $stopSupport
- * @property string             $whiteList
+ * @property ConvertRequestVo                     $convertRequestInfo
+ * @property AutoConvertService                   $autoConvertService
+ * @property AutoConvertSectionRealtimeMsgService $autoConvertSectionRealtimeMsgService
+ * @property SMS                                  $SMS
+ * @property RedisUtils                           $redisUtils
+ * @property string                               $distribute
+ * @property string                               $stopSupport
+ * @property string                               $whiteList
  * Class AutoConvertEvent
  */
 class AutoConvertEvent extends Event
@@ -29,6 +33,10 @@ class AutoConvertEvent extends Event
     public $redisUtils;
     /** @var AutoConvertService */
     public $autoConvertService;
+    /** @var AutoConvertSectionRealtimeMsgService */
+    public $autoConvertSectionRealtimeMsgService;
+    /** @var SMS */
+    public $SMS;
     /** @var string */
     public $returnDept;
     /** @var string $distribute 是否可分配 */
@@ -38,30 +46,34 @@ class AutoConvertEvent extends Event
     /** @var string $whiteList 白名单 */
     public $whiteList;
     /** @var array $nodeInfo 节点信息 */
-    protected  $nodeInfo;
+    protected $nodeInfo;
 
     public function __construct(ConvertRequestVo $convertRequestInfo,
                                 AutoConvertService $autoConvertService,
+                                AutoConvertSectionRealtimeMsgService $autoConvertSectionRealtimeMsgService,
+                                SMS $SMS,
                                 RedisUtils $redisUtils,
                                 string $distribute,
                                 string $stopSupport,
                                 string $whiteList
     )
     {
-        $this->convertRequestInfo = $convertRequestInfo;
-        $this->autoConvertService = $autoConvertService;
-        $this->redisUtils         = $redisUtils;
-        $this->distribute         = $distribute;
-        $this->stopSupport        = $stopSupport;
-        $this->whiteList          = $whiteList;
+        $this->convertRequestInfo                   = $convertRequestInfo;
+        $this->autoConvertService                   = $autoConvertService;
+        $this->autoConvertSectionRealtimeMsgService = $autoConvertSectionRealtimeMsgService;
+        $this->SMS                                  = $SMS;
+        $this->redisUtils                           = $redisUtils;
+        $this->distribute                           = $distribute;
+        $this->stopSupport                          = $stopSupport;
+        $this->whiteList                            = $whiteList;
     }
 
     /**
      * 获取粉丝需转移到的分部
      * @return string || null
-     * @author zhuozhen
+     * @author         zhuozhen
      */
-    public function getReturnDept() :? string
+    public function getReturnDept(): ?string
     {
         return $this->returnDept;
     }
@@ -82,7 +94,7 @@ class AutoConvertEvent extends Event
      * @return array
      * @author zhuozhen
      */
-    public function getNodeInfo() : array
+    public function getNodeInfo(): array
     {
         return $this->nodeInfo;
     }
@@ -92,7 +104,7 @@ class AutoConvertEvent extends Event
      * @param array $nodeInfo
      * @author zhuozhen
      */
-    public function setNodeInfo(array $nodeInfo) : void
+    public function setNodeInfo(array $nodeInfo): void
     {
         $this->nodeInfo = $nodeInfo;
     }
