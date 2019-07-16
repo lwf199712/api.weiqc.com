@@ -10,29 +10,29 @@ use yii\base\Model;
  * Class MessageBundleDto
  * @property string $text
  * @property string $phone
- * @property string $template
+ * @property string $apikey
  * @package app\common\infrastructure
  */
 class MessageBundleDto extends Model
 {
     /** @var string $text */
     public $text;
-    /** @var string $phone */
-    public $phone;
-    /** @var string $template */
-    public $template;
+    /** @var string $mobile */
+    public $mobile;
+    /** @var string $apikey */
+    public $apikey;
 
     /**
      * Returns the validation rules for attributes.
      *
      * @return array
-     * @author: lirong
+     * @author: zhuozhen
      */
     public function rules(): array
     {
         return [
-            [['phone', 'text', 'template'], 'required'],
-            [['phone', 'text', 'template'], 'string', 'min' => 1, 'max' => 256],
+            [['mobile', 'text', 'apikey'], 'required'],
+            [['mobile', 'text' , 'apikey'], 'string', 'min' => 1, 'max' => 256],
         ];
     }
 
@@ -41,14 +41,14 @@ class MessageBundleDto extends Model
      * Returns the attribute labels.
      *
      * @return array
-     * @author: lirong
+     * @author: zhuozhen
      */
     public function attributeLabels(): array
     {
         return [
-            'text'  => '短信内容',
-            'phone' => '收信人手机',
-            'template' => '使用模板',
+            'text'   => '短信内容',
+            'mobile' => '收信人手机',
+            'apikey' => '用户唯一标识',
         ];
     }
 }

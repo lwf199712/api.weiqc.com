@@ -63,10 +63,7 @@ class SMSImpl extends ClientBaseService implements SMS
     public function batchSendMsg(MessageBundleDto $messageBundleDto): void
     {
         $response = $this->client->request('POST', Yii::$app->params['api']['yunpian_api']['base_url'] . Yii::$app->params['api']['yunpian_api']['sms_actions']['single_send_uri'], [
-            'query' => [
-                'apikey' => Yii::$app->params['api']['yunpian_api']['apikey'],
-            ],
-            'json'  => $messageBundleDto->attributes,
+            'form_params' => ArrayUtils::attributesAsMap($messageBundleDto)
         ]);
         $response = json_decode($response->getBody()->getContents(), false);
         if ((int)$response->code !== 0) {

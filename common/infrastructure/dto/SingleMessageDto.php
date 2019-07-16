@@ -25,7 +25,7 @@ class SingleMessageDto extends Model
      * Returns the validation rules for attributes.
      *
      * @return array
-     * @author: lirong
+     * @author: zhuozhen
      */
     public function rules(): array
     {
@@ -39,7 +39,7 @@ class SingleMessageDto extends Model
      * Returns the attribute labels.
      *
      * @return array
-     * @author: lirong
+     * @author: zhuozhen
      */
     public function attributeLabels(): array
     {
