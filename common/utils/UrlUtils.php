@@ -2,6 +2,9 @@
 
 namespace app\common\utils;
 
+use yii\base\InvalidConfigException;
+use yii\web\Request;
+
 /**
  * Class ArrayUtils
  *
@@ -26,5 +29,22 @@ class UrlUtils
             return substr($getParams, 0, $getParamsLen);
         }
         return '';
+    }
+
+    /**
+     * 获取完整的URL
+     * @param Request $request
+     * @return string
+     * @throws InvalidConfigException
+     * @author zhuozhen
+     */
+    public function getClientUrl(Request $request) : string
+    {
+        $pageURL = ($request->getIsSecureConnection() ?  'http' : 'https' ) .'://';
+         if ($request->securePort !== 80){
+             return $pageURL . $request->getServerName() . ':' . $request->getServerPort() . $request->getUrl();
+         }
+         return $pageURL . $request->getServerName() . $request->getUrl();
+
     }
 }

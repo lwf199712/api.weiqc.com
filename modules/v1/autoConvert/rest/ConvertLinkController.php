@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace app\modules\v1\autoConvert\rest;
 
-use app\common\infrastructure\dto\SingleMessageDto;
 use app\common\infrastructure\service\SMS;
 use app\common\rest\RestBaseController;
 use app\common\utils\RedisUtils;

@@ -35,12 +35,14 @@ use app\modules\v1\autoConvert\service\impl\AutoConvertStaticConversionServiceIm
 use app\modules\v1\autoConvert\service\impl\AutoConvertStaticUrlServiceImpl;
 use app\modules\v1\autoConvert\service\impl\CalculateLackFansRateServiceImpl;
 use app\modules\v1\autoConvert\service\impl\ChangeServiceImpl;
+use app\modules\v1\userAction\service\impl\UserActionPageMonitorImpl;
 use app\modules\v1\userAction\service\impl\UserActionRedisCacheImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticConversionImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticHitsImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticServiceConversionsImpl;
 use app\modules\v1\userAction\service\impl\UserActionUserActionStaticUrlImpl;
 use app\modules\v1\userAction\service\UserActionCache;
+use app\modules\v1\userAction\service\UserActionPageMonitorService;
 use app\modules\v1\userAction\service\UserActionStaticConversionService;
 use app\modules\v1\userAction\service\UserActionStaticHitsService;
 use app\modules\v1\userAction\service\UserActionStaticServiceConversionsService;
@@ -78,6 +80,7 @@ $containerList = [
     UserActionStaticServiceConversionsService::class => UserActionUserActionStaticServiceConversionsImpl::class,
     UserActionsService::class                        => UserActionsImpl::class,
     UserActionStaticHitsService::class               => UserActionUserActionStaticHitsImpl::class,
+    UserActionPageMonitorService::class              => UserActionPageMonitorImpl::class,
     //autoConvert模块容器
     CalculateLackFansRateService::class              => CalculateLackFansRateServiceImpl::class,
     ChangeService::class                             => ChangeServiceImpl::class,
