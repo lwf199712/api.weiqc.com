@@ -38,4 +38,30 @@ class UserActionUserActionStaticUrlImpl extends BaseObject implements UserAction
         }
         return $this->staticUrl::find()->select($select)->where($condition)->one();
     }
+
+    /**
+     * 更新链接
+     * @param int    $id
+     * @param string $urlService
+     * @return bool
+     * @author zhuozhen
+     */
+    public function updateService(int $id, string $urlService): bool
+    {
+        $urlInfo = $this->staticUrl::findOne(['id' => $id]);
+        if ($urlInfo === null || empty($urlService)){
+            return false;
+        }
+        if (strpos($urlInfo->url, 'wxh')) {
+            $url = substr($urlInfo->url, 0, strrpos($urlInfo->url, '?'));
+        }
+        $url = $url . '?wxh=' . $urlService;
+        if (strpos($urlInfo->pcurl, 'wxh')) {
+            $pcurl = substr($urlInfo->pcurl, 0, strrpos($urlInfo->pcurl, '?'));
+        }
+        $pcurl = $pcurl . '?wxh=' . $urlService;
+
+        $result = $this->staticUrl::updateAll(['url' => $url, 'pcurl' => $pcurl],['id' => $id]);
+        return $result > 0;
+    }
 }

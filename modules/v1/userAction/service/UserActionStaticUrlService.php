@@ -19,4 +19,14 @@ interface UserActionStaticUrlService
      * @author: lirong
      */
     public function findOne($condition, $select = null);
+
+    /**
+     * 更新链接
+     * @param int    $id
+     * @param string $urlService
+     * @return bool
+     * @author zhuozhen
+     */
+    public function updateService(int $id, string $urlService) : bool ;
+
 }
