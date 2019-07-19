@@ -202,13 +202,15 @@ class AutoConvertSubscriber implements EventSubscriberInterface
 
         //更新缓存中满粉目标数，在原有基础上增加10%
         $availableDept = SectionRealtimeMsgDo::find()->select('current_dept,thirty_min_fans_target')->asArray()->all();
-
         foreach ($availableDept as $v) {
             $oldFullFansCount = $event->redisUtils->getRedis()->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $v['current_dept'], 'fullFansCount');
-            if ($oldFullFansCount !== null) {
-                $newFullFansCount = (int)$oldFullFansCount + ceil($v['thirty_min_fans_target'] * 0.1);
-                $event->redisUtils->getRedis()->hSet(MessageEnum::DC_REAL_TIME_MESSAGE . $v['current_dept'], 'fullFansCount', $newFullFansCount);
+            if ($oldFullFansCount === null) {
+                $event->redisUtils->getRedis()->hSet(MessageEnum::DC_REAL_TIME_MESSAGE . $v['current_dept'], 'fullFansCount', $v['thirty_min_fans_target']);
+                $oldFullFansCount = $v['thirty_min_fans_target'];
             }
+            $newFullFansCount = (int)$oldFullFansCount + ceil($v['thirty_min_fans_target'] * 0.1);
+            Yii::info('oldFullFansCount:' . (int)$oldFullFansCount . ', thirty_min_fans_target:'.$v['thirty_min_fans_target']*0.1 );
+            $event->redisUtils->getRedis()->hSet(MessageEnum::DC_REAL_TIME_MESSAGE . $v['current_dept'], 'fullFansCount', $newFullFansCount);
         }
     }
 

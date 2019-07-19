@@ -175,7 +175,7 @@ class AutoConvertServiceImpl extends BaseObject implements AutoConvertService
         if ($convertRequestInfo->fansCount >= $todayFansCount && $isMsgInform === 'yes') {
             //满粉通知标志     通知过一次之后设置此标志，今日都不再进行通知
             $this->redisUtils->getRedis()->set(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . '_fullFansInform', 'yes');
-            $this->redisUtils->getRedis()->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . '_fullFansInform', $convertRequestInfo->department);
+            $this->redisUtils->getRedis()->expireAt(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department . '_fullFansInform',  mktime(23, 59, 59, date('m'), date('d'), date('Y')));
             //发送信息
             $currentDeptId   = $this->redisUtils->getRedis()->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department, 'id');
             $currentDeptInfo = $autoConvertSectionRealtimeMsgService->findOne(['id' => $currentDeptId]);
