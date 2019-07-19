@@ -147,7 +147,8 @@ class ConvertLinkController extends RestBaseController
                                                     $this->redisUtils,
                                                     $this->distribute,
                                                     $this->stopSupport,
-                                                    $this->whiteList);
+                                                    $this->whiteList,
+                                      AutoConvertEvent::FIRST_IN_FULL_FANS);
         $this->dispatcher->addSubscriber($autoConvertSubscriber);
         $this->dispatcher->dispatch(AutoConvertEvent::DEFAULT_SCENE, $autoConvertEvent);
         $changeDept = $autoConvertEvent->getReturnDept();

@@ -19,6 +19,7 @@ use Symfony\Component\EventDispatcher\Event;
  * @property string                               $distribute
  * @property string                               $stopSupport
  * @property string                               $whiteList
+ * @property int                                  $scenarioType
  * Class AutoConvertEvent
  */
 class AutoConvertEvent extends Event
@@ -26,6 +27,10 @@ class AutoConvertEvent extends Event
     public const DEFAULT_SCENE = 'DefaultScene';
 
     public const FULL_FANS_SCENE = 'FullFansScene';
+
+    public const FIRST_IN_FULL_FANS  = 1;
+
+    public const NEXT_IN_FULL_FANS = 2;
 
     /** @var ConvertRequestVo */
     public $convertRequestInfo;
@@ -47,6 +52,8 @@ class AutoConvertEvent extends Event
     public $whiteList;
     /** @var array $nodeInfo 节点信息 */
     protected $nodeInfo;
+    /** @var int $scenarioType */
+    protected $scenarioType;
 
     public function __construct(ConvertRequestVo $convertRequestInfo,
                                 AutoConvertService $autoConvertService,
@@ -55,7 +62,8 @@ class AutoConvertEvent extends Event
                                 RedisUtils $redisUtils,
                                 string $distribute,
                                 string $stopSupport,
-                                string $whiteList
+                                string $whiteList,
+                                int $scenarioType
     )
     {
         $this->convertRequestInfo                   = $convertRequestInfo;
@@ -66,6 +74,7 @@ class AutoConvertEvent extends Event
         $this->distribute                           = $distribute;
         $this->stopSupport                          = $stopSupport;
         $this->whiteList                            = $whiteList;
+        $this->scenarioType                         = $scenarioType;
     }
 
     /**
@@ -107,5 +116,25 @@ class AutoConvertEvent extends Event
     public function setNodeInfo(array $nodeInfo): void
     {
         $this->nodeInfo = $nodeInfo;
+    }
+
+    /**
+     * 设置满粉场景
+     * @param int $scenarioType
+     * @author zhuozhen
+     */
+    public function setScenarioType(int $scenarioType) : void
+    {
+        $this->scenarioType = $scenarioType;
+    }
+
+    /**
+     * 获取满粉场景
+     * @return int
+     * @author zhuozhen
+     */
+    public function getScenarioType() :int
+    {
+        return $this->scenarioType ;
     }
 }
