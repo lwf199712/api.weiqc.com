@@ -8,7 +8,9 @@ use app\common\rest\RestBaseController;
 use app\common\utils\RedisUtils;
 use app\common\utils\RequestUtils;
 use app\common\utils\ResponseUtils;
+use app\modules\v1\autoConvert\domain\behavior\AutoConvertBehavior;
 use app\modules\v1\autoConvert\domain\event\AutoConvertEvent;
+use app\modules\v1\autoConvert\domain\event\AutoConvertPrepareEvent;
 use app\modules\v1\autoConvert\domain\subscriber\AutoConvertSubscriber;
 use app\modules\v1\autoConvert\domain\vo\ConvertRequestVo;
 use app\modules\v1\autoConvert\enum\MessageEnum;
@@ -20,6 +22,8 @@ use app\modules\v1\autoConvert\service\AutoConvertStaticUrlService;
 use app\modules\v1\autoConvert\service\CalculateLackFansRateService;
 use app\modules\v1\autoConvert\service\ChangeService;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Yii;
+use yii\base\InvalidConfigException;
 
 /**
  * @property AutoConvertSectionRealtimeMsgService $autoConvertSectionRealtimeMsgService
@@ -32,9 +36,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  * @property ResponseUtils                        $responseUtils
  * @property RedisUtils                           $redisUtils
  * @property EventDispatcher                      dispatcher
- * @property string                               $distribute
- * @property string                               $stopSupport
- * @property string                               $whiteList
  * @property SMS                                  $SMS
  * Class ConvertLinkController
  */
@@ -62,14 +63,25 @@ class ConvertLinkController extends RestBaseController
     protected $dispatcher;
     /** @var SMS */
     protected $SMS;
-    /** @var string $distribute 是否可分配 */
-    protected $distribute;
-    /** @var string $stopSupport 是否停止供粉 */
-    protected $stopSupport;
-    /** @var string $whiteList 白名单 */
-    protected $whiteList;
 
-
+    /**
+     * ConvertLinkController constructor.
+     * @param                                      $id
+     * @param                                      $module
+     * @param AutoConvertStaticUrlService          $autoConvertStaticUrlService
+     * @param AutoConvertStaticConversionService   $autoConvertStaticConversionService
+     * @param AutoConvertSectionRealtimeMsgService $autoConvertSectionRealtimeMsgService
+     * @param CalculateLackFansRateService         $calculateLackFansRateService
+     * @param AutoConvertService                   $autoConvertService
+     * @param ChangeService                        $changeService
+     * @param RequestUtils                         $requestUtils
+     * @param ResponseUtils                        $responseUtils
+     * @param EventDispatcher                      $dispatcher
+     * @param RedisUtils                           $redisUtils
+     * @param SMS                                  $SMS
+     * @param array                                $config
+     * @throws InvalidConfigException
+     */
     public function __construct($id, $module,
                                 AutoConvertStaticUrlService $autoConvertStaticUrlService,
                                 AutoConvertStaticConversionService $autoConvertStaticConversionService,
@@ -99,6 +111,8 @@ class ConvertLinkController extends RestBaseController
         $this->dispatcher    = $dispatcher;
         //基础设施类
         $this->SMS = $SMS;
+
+        $this->on(AutoConvertPrepareEvent::class, Yii::createObject(['class' => AutoConvertBehavior::class]));
         parent::__construct($id, $module, $config);
     }
 
@@ -119,36 +133,29 @@ class ConvertLinkController extends RestBaseController
     /**
      * 自动转粉接口
      * @return array
+     * @throws InvalidConfigException
      * @author zhuozhen
      */
     public function actionConvert(): array
     {
-        $convertRequestInfo = new ConvertRequestVo();
-        $convertRequestInfo->setAttributes($this->request->get());
-        $deptIsExists = $this->autoConvertService->checkDeptExists($convertRequestInfo);
-        if ($deptIsExists === false) {
-            return ['操作失败！当前公众号不存在', 406];
+        $convertRequestVo = new ConvertRequestVo();
+        $convertRequestVo->setAttributes($this->request->get());
+        $this->trigger(AutoConvertPrepareEvent::class, $autoConvertPrepareEvent = Yii::createObject(['class' => AutoConvertPrepareEvent::class], [
+            $convertRequestVo, $this->autoConvertService, $this->redisUtils,
+        ]));
+        if ($autoConvertPrepareEvent->errors !== null) {
+            return $autoConvertPrepareEvent->errors;
         }
-        $this->autoConvertService->prepareData($convertRequestInfo);
-        $this->autoConvertService->initDept($convertRequestInfo);
-        $redis = $this->redisUtils->getRedis();
-        //是否可分配
-        $this->distribute = $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department, SectionRealtimeMsgEnum::getIsDistribute(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
-        //是否停止供粉
-        $this->stopSupport = $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department, SectionRealtimeMsgEnum::getIsStopSupportFans(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
-        //白名单
-        $this->whiteList = $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $convertRequestInfo->department, SectionRealtimeMsgEnum::getWhiteList(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
-
-        $autoConvertSubscriber = new AutoConvertSubscriber();
-        $autoConvertEvent      = new AutoConvertEvent($convertRequestInfo,
-                                                    $this->autoConvertService,
-                                                    $this->autoConvertSectionRealtimeMsgService,
-                                                    $this->SMS,
-                                                    $this->redisUtils,
-                                                    $this->distribute,
-                                                    $this->stopSupport,
-                                                    $this->whiteList,
-                                      AutoConvertEvent::FIRST_IN_FULL_FANS);
+        $autoConvertSubscriber = new AutoConvertSubscriber;
+        $autoConvertEvent      = new AutoConvertEvent($convertRequestVo,
+            $this->autoConvertService,
+            $this->autoConvertSectionRealtimeMsgService,
+            $this->SMS,
+            $this->redisUtils,
+            $autoConvertPrepareEvent->distribute,
+            $autoConvertPrepareEvent->stopSupport,
+            $autoConvertPrepareEvent->whiteList,
+            AutoConvertEvent::FIRST_IN_FULL_FANS);
         $this->dispatcher->addSubscriber($autoConvertSubscriber);
         $this->dispatcher->dispatch(AutoConvertEvent::DEFAULT_SCENE, $autoConvertEvent);
         $changeDept = $autoConvertEvent->getReturnDept();
@@ -157,9 +164,9 @@ class ConvertLinkController extends RestBaseController
             return ['操作成功!暂时没有转换链接', 200, [$changeDept, $autoConvertEvent->getNodeInfo()]];
         }
         /** @var ChangeService __invoke */
-        ($this->changeService)($convertRequestInfo->department, $changeDept, $this->autoConvertStaticUrlService, $this->autoConvertStaticConversionService);
+        ($this->changeService)($convertRequestVo->department, $changeDept, $this->autoConvertStaticUrlService, $this->autoConvertStaticConversionService);
         //当今日进粉数达到设置的今日供粉数，则发送一条消息
-        $this->autoConvertService->sendMessageWhenArriveTodayFansCount($convertRequestInfo, $this->SMS,$this->autoConvertSectionRealtimeMsgService);
+        $this->autoConvertService->sendMessageWhenArriveTodayFansCount($convertRequestVo, $this->SMS, $this->autoConvertSectionRealtimeMsgService);
         return ['操作成功!已转换链接', 200, [$changeDept, $autoConvertEvent->getNodeInfo()]];
 
     }
