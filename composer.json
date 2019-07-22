@@ -28,7 +28,9 @@
     "yiisoft/yii2-swiftmailer": "~2.1.0",
     "guzzlehttp/guzzle": "~6.0",
     "workerman/workerman": "^3.5",
-    "symfony/event-dispatcher": "^4.2"
+    "symfony/event-dispatcher": "^4.2",
+    "mdmsoft/yii2-admin": "~2.0",
+    "dmstr/yii2-adminlte-asset": "2.*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.1.0",
@@ -80,7 +82,7 @@
   "repositories": [
     {
       "type": "composer",
-      "url": "https://packagist.laravel-china.org"
+      "url": "https://mirrors.aliyun.com/composer/"
     }
   ]
 }

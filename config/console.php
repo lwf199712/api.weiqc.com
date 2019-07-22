@@ -1,4 +1,5 @@
 <?php
+
 /**
  * commands config
  *
@@ -8,9 +9,10 @@
 use yii\gii\Module;
 use yii\log\FileTarget;
 use yii\caching\FileCache;
+use yii\rbac\DbManager;
 
 $params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/db.php';
+$db     = require __DIR__ . '/db.php';
 
 $config = [
     'id'                  => 'basic-console',
@@ -23,10 +25,10 @@ $config = [
         '@tests' => '@app/tests',
     ],
     'components'          => [
-        'cache' => [
+        'cache'       => [
             'class' => FileCache::class,
         ],
-        'log'   => [
+        'log'         => [
             'targets' => [
                 [
                     'class'  => FileTarget::class,
@@ -42,8 +44,15 @@ $config = [
                 ],
             ],
         ],
-        'db'    => $db,
+        'authManager' => [
+            'class'           => DbManager::class,
+            // 'cache' => 'cache',
+        ],
+
+        'db'          => $db,
     ],
+
+
     'params'              => $params,
     /*
     'controllerMap' => [
@@ -56,7 +65,7 @@ $config = [
 
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
-    $config['bootstrap'][] = 'gii';
+    $config['bootstrap'][]    = 'gii';
     $config['modules']['gii'] = [
         'class' => Module::class,
     ];

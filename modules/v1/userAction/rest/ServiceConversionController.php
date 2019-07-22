@@ -12,6 +12,7 @@ use Yii;
 use yii\base\Exception;
 
 /**
+ * 获取落地页公众号接口
  * Class ServiceConversionController
  * @@property  UserActionStaticUrlService $userActionStaticUrlService
  * @package app\modules\v1\userAction\rest

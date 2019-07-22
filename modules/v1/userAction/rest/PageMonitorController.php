@@ -16,18 +16,20 @@ use Yii;
 use yii\base\InvalidConfigException;
 
 /**
+ * 落地页监控接口
+ * Class PageMonitorController
  * @property UserActionStaticUrlService   $userActionStaticUrlService
  * @property UserActionPageMonitorService $userActionPageMonitorService
  * @property UrlUtils                     $urlUtils,
- * Class PageMonitorController
+ *
  * @package app\modules\v1\userAction\rest
  */
 class PageMonitorController extends RestBaseController
 {
     /** @var UserActionStaticUrlService */
-    public $userActionStaticUrlService;
+    protected $userActionStaticUrlService;
     /** @var  UserActionPageMonitorService */
-    public $userActionPageMonitorService;
+    protected $userActionPageMonitorService;
     /** @var UrlUtils */
     protected $urlUtils;
 
@@ -78,8 +80,7 @@ class PageMonitorController extends RestBaseController
         }
 
         $url             = $this->request->getReferrer() ?? $this->urlUtils->getClientUrl($this->request);
-        $ipAddress       = $this->request->getUserIP();
-        $ip              = ip2long($ipAddress);
+        $ip              = ip2long( $this->request->getUserIP());
         $currentPageList = explode(',', $pageMonitorRequestDto->current_page);
         $durationList    = explode(',', $pageMonitorRequestDto->duration);
 

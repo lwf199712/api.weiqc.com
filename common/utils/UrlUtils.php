@@ -14,6 +14,7 @@ use yii\web\Request;
 class UrlUtils
 {
     /**
+     * 拼接URL参数
      * @param array $params
      * @return string
      * @author: lirong

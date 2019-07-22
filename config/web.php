@@ -1,14 +1,28 @@
 <?php
+
 /**
  * web config
  *
  * @author lirong
  */
 
+use app\common\rest\RestBaseController;
+use mdm\admin\components\AccessControl;
+use mdm\admin\controllers\AssignmentController;
+use mdm\admin\controllers\DefaultController;
+use mdm\admin\controllers\MenuController;
+use mdm\admin\controllers\PermissionController;
+use mdm\admin\controllers\RoleController;
+use mdm\admin\controllers\RouteController;
+use mdm\admin\controllers\RuleController;
+use mdm\admin\controllers\UserController;
+use mdm\admin\Module;
+use yii\rbac\DbManager;
 use yii\debug\Module as DebugModule;
 use yii\gii\Module as GiiModule;
 use yii\web\JsonParser;
 use app\modules\v1\Module as V1Module;
+use app\modules\v2\Module as V2Module;
 use yii\web\Response;
 use yii\log\FileTarget;
 use yii\swiftmailer\Mailer;
@@ -23,16 +37,33 @@ require_once __DIR__ . '/container/v1_container.php';
 $config = [
     'id'         => 'basic',
     'basePath'   => dirname(__DIR__),
-    'bootstrap'  => [ 'log' ],
+    'language'   => 'zh-CN',
+    'bootstrap'  => ['log'],
     'aliases'    => [
-        '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@bower'     => '@vendor/bower-asset',
+        '@npm'       => '@vendor/npm-asset',
+        '@mdm/admin' => '@vendor/mdmsoft/yii2-admin',
     ],
     'modules'    => [
         //load conversion modules
-        'v1' => [
+        'v1'    => [
             'class' => V1Module::class,
         ],
+        'v2'    => [
+            'class' => V2Module::class,
+        ],
+        //加载RBAC权限管理模块
+        'admin' => [
+            'class'      => Module::class,
+            'layout'     => 'right-menu',
+            'mainLayout' => '@app/views/layouts/main.php',
+            'menus'      => [
+                'user/signup' => [
+                    'label' => '新增用户',
+                ],
+            ],
+        ],
+
     ],
     'components' => [
         'request'      => [
@@ -47,16 +78,17 @@ $config = [
             'class'         => Response::class,
             'on beforeSend' => static function ($event) {
                 $response = $event->sender;
-                if ($event->sender->statusCode !== 500) {
+                if ($event->sender->statusCode !== 500 && Yii::$app->controller instanceof  RestBaseController
+                ) {
                     if ($response->data !== null && $event->sender->format === 'json') {
                         $responseData   = $response->data;
                         $message        = array_shift($responseData);
                         $code           = array_shift($responseData);
                         $data           = array_shift($responseData);
                         $response->data = [
-                            'message' => (string) $message,
-                            'code'    => (int) $code,
-                            'data'    => is_string($data) ? [ $data ] : $data,
+                            'message' => (string)$message,
+                            'code'    => (int)$code,
+                            'data'    => is_string($data) ? [$data] : $data,
                         ];
                         ksort($response->data);
                     }
@@ -92,35 +124,35 @@ $config = [
             'targets'    => [
                 [
                     'class'  => FileTarget::class,
-                    'levels' => [ 'error', 'warning', 'info', 'trace' ],
+                    'levels' => ['error', 'warning', 'info', 'trace'],
                 ],
                 //TODO 自定义info日志,用于记录post参数(线上调试用,调试完请删除)
                 [
                     'class'       => FileTarget::class,
-                    'levels'      => [ 'info' ],
-                    'categories'  => [ 'post_params' ],
+                    'levels'      => ['info'],
+                    'categories'  => ['post_params'],
                     'logFile'     => '@app/runtime/logs/post_params.log',
-                    'logVars'     => [ '*' ],
+                    'logVars'     => ['*'],
                     'maxFileSize' => 1024 * 2,
                     'maxLogFiles' => 20,
                 ],
                 //TODO 自定义info日志,用于记录api参数(线上调试用,调试完请删除)
                 [
                     'class'       => FileTarget::class,
-                    'levels'      => [ 'info' ],
-                    'categories'  => [ 'api_params' ],
+                    'levels'      => ['info'],
+                    'categories'  => ['api_params'],
                     'logFile'     => '@app/runtime/logs/api_params.log',
-                    'logVars'     => [ '*' ],
+                    'logVars'     => ['*'],
                     'maxFileSize' => 1024 * 2,
                     'maxLogFiles' => 20,
                 ],
                 //TODO 自定义info日志,用于记录api参数响应值
                 [
                     'class'       => FileTarget::class,
-                    'levels'      => [ 'info' ],
-                    'categories'  => [ 'api_response' ],
+                    'levels'      => ['info'],
+                    'categories'  => ['api_response'],
                     'logFile'     => '@app/runtime/logs/api_response.log',
-                    'logVars'     => [ '*' ],
+                    'logVars'     => ['*'],
                     'maxFileSize' => 1024 * 2,
                     'maxLogFiles' => 20,
                 ],
@@ -132,9 +164,29 @@ $config = [
             'showScriptName'  => false,
             'rules'           => require __DIR__ . '/route.php',
         ],
+        'authManager'  => [
+            'class' => DbManager::class,
+            // uncomment if you want to cache RBAC items hierarchy
+            // 'cache' => 'cache',
+        ],
         'db'           => $db,
     ],
-    'params'     => $params,
+
+    'as access' => [
+        'class'        => AccessControl::class,
+        'allowActions' => [
+            'site/*',
+            'admin/*',
+            'v1/*',
+            'gii/*',
+            'debug/*'
+            //此处的action列表，允许任何人（包括游客）访问
+            //所以如果是正式环境（线上环境），不应该在这里配置任何东西，为空即可
+            //但是为了在开发环境更简单的使用，可以在此处配置你所需要的任何权限
+            //在开发完成之后，需要清空这里的配置，转而在系统里面通过RBAC配置权限
+        ],
+    ],
+    'params'    => $params,
 ];
 
 if (YII_ENV_DEV) {
