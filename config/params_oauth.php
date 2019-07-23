@@ -18,5 +18,19 @@ return [
             //token获取地址
             'token_url'     => 'https://api.e.qq.com/oauth/token'
         ]
+    ],
+
+    /**
+     * 今日头条 oauth2.0 验证地址
+     */
+    'toutiao_marketing_api' => [
+        'token_key' => 'toutiao_marketing_api',
+        'app_id'    => 1111,
+        //鉴权地址
+        'authorize_url' => 'openapi/audit/oauth',
+        //鉴权回调地址
+        'redirect_uri' => 'xxx',
+        //token获取地址
+        'token_uri'  => ''
     ]
 ];

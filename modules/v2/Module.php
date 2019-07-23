@@ -1,9 +1,9 @@
 <?php
-
+declare(strict_types=1);
 namespace app\modules\v2;
 
 use yii\base\Module as BaseModule;
-//use app\modules\v2\oauth\Module as OauthModule;
+use app\modules\v2\oauth\Module as OauthModule;
 use Yii;
 
 /**
@@ -31,7 +31,7 @@ class Module extends BaseModule
         $this->modules = [
             //鉴权
             'oauth'       => [
-//                'class' => OauthModule::class,
+                'class' => OauthModule::class,
             ],
         ];
     }

@@ -42,13 +42,13 @@ class SMSImpl extends ClientBaseService implements SMS
      */
     public function singleSendMsg(SingleMessageDto $singleMessageDto): void
     {
-        $response = $this->client->request('POST', Yii::$app->params['api']['yunpian_api']['base_url'] . Yii::$app->params['api']['yunpian_api']['sms_actions']['single_send_uri'], [
-                'form_params' => ArrayUtils::attributesAsMap($singleMessageDto)
-            ]);
-            $response = json_decode($response->getBody()->getContents(), false);
-            if ((int)$response->code !== 0) {
-                throw new YuanpianApiException('短信发送失败,接口返回错误:' . $response->msg, $response->code ?? 500);
-            }
+        $response = $this->client->request('POST', Yii::$app->params['api']['yunpian_api']['sms_actions']['single_send_uri'], [
+            'form_params' => ArrayUtils::attributesAsMap($singleMessageDto),
+        ]);
+        $response = json_decode($response->getBody()->getContents(), false);
+        if ((int)$response->code !== 0) {
+            throw new YuanpianApiException('短信发送失败,接口返回错误:' . $response->msg, $response->code ?? 500);
+        }
 
     }
 
@@ -62,8 +62,8 @@ class SMSImpl extends ClientBaseService implements SMS
      */
     public function batchSendMsg(MessageBundleDto $messageBundleDto): void
     {
-        $response = $this->client->request('POST', Yii::$app->params['api']['yunpian_api']['base_url'] . Yii::$app->params['api']['yunpian_api']['sms_actions']['single_send_uri'], [
-            'form_params' => ArrayUtils::attributesAsMap($messageBundleDto)
+        $response = $this->client->request('POST', Yii::$app->params['api']['yunpian_api']['sms_actions']['single_send_uri'], [
+            'form_params' => ArrayUtils::attributesAsMap($messageBundleDto),
         ]);
         $response = json_decode($response->getBody()->getContents(), false);
         if ((int)$response->code !== 0) {

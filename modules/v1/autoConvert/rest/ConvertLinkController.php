@@ -13,8 +13,6 @@ use app\modules\v1\autoConvert\domain\event\AutoConvertEvent;
 use app\modules\v1\autoConvert\domain\event\AutoConvertPrepareEvent;
 use app\modules\v1\autoConvert\domain\subscriber\AutoConvertSubscriber;
 use app\modules\v1\autoConvert\domain\vo\ConvertRequestVo;
-use app\modules\v1\autoConvert\enum\MessageEnum;
-use app\modules\v1\autoConvert\enum\SectionRealtimeMsgEnum;
 use app\modules\v1\autoConvert\service\AutoConvertSectionRealtimeMsgService;
 use app\modules\v1\autoConvert\service\AutoConvertService;
 use app\modules\v1\autoConvert\service\AutoConvertStaticConversionService;
