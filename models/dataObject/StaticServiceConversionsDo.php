@@ -58,4 +58,5 @@ class StaticServiceConversionsDo extends ActiveRecord
             'create_time'      => '创建时间',
         ];
     }
+
 }

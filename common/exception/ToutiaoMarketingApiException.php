@@ -9,6 +9,6 @@ class ToutiaoMarketingApiException extends Exception
 {
     public static function defaultMessage($response) : string
     {
-        return "'获取头条Token失败：'.$response->message,$response->code ?? 500";
+        return "'获取头条Token失败：'.$response->message,$response->code";
     }
 }
