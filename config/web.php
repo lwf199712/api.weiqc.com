@@ -8,14 +8,6 @@
 
 use app\common\rest\RestBaseController;
 use mdm\admin\components\AccessControl;
-use mdm\admin\controllers\AssignmentController;
-use mdm\admin\controllers\DefaultController;
-use mdm\admin\controllers\MenuController;
-use mdm\admin\controllers\PermissionController;
-use mdm\admin\controllers\RoleController;
-use mdm\admin\controllers\RouteController;
-use mdm\admin\controllers\RuleController;
-use mdm\admin\controllers\UserController;
 use mdm\admin\Module;
 use yii\rbac\DbManager;
 use yii\debug\Module as DebugModule;
