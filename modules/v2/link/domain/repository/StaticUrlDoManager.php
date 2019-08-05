@@ -3,25 +3,25 @@ declare(strict_types=1);
 
 namespace app\modules\v2\link\domain\repository;
 
-
 use app\common\repository\BaseRepository;
 use app\models\dataObject\StaticUrlDo;
 use app\modules\v2\link\domain\dto\StaticUrlDto;
-use app\modules\v2\link\domain\entity\StaticUrlEntity;
+use app\modules\v2\link\domain\entity\StaticUrlEntity as StaticListAggregateRoot;
 use yii\data\ActiveDataProvider;
-use yii\db\ActiveQuery;
 
 class StaticUrlDoManager extends BaseRepository
 {
     public $modelClass = StaticUrlDo::class;
 
-    public function listStaticUrl(StaticUrlDto $staticUrlDto): ActiveDataProvider
+    public function listDataProvider(StaticUrlDto $staticUrlDto,StaticListAggregateRoot $staticListAggregateRoot): ActiveDataProvider
     {
         $this->query
             ->alias('staticUrl')
-            ->select(['staticUrl.id', 'staticUrl.ident', 'staticUrl.url', 'staticUrl.pcurl', 'staticUrl.name', 'staticUrl.conversion_cost', 'staticUrl.group_id', 'staticUrl.m_id'])
+            ->select(['staticUrl.id', 'staticUrl.ident', 'staticUrl.url', 'staticUrl.pcurl', 'staticUrl.name', 'staticUrl.conversion_cost', 'staticUrl.group_id', 'staticUrl.m_id' ,
+                'member.username',
+                'staticUrlGroup.groupname','staticUrlGroup.desc'])
             ->andWhere(['BETWEEN', 'createtime', $staticUrlDto->beginDate, $staticUrlDto->endDate])
-            ->joinWith('member');
+            ->joinWith(['member','staticUrlGroup']);
 
         if ($staticUrlDto->fieldValue === 'username') {     //username的情况需特殊处理
             $this->query->andWhere(['like', 'member.username', $staticUrlDto->fieldValue]);
@@ -30,7 +30,7 @@ class StaticUrlDoManager extends BaseRepository
         }
 
         if ($staticUrlDto->userName || $staticUrlDto->channelName) {         //负责人|渠道
-            $this->query->joinWith('staticUrlGroup')
+            $this->query
                 ->andFilterWhere(['=', 'staticUrlGroup.user_name', $staticUrlDto->userName])
                 ->andFilterWhere(['=', 'staticUrlGroup.channel_name', $staticUrlDto->channelName]);
         }
@@ -41,11 +41,9 @@ class StaticUrlDoManager extends BaseRepository
         }
 
         if ($staticUrlDto->secondGroup) {                                    //分组
-            $this->query->andWhere(['=', 'group_id', $staticUrlDto->secondGroup]);
+            $this->query->andWhere(['=', 'staticUrl.group_id', $staticUrlDto->secondGroup]);
         } else {
-            $this->query->joinWith(['staticUrlGroup' => static function (ActiveQuery $query) use ($staticUrlDto) {
-                $query->andWhere(['in', 'group_id', StaticUrlEntity::getAllSecondGroup((int)$staticUrlDto->firstGroup)]);
-            }]);
+            $this->query->andWhere(['in', 'staticUrl.group_id', $staticListAggregateRoot->getAllSecondGroup((int)$staticUrlDto->firstGroup)]);
         }
 
         $this->query->andWhere(['=', 'recycle', $staticUrlDto->recycle]);
