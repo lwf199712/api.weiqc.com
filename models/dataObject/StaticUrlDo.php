@@ -78,4 +78,20 @@ class StaticUrlDo extends ActiveRecord
             'group_id'   => '组别id',
         ];
     }
+
+
+    public function getStaticUrlGroup(): void
+    {
+        $this->hasOne(StaticUrlGroup::class,['id' => 'group_id']);
+    }
+
+    public function getStaticServiceConversions() : void
+    {
+        $this->hasOne(StaticServiceConversions::class,['u_id' => 'u_id']);
+    }
+
+    public function getMember() : void
+    {
+        $this->hasOne(Member::class,['id' => 'm_id']);
+    }
 }
