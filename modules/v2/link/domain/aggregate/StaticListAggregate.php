@@ -25,7 +25,7 @@ class StaticListAggregate extends BaseObject
     /** @var StaticListAggregateRoot */
     public $staticListAggregateRoot;
     /** @var StaticUrlDoManager */
-    public $staticUrlDoManager;
+    private $staticUrlDoManager;
     /** @var StaticHitsEntity */
     private $staticHitsEntity;
     /** @var StaticServiceConversionsEntity */
