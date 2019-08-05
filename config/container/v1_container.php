@@ -90,7 +90,7 @@ $containerList = [
     AutoConvertSectionRealtimeMsgService::class      => AutoConvertSectionRealtimeMsgServiceImpl::class,
     //oauth模块容器
     UserActionCache::class                           => UserActionRedisCacheImpl::class,
-    //tencentMarketingApi - oauth 容器
+    //tencentMarketingApi - oauth 容器...
     OauthCacheService::class                         => OauthRedisCacheImpl::class,
     OauthService::class                              => OauthImpl::class,
     UserActionSetsService::class                     => UserActionSetsImpl::class,

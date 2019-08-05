@@ -6,30 +6,31 @@ namespace app\modules\v2\link\rest;
 
 use app\common\rest\AdminBaseController;
 use app\models\dataObject\StaticUrlDo;
-use app\modules\v2\link\service\StaticListService;
+use app\modules\v2\link\domain\aggregate\StaticListAggregate;
+use app\modules\v2\link\domain\dto\StaticUrlDto;
 
 /**
  * Class StaticController
- * @property StaticUrlDo $staticUrlDo
- * @property StaticListService $staticListService
+ * @property StaticUrlDto $staticUrlDto
+ * @property StaticListAggregate $staticListAggregate
  * @package app\modules\v2\link\rest
  */
 class StaticController extends AdminBaseController
 {
-    /** @var StaticUrlDo  */
-    public $staticUrlDo;
-    /** @var StaticListService */
-    public $staticListService;
+    /** @var StaticUrlDto  */
+    public $staticUrlDto;
+    /** @var StaticListAggregate */
+    public $staticListAggregate;
 
     public $modelClass = StaticUrlDo::class;
 
     public function __construct($id, $module,
-                                StaticUrlDo $staticUrlDo,
-                                StaticListService $staticListService,
+                                StaticUrlDto $staticUrlDto,
+                                StaticListAggregate $staticListAggregate,
                                 $config = [])
     {
-        $this->staticListService = $staticListService;
-        $this->staticUrlDo = $staticUrlDo;
+        $this->staticListAggregate = $staticListAggregate;
+        $this->staticUrlDto = $staticUrlDto;
         parent::__construct($id, $module, $config);
     }
 
@@ -43,16 +44,29 @@ class StaticController extends AdminBaseController
     {
         return [
             'index' => ['GET', 'HEAD'],
+            'export' => ['GET','HEAD'],
         ];
     }
 
 
     public function index() : array
     {
-        $this->staticUrlDo->load($this->request->get());
-        if ($this->staticUrlDo->validate() === false){
-            return ['输入参数有误',406,$this->staticUrlDo->getErrors()];
+        $this->staticUrlDto->load($this->request->get());
+        if ($this->staticUrlDto->validate() === false){
+            return ['输入参数有误',406,$this->staticUrlDto->getErrors()];
         }
-        return $this->staticListService->listDataProvider($this->staticUrlDo);
+        $data = $this->staticListAggregate->listStaticUrl($this->staticUrlDto);
+        return ['成功返回数据',200,$data];
+    }
+
+
+    public function export() : array
+    {
+        $this->staticUrlDto->load($this->request->get());
+        if ($this->staticUrlDto->validate() === false){
+            return ['输入参数有误',406,$this->staticUrlDto->getErrors()];
+        }
+        $data = $this->staticListAggregate->listStaticUrl($this->staticUrlDto);
+        //TODO export DATA
     }
 }
