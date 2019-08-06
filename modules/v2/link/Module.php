@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\v2\oauth;
+namespace app\modules\v2\link;
 
 use yii\base\Module as BaseModule;
 
@@ -9,7 +9,7 @@ use yii\base\Module as BaseModule;
  * Class Module
  *
  * @package app\modules\v2
- * @author: lirong
+ * @author: zhuozhen
  */
 class Module extends BaseModule
 {
@@ -19,5 +19,5 @@ class Module extends BaseModule
      * @var string $controllerNamespace
      * @author: lirong
      */
-    public $controllerNamespace = 'app\modules\v2\oauth\web';
+    public $controllerNamespace = 'app\modules\v2\link\rest';
 }

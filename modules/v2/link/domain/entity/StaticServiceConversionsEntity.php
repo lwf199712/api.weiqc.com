@@ -11,11 +11,11 @@ class StaticServiceConversionsEntity extends StaticServiceConversionsDo
     /**
      * 获取转换数
      * @param array $uIdList
-     * @return int
+     * @return array
      * @author zhuozhen
      */
-    public  function getServiceConversionData(array $uIdList) : int
+    public  function getServiceConversionData(array $uIdList) : array
     {
-        self::find()->where(['in','u_id',$uIdList])->distinct('u_id')->count('u_id');
+        self::find()->select(['u_id','count(id) as count'])->where(['in','u_id',$uIdList])->groupBy('u_id')->all();
     }
 }

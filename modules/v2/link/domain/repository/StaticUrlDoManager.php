@@ -11,7 +11,7 @@ use yii\data\ActiveDataProvider;
 
 class StaticUrlDoManager extends BaseRepository
 {
-    public $modelClass = StaticUrlDo::class;
+    public static $modelClass = StaticUrlDo::class;
 
     public function listDataProvider(StaticUrlDto $staticUrlDto,StaticListAggregateRoot $staticListAggregateRoot): ActiveDataProvider
     {

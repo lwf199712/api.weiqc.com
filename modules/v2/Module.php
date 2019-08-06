@@ -4,6 +4,7 @@ namespace app\modules\v2;
 
 use yii\base\Module as BaseModule;
 use app\modules\v2\oauth\Module as OauthModule;
+use app\modules\v2\link\Module as LinkModule;
 use Yii;
 
 /**
@@ -33,6 +34,9 @@ class Module extends BaseModule
             'oauth'       => [
                 'class' => OauthModule::class,
             ],
+            'link'       => [
+                'class' => LinkModule::class,
+            ]
         ];
     }
 }
