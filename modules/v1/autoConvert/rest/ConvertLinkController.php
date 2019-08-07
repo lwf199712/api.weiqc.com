@@ -154,6 +154,8 @@ class ConvertLinkController extends RestBaseController
             $autoConvertPrepareEvent->stopSupport,
             $autoConvertPrepareEvent->whiteList,
             AutoConvertEvent::FIRST_IN_FULL_FANS);
+
+        //把订阅器（$autoConvertSubscriber）注册给派遣器（$this->dispatcher）
         $this->dispatcher->addSubscriber($autoConvertSubscriber);
         $this->dispatcher->dispatch(AutoConvertEvent::DEFAULT_SCENE, $autoConvertEvent);
         $changeDept = $autoConvertEvent->getReturnDept();
@@ -162,12 +164,14 @@ class ConvertLinkController extends RestBaseController
             return ['操作成功!暂时没有转换链接', 200, [$changeDept, $autoConvertEvent->getNodeInfo()]];
         }
         /** @var ChangeService __invoke */
-        ($this->changeService)($convertRequestVo->department, $changeDept, $this->autoConvertStaticUrlService, $this->autoConvertStaticConversionService);
+        $bool = ($this->changeService)($convertRequestVo->department, $changeDept, $this->autoConvertStaticUrlService, $this->autoConvertStaticConversionService);
         //当今日进粉数达到设置的今日供粉数，则发送一条消息
         $this->autoConvertService->sendMessageWhenArriveTodayFansCount($convertRequestVo, $this->SMS, $this->autoConvertSectionRealtimeMsgService);
-        return ['操作成功!已转换链接', 200, [$changeDept, $autoConvertEvent->getNodeInfo()]];
 
+        if ($bool){
+            return ['操作成功!已转换链接', 200, [$changeDept, $autoConvertEvent->getNodeInfo()]];
+        }
+
+        return ['操作成功!查询不到转化的链接，无链接被转化。',200];
     }
-
-
 }

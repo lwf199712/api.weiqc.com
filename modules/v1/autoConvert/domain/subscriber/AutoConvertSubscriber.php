@@ -144,7 +144,8 @@ class AutoConvertSubscriber implements EventSubscriberInterface
         $redis               = $event->redisUtils->getRedis();
         $diffVal             = $event->convertRequestInfo->fansCount - $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE));
         $thirtyMinFansTarget = $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department, SectionRealtimeMsgEnum::getThirtyMinFansTarget(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
-        if ($diffVal <= $thirtyMinFansTarget) {
+//        var_dump($diffVal.'++++'.$thirtyMinFansTarget);die();
+        if ($diffVal < $thirtyMinFansTarget) {
             $event->setReturnDept();
             $event->stopPropagation();
         } else {

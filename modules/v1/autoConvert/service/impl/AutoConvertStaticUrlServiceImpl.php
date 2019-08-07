@@ -35,7 +35,8 @@ class AutoConvertStaticUrlServiceImpl extends BaseObject implements AutoConvertS
     public function getServiceUrl(string $currentDept): array
     {
         $todayBegin = strtotime(date('Y-m-d'));
-        $todayEnd   = mktime(23, 59, 59, (int)date('m'), (int)date('d'), (int)date('Y'));
+        $todayEnd   = strtotime('+1 day',$todayBegin) - 1;
+
         $urlSet     = $this->staticUrlDo::find()
             ->alias('u')
             ->select('u.id as url_id,s.id as service_id,s.service,u.url,u.pcurl')
@@ -62,7 +63,7 @@ class AutoConvertStaticUrlServiceImpl extends BaseObject implements AutoConvertS
     {
         $row = $this->staticUrlDo::updateAll(['url' => $url, 'pcurl' => $pcUrl], ['id' => $id]);
         if ($row < 1) {
-            throw new RuntimeException("tatis_url表将公众号 $oldDept 切换为 $newDept 时出错，url和pcurl字段更新失败！");
+            throw new RuntimeException("statis_url表将公众号 $oldDept 切换为 $newDept 时出错，url和pcurl字段更新失败！");
         }
         return $row;
     }

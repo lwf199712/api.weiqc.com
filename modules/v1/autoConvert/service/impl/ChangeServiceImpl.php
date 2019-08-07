@@ -15,21 +15,22 @@ class ChangeServiceImpl extends BaseObject implements ChangeService
 
     /**
      * 转粉程序
-     * @param string                             $currentDept
-     * @param string                             $lackFansDept
-     * @param AutoConvertStaticUrlService        $autoConvertStaticUrlService
+     * @param string $currentDept
+     * @param string $lackFansDept
+     * @param AutoConvertStaticUrlService $autoConvertStaticUrlService
      * @param AutoConvertStaticConversionService $autoConvertStaticConversionService
+     * @return bool
      * @author zhuozhen
      */
     public function __invoke(string $currentDept,
                              string $lackFansDept,
                              AutoConvertStaticUrlService $autoConvertStaticUrlService,
-                             AutoConvertStaticConversionService $autoConvertStaticConversionService): void
+                             AutoConvertStaticConversionService $autoConvertStaticConversionService): bool
     {
         $urlSet = $autoConvertStaticUrlService->getServiceUrl($currentDept);
 
-        if ($urlSet === null){
-            return ;
+        if (empty($urlSet)){
+            return false;
         }
         foreach ($urlSet as $key => $value){
             $url = $value['url'];
@@ -43,14 +44,17 @@ class ChangeServiceImpl extends BaseObject implements ChangeService
 
             $transaction = Yii::$app->db->beginTransaction();
             try {
-                $autoConvertStaticUrlService->updateUrl((int)$value['url_id'], $url, $pcUrl, $currentDept, $lackFansDept);
-                $autoConvertStaticConversionService->updateService($value['service_id'], $lackFansDept);
+               $rows = $autoConvertStaticUrlService->updateUrl((int)$value['url_id'], $url, $pcUrl, $currentDept, $lackFansDept);
+               $rows2 = $autoConvertStaticConversionService->updateService((int)$value['service_id'], $lackFansDept);
                 $transaction->commit();
                 Yii::info('自动转粉：' . $currentDept . '切换为' . $lackFansDept . '成功！');
+                var_dump($rows.'====='.$rows2);
             } catch (Throwable $e) {
                 Yii::info('自动转粉系统切换公众号时候catch到了异常，异常信息为：' . $e->getMessage());
                 $transaction->rollBack();
+                var_dump($e->getMessage());
             }
         }
+        return true;
     }
 }
