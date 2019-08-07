@@ -15,6 +15,6 @@ class StaticUrlGroupEntity extends StaticUrlGroup
      */
     public  function getDefaultGroup() : array
     {
-        self::find()->select(['groupname','id'])->where(['=',0,'parent'])->orderBy('groupname')->all();
+        return self::find()->select(['groupname','id'])->where(['=',0,'parent'])->orderBy('groupname')->all();
     }
 }

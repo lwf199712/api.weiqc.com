@@ -16,6 +16,6 @@ class StaticServiceConversionsEntity extends StaticServiceConversionsDo
      */
     public  function getServiceConversionData(array $uIdList) : array
     {
-        self::find()->select(['u_id','count(id) as count'])->where(['in','u_id',$uIdList])->groupBy('u_id')->all();
+        return self::find()->select(['u_id','count(id) as count'])->where(['in','u_id',$uIdList])->groupBy('u_id')->all();
     }
 }

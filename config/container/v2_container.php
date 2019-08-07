@@ -5,8 +5,11 @@
  * @author zhuozhen
  */
 
-$containerList = [
+use app\common\infrastructure\service\ExcelService;
+use app\common\infrastructure\service\impl\ExcelServiceImpl;
 
+$containerList = [
+    ExcelService::class => ExcelServiceImpl::class
 ];
 
 foreach ($containerList as $class => $definition) {
