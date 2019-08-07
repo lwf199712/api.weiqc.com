@@ -61,7 +61,7 @@ class AutoConvertPrepareEvent extends Event
     }
 
 
-    public function setErrors(array $errors) : void
+    public function setErrors(string $errors) : void
     {
         $this->errors[] = $errors;
     }

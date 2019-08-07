@@ -19,7 +19,7 @@ class AutoConvertBehavior extends Behavior
     {
         $deptIsExists = $event->autoConvertService->checkDeptExists($event->convertRequestVo);
         if ($deptIsExists === false) {
-            $event->errors = ['操作失败！当前公众号不存在', 406];
+            $event->errors = '当前公众号不存在';
             return;
         }
         $event->autoConvertService->prepareData($event->convertRequestVo);

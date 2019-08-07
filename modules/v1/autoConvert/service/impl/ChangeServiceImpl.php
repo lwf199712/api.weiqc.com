@@ -42,17 +42,12 @@ class ChangeServiceImpl extends BaseObject implements ChangeService
             $url = $url . '?wxh=' . $lackFansDept;
             $pcUrl = $pcUrl . '?wxh=' . $lackFansDept;
 
-            $transaction = Yii::$app->db->beginTransaction();
             try {
-               $rows = $autoConvertStaticUrlService->updateUrl((int)$value['url_id'], $url, $pcUrl, $currentDept, $lackFansDept);
-               $rows2 = $autoConvertStaticConversionService->updateService((int)$value['service_id'], $lackFansDept);
-                $transaction->commit();
+               $autoConvertStaticUrlService->updateUrl((int)$value['url_id'], $url, $pcUrl, $currentDept, $lackFansDept);
+               $autoConvertStaticConversionService->updateService((int)$value['service_id'], $lackFansDept);
                 Yii::info('自动转粉：' . $currentDept . '切换为' . $lackFansDept . '成功！');
-                var_dump($rows.'====='.$rows2);
             } catch (Throwable $e) {
                 Yii::info('自动转粉系统切换公众号时候catch到了异常，异常信息为：' . $e->getMessage());
-                $transaction->rollBack();
-                var_dump($e->getMessage());
             }
         }
         return true;

@@ -62,8 +62,8 @@ class AutoConvertSubscriber implements EventSubscriberInterface
                 ['supportRule', -3],
                 ['convertAim', -4],
                 ['calculateDisparity', -5],
-                ['raiseConvertAim', -6],
-                ['fullFansConvertAim', -7],
+                ['raiseConvertAim', -6],        //全部满分，增量10%
+                ['fullFansConvertAim', -7],     //计算增量后是否满粉
                 ['fullFansCalculateDisparity', -8],
             ],
             AutoConvertEvent::FULL_FANS_SCENE => [       //满粉循环
