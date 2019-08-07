@@ -7,14 +7,15 @@ interface ChangeService
 {
     /**
      * 转粉程序
-     * @param string                             $currentDept
-     * @param string                             $lackFansDept
-     * @param AutoConvertStaticUrlService        $autoConvertStaticUrlService
+     * @param string $currentDept
+     * @param string $lackFansDept
+     * @param AutoConvertStaticUrlService $autoConvertStaticUrlService
      * @param AutoConvertStaticConversionService $autoConvertStaticConversionService
+     * @return bool
      * @author zhuozhen
      */
     public function __invoke(string $currentDept,
                              string $lackFansDept,
                              AutoConvertStaticUrlService $autoConvertStaticUrlService,
-                             AutoConvertStaticConversionService $autoConvertStaticConversionService) : void ;
+                             AutoConvertStaticConversionService $autoConvertStaticConversionService) : bool ;
 }

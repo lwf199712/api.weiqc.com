@@ -141,8 +141,9 @@ class ConvertLinkController extends RestBaseController
         $this->trigger(AutoConvertPrepareEvent::class, $autoConvertPrepareEvent = Yii::createObject(['class' => AutoConvertPrepareEvent::class], [
             $convertRequestVo, $this->autoConvertService, $this->redisUtils,
         ]));
+
         if ($autoConvertPrepareEvent->errors !== null) {
-            return $autoConvertPrepareEvent->errors;
+            return ['操作失败',500,$autoConvertPrepareEvent->errors];
         }
         $autoConvertSubscriber = new AutoConvertSubscriber;
         $autoConvertEvent      = new AutoConvertEvent($convertRequestVo,
@@ -154,6 +155,8 @@ class ConvertLinkController extends RestBaseController
             $autoConvertPrepareEvent->stopSupport,
             $autoConvertPrepareEvent->whiteList,
             AutoConvertEvent::FIRST_IN_FULL_FANS);
+
+        //把订阅器（$autoConvertSubscriber）注册给派遣器（$this->dispatcher）
         $this->dispatcher->addSubscriber($autoConvertSubscriber);
         $this->dispatcher->dispatch(AutoConvertEvent::DEFAULT_SCENE, $autoConvertEvent);
         $changeDept = $autoConvertEvent->getReturnDept();
@@ -161,13 +164,18 @@ class ConvertLinkController extends RestBaseController
         if ($changeDept === null) {
             return ['操作成功!暂时没有转换链接', 200, [$changeDept, $autoConvertEvent->getNodeInfo()]];
         }
-        /** @var ChangeService __invoke */
-        ($this->changeService)($convertRequestVo->department, $changeDept, $this->autoConvertStaticUrlService, $this->autoConvertStaticConversionService);
+        /**
+         * 修改统计链接的公众号及当前公众号字段值
+         * @var ChangeService __invoke
+         */
+        $bool = ($this->changeService)($convertRequestVo->department, $changeDept, $this->autoConvertStaticUrlService, $this->autoConvertStaticConversionService);
         //当今日进粉数达到设置的今日供粉数，则发送一条消息
         $this->autoConvertService->sendMessageWhenArriveTodayFansCount($convertRequestVo, $this->SMS, $this->autoConvertSectionRealtimeMsgService);
-        return ['操作成功!已转换链接', 200, [$changeDept, $autoConvertEvent->getNodeInfo()]];
 
+        if ($bool){
+            return ['操作成功!已转换链接', 200, [$changeDept, $autoConvertEvent->getNodeInfo()]];
+        }
+
+        return ['操作成功!查询不到转化的链接，无链接被转化。',200];
     }
-
-
 }
