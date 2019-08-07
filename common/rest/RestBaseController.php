@@ -111,10 +111,10 @@ abstract class RestBaseController extends ActiveController
     {
         if (!in_array($action->actionMethod, $this->transactionClose(), false)) {
             //indicating whether this transaction is active
-            if ($result && current($result) === false && $this->transaction->getIsActive()) {
+            if ($result && $result[1] !== 200 && $this->transaction->getIsActive()) {
                 $this->transaction->rollBack();
             }
-            if ($result && current($result) === true && $this->transaction->getIsActive()) {
+            if ($result && $result[1] === 200 && $this->transaction->getIsActive()) {
                 $this->transaction->commit();
             }
         }

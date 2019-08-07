@@ -25,7 +25,7 @@ class StaticListAggregate extends BaseObject
     /** @var StaticListAggregateRoot */
     public $staticListAggregateRoot;
     /** @var StaticUrlDoManager */
-    public $staticUrlDoManager;
+    private $staticUrlDoManager;
     /** @var StaticHitsEntity */
     private $staticHitsEntity;
     /** @var StaticServiceConversionsEntity */
@@ -57,7 +57,11 @@ class StaticListAggregate extends BaseObject
      */
     public function listStaticUrl(StaticUrlDto $staticUrlDto): array
     {
-        $list = $this->staticUrlDoManager->listDataProvider($staticUrlDto,$this->staticListAggregateRoot)->getModels();
+        $list    = $this->staticUrlDoManager->listDataProvider($staticUrlDto, $this->staticListAggregateRoot)->getModels();
+        $uIdList = array_column($list, 'id');
+        $ips     = $this->staticHitsEntity->getStaticHitsData($uIdList);                             //独立IP
+        $cvs     = $this->staticServiceConversionsEntity->getServiceConversionData($uIdList);        //转换数
+
 
         foreach ($list as $key => $item) {
             $list[$key]['groupname'] = empty($item['desc']) ? $item['groupname'] : $item['groupname'] . '-' . $item['desc'];
@@ -66,14 +70,21 @@ class StaticListAggregate extends BaseObject
             } else {
                 $list[$key]['currentDept'] = '';
             }
+            foreach ($ips as $ip) {
+                if ($ip['u_id'] === $item['staticUrl.id']) {
+                    $list[$key]['ip'] = $ip['count'];
+                }
+            }
+            foreach ($cvs as $cv) {
+                if ($cv['u_id'] === $item['staticUrl.id']) {
+                    $list[$key]['ip'] = $cv['count'];
+                }
+            }
         }
-        $uIdList               = array_column($list, 'id');
-        $static['today']['ip'] = $this->staticHitsEntity->getStaticHitsData($uIdList);                             //独立IP
-        $static['today']['cv'] = $this->staticServiceConversionsEntity->getServiceConversionData($uIdList);        //转换数
-        $defaultGroupList      = $this->staticUrlGroupEntity->getDefaultGroup();
+
+        $defaultGroupList = $this->staticUrlGroupEntity->getDefaultGroup();
         return [
             'list'             => $list,
-            'static'           => $static,
             'defaultGroupList' => $defaultGroupList,
         ];
     }
