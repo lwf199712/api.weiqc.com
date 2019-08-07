@@ -2,7 +2,9 @@
 
 namespace app\models\dataObject;
 
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "{{%statis_service_conversions}}".
@@ -36,7 +38,7 @@ class StaticServiceConversionsDo extends ActiveRecord
             [['u_id', 'create_time'], 'required'],
             [['u_id', 'conversions', 'conversions_time', 'create_time'], 'integer'],
             [['pattern'], 'string', 'max' => 13],
-            [['service'], 'string', 'max' => 64],
+            [['service','original_service'], 'string', 'max' => 64],
             [['service_list', 'conversions_list'], 'string', 'max' => 255],
         ];
     }
@@ -56,6 +58,18 @@ class StaticServiceConversionsDo extends ActiveRecord
             'conversions'      => '当前服务号转化数',
             'conversions_time' => '开始转化时间',
             'create_time'      => '创建时间',
+            'original_service' => '最初设置的公众号',
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::class,
+                'createdAtAttribute' => 'create_time',
+                'value' => new Expression('NOW()'),
+            ],
         ];
     }
 

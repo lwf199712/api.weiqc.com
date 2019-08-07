@@ -3,34 +3,45 @@ declare(strict_types=1);
 
 namespace app\modules\v2\link\rest;
 
-
+use app\common\facade\ExcelFacade;
 use app\common\rest\AdminBaseController;
 use app\models\dataObject\StaticUrlDo;
 use app\modules\v2\link\domain\aggregate\StaticListAggregate;
 use app\modules\v2\link\domain\dto\StaticUrlDto;
+use app\modules\v2\link\domain\dto\StaticUrlForm;
+use yii\db\ActiveRecord;
 
 /**
  * Class StaticController
- * @property StaticUrlDto $staticUrlDto
+ * @property StaticUrlDto        $staticUrlDto
+ * @property staticUrlForm       $staticUrlForm
  * @property StaticListAggregate $staticListAggregate
+ * @property ActiveRecord        $dto
  * @package app\modules\v2\link\rest
  */
 class StaticController extends AdminBaseController
 {
-    /** @var StaticUrlDto  */
-    public $staticUrlDto;
+
     /** @var StaticListAggregate */
     public $staticListAggregate;
+    /** @var StaticUrlDto */
+    public $staticUrlDto;
+    /** @var StaticUrlForm */
+    public $staticUrlForm;
+    /** @var ActiveRecord $dto */
+    public $dto;
 
     public $modelClass = StaticUrlDo::class;
 
     public function __construct($id, $module,
-                                StaticUrlDto $staticUrlDto,
                                 StaticListAggregate $staticListAggregate,
+                                StaticUrlDto $staticUrlDto,
+                                StaticUrlForm $staticUrlForm,
                                 $config = [])
     {
         $this->staticListAggregate = $staticListAggregate;
-        $this->staticUrlDto = $staticUrlDto;
+        $this->staticUrlDto        = $staticUrlDto;
+        $this->staticUrlForm       = $staticUrlForm;
         parent::__construct($id, $module, $config);
     }
 
@@ -43,30 +54,51 @@ class StaticController extends AdminBaseController
     public function verbs(): array
     {
         return [
-            'index' => ['GET', 'HEAD'],
-            'export' => ['GET','HEAD'],
+            'index'  => ['GET', 'HEAD'],
+            'view'   => ['GET', 'HEAD'],
+            'create' => ['POST'],
+            'update' => ['PUT', 'PATCH'],
+            'delete' => ['DELETE'],
+            'export' => ['GET', 'HEAD'],
         ];
     }
 
 
-    public function index() : array
+    public function actionIndex(): array
     {
-        $this->staticUrlDto->load($this->request->get());
-        if ($this->staticUrlDto->validate() === false){
-            return ['输入参数有误',406,$this->staticUrlDto->getErrors()];
-        }
-        $data = $this->staticListAggregate->listStaticUrl($this->staticUrlDto);
-        return ['成功返回数据',200,$data];
+        $this->dto = $this->staticUrlDto;
+        $data      = $this->staticListAggregate->listStaticUrl($this->staticUrlDto);
+        return ['成功返回数据', 200, $data];
     }
 
 
-    public function export() : array
+    public function actionExport(): array
     {
-        $this->staticUrlDto->load($this->request->get());
-        if ($this->staticUrlDto->validate() === false){
-            return ['输入参数有误',406,$this->staticUrlDto->getErrors()];
-        }
-        $data = $this->staticListAggregate->listStaticUrl($this->staticUrlDto);
-        //TODO export DATA
+        $this->dto = $this->staticUrlDto;
+        $data      = $this->staticListAggregate->listStaticUrl($this->staticUrlDto);
+        ExcelFacade::export($data);        //TODO export DATA
     }
+
+
+    public function actionCreate(): array
+    {
+        $this->dto = $this->staticUrlForm;
+        if ($this->staticListAggregate->addStaticUrl($this->staticUrlForm) === false) {
+            return ['添加统计链接错误', 500];
+        }
+        return ['操作成功', 200];
+
+    }
+
+    public function actionUpdate(): array
+    {
+        $this->dto = $this->staticUrlForm;
+    }
+
+    public function actionDelete(): array
+    {
+
+    }
+
+
 }

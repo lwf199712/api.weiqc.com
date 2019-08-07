@@ -13,8 +13,24 @@ class StaticUrlEntity extends StaticUrlDo
      * @return array
      * @author zhuozhen
      */
-    public static function getAllSecondGroup(int $firstGroup) : array
+    public function getAllSecondGroup(int $firstGroup): array
     {
-        return array_column(self::find()->joinWith('staticUrlGroup')->select('staticUrlGroup.id')->where(['in','staticUrlGroup.parent',$firstGroup])->all(),'id') ?? [$firstGroup];
+        return array_column(self::find()->joinWith('staticUrlGroup')->select('staticUrlGroup.id')->where(['in', 'staticUrlGroup.parent', $firstGroup])->all(), 'id') ?? [$firstGroup];
+    }
+
+    /**
+     * 更新公众号链接
+     * @param StaticUrlEntity $staticUrlEntity
+     * @param string          $service
+     * @return void
+     * @author zhuozhen
+     */
+    public function updateUrl(StaticUrlEntity $staticUrlEntity, string $service): void
+    {
+        if (strpos($staticUrlEntity->url, 'wxh') && strpos($staticUrlEntity->pcurl, 'wxh')) {
+            $staticUrlEntity->url   = substr($staticUrlEntity->url, 0, strrpos($staticUrlEntity->url, '?')) . '?wxh=' . $service;
+            $staticUrlEntity->pcurl = substr($staticUrlEntity->pcurl, 0, strrpos($staticUrlEntity->pcurl, '?')) . '?wxh=' . $service;
+            $staticUrlEntity->save();
+        }
     }
 }
