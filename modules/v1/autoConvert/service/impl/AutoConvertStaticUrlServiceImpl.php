@@ -67,4 +67,28 @@ class AutoConvertStaticUrlServiceImpl extends BaseObject implements AutoConvertS
         }
         return $row;
     }
+
+    /**
+     * 获取特定模式下除去某公众号对应的url
+     * @param string $currentDept
+     * @return array
+     * @author dengkai
+     * @date 2019-08-08
+     */
+    public function getServiceUrlExceptSomeOne(string $currentDept): array
+    {
+        $todayBegin = strtotime(date('Y-m-d'));
+        $todayEnd   = strtotime('+1 day',$todayBegin) - 1;
+
+        $urlSet     = $this->staticUrlDo::find()
+            ->alias('u')
+            ->select('u.id as url_id,s.id as service_id,s.original_service,u.url,u.pcurl')
+            ->leftJoin(StaticServiceConversionsDo::tableName() . ' as s', 'u.id = s.u_id')
+            ->where(['s.pattern' => 3])
+            ->andWhere(['!=','s.original_service',$currentDept])
+            ->andWhere(['between', 's.conversions_time', $todayBegin, $todayEnd])
+            ->asArray()
+            ->all();
+        return $urlSet;
+    }
 }

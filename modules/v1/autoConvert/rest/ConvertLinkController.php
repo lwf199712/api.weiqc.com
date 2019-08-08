@@ -160,15 +160,24 @@ class ConvertLinkController extends RestBaseController
         $this->dispatcher->addSubscriber($autoConvertSubscriber);
         $this->dispatcher->dispatch(AutoConvertEvent::DEFAULT_SCENE, $autoConvertEvent);
         $changeDept = $autoConvertEvent->getReturnDept();
+        $restoreAllLinks = $autoConvertEvent->getRestoreAllLinks();
 
         if ($changeDept === null) {
             return ['操作成功!暂时没有转换链接', 200, [$changeDept, $autoConvertEvent->getNodeInfo()]];
         }
-        /**
-         * 修改统计链接的公众号及当前公众号字段值
-         * @var ChangeService __invoke
-         */
-        $bool = ($this->changeService)($convertRequestVo->department, $changeDept, $this->autoConvertStaticUrlService, $this->autoConvertStaticConversionService);
+
+        //是否要还原所有链接
+        if ($restoreAllLinks){
+           $bool = $this->changeService->restoreAllLinks($convertRequestVo->department, $this->autoConvertStaticUrlService, $this->autoConvertStaticConversionService);
+        }else{
+            /**
+             * 修改统计链接的公众号及当前公众号字段值
+             * @var ChangeService __invoke
+             */
+            $bool = ($this->changeService)($convertRequestVo->department, $changeDept, $this->autoConvertStaticUrlService, $this->autoConvertStaticConversionService);
+        }
+
+
         //当今日进粉数达到设置的今日供粉数，则发送一条消息
         $this->autoConvertService->sendMessageWhenArriveTodayFansCount($convertRequestVo, $this->SMS, $this->autoConvertSectionRealtimeMsgService);
 

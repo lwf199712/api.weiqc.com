@@ -101,13 +101,19 @@ class AutoConvertEvent extends Event
         $this->returnDept = $dept;
     }
 
-
+    /**
+     *
+     * @return bool
+     * @author dengkai
+     * @date 2019-08-07
+     */
     public function getRestoreAllLinks(): bool
     {
         return $this->restoreAllLinks;
     }
 
     /**
+     * 设置是否还原所有链接标志 true-还原/false-不还原
      * @param bool $restoreAllLinks
      * @author dengkai
      * @date 2019-08-07
