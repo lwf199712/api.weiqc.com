@@ -6,28 +6,31 @@ namespace app\modules\v2\link\domain\repository;
 use app\common\repository\BaseRepository;
 use app\models\dataObject\StaticUrlDo;
 use app\modules\v2\link\domain\dto\StaticUrlDto;
-use app\modules\v2\link\domain\entity\StaticUrlEntity as StaticListAggregateRoot;
+use app\modules\v2\link\domain\entity\StaticUrlGroupEntity;
 use yii\data\ActiveDataProvider;
 
 class StaticUrlDoManager extends BaseRepository
 {
     public static $modelClass = StaticUrlDo::class;
 
-    public function listDataProvider(StaticUrlDto $staticUrlDto,StaticListAggregateRoot $staticListAggregateRoot): ActiveDataProvider
+    public function listDataProvider(StaticUrlDto $staticUrlDto,StaticUrlGroupEntity $staticUrlGroupEntity): ActiveDataProvider
     {
         $this->query
             ->alias('staticUrl')
-            ->select(['staticUrl.id', 'staticUrl.ident', 'staticUrl.url', 'staticUrl.pcurl', 'staticUrl.name', 'staticUrl.conversion_cost', 'staticUrl.group_id', 'staticUrl.m_id' ,
+            ->select(['staticUrl.id', 'staticUrl.ident', 'staticUrl.url', 'staticUrl.pcurl', 'staticUrl.name', 'staticUrl.group_id', 'staticUrl.m_id' ,
                 'member.username',
                 'staticUrlGroup.groupname','staticUrlGroup.desc'])
-            ->andWhere(['BETWEEN', 'createtime', $staticUrlDto->beginDate, $staticUrlDto->endDate])
+            ->andWhere(['BETWEEN', 'staticUrl.createtime', $staticUrlDto->getBeginDate(), $staticUrlDto->getEndDate()])
             ->joinWith(['member','staticUrlGroup']);
+
+
 
         if ($staticUrlDto->fieldValue === 'username') {     //username的情况需特殊处理
             $this->query->andWhere(['like', 'member.username', $staticUrlDto->fieldValue]);
         } else {
             $this->query->andFilterWhere(['=', 'staticUrl.' . $staticUrlDto->field, $staticUrlDto->fieldValue]);
         }
+
 
         if ($staticUrlDto->userName || $staticUrlDto->channelName) {         //负责人|渠道
             $this->query
@@ -43,10 +46,10 @@ class StaticUrlDoManager extends BaseRepository
         if ($staticUrlDto->secondGroup) {                                    //分组
             $this->query->andWhere(['=', 'staticUrl.group_id', $staticUrlDto->secondGroup]);
         } else {
-            $this->query->andWhere(['in', 'staticUrl.group_id', $staticListAggregateRoot->getAllSecondGroup((int)$staticUrlDto->firstGroup)]);
+            $this->query->andWhere(['in', 'staticUrl.group_id', $staticUrlGroupEntity->getSecondGroup((int)$staticUrlDto->firstGroup)]);
         }
-
         $this->query->andWhere(['=', 'recycle', $staticUrlDto->recycle]);
+
 
         return new ActiveDataProvider([
             'query'      => $this->query->asArray(),

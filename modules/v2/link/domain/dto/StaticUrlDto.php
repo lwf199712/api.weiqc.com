@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace app\modules\v2\link\domain\dto;
 
 
+use Yii;
 use yii\base\Model;
 
 /**
@@ -23,6 +24,10 @@ use yii\base\Model;
  */
 class StaticUrlDto extends Model
 {
+    public const ONE = 'one';       //查询单条数据
+
+    /** @var string */
+    public $id;
     /** @var string */
     public $recycle;
     /** @var string */
@@ -50,7 +55,7 @@ class StaticUrlDto extends Model
     {
         return [
             [['recycle', 'beginDate', 'endDate', 'field'], 'required'],
-            [['beginDate', 'endDate'], 'date'],
+            [['beginDate', 'endDate'], 'string'],
             [['beginDate'], 'compare', 'compareAttribute' => 'endDate', 'operator' => '<', 'enableClientValidation' => false],
             ['fieldValue', 'filter', 'filter' => 'trim'],
             ['field', 'in', 'range' => ['name', 'ident', 'url', 'username']],
@@ -58,7 +63,7 @@ class StaticUrlDto extends Model
         ];
     }
 
-    public function attributes()
+    public function attributeLabels()
     {
         return [
             'recycle'         => '正常链接(N)/回收站链接(Y)',
@@ -72,6 +77,13 @@ class StaticUrlDto extends Model
             'secondGroup'     => '二级组别',
             'secondGroupName' => '二级组别名',
         ];
+    }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::ONE] = ['id'];
+        return $scenarios;
     }
 
     public function getBeginDate()

@@ -57,14 +57,14 @@ abstract class RestBaseController extends ActiveController
      */
     public function actions()
     {
-        $parent = parent::actions();
+        $actions = parent::actions();
         //Unified processing of cross-domain authentication interfaces
-        $parent['options'] = [
+        $actions['options'] = [
             'class' => OptionsAction::class
         ];
-        unset($parent['create'], $parent['view'], $parent['update'], $parent['delete']);
+        unset($actions['create'], $actions['view'], $actions['update'], $actions['delete']);
         $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
-        return $parent;
+        return $actions;
     }
 
     /**

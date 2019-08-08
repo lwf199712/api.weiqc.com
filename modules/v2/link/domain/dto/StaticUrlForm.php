@@ -15,6 +15,8 @@ use yii\base\Model;
 class StaticUrlForm extends Model
 {
     /** @var string */
+    public $id;
+    /** @var string */
     public $name;
     /** @var string */
     public $pattern;
@@ -35,7 +37,7 @@ class StaticUrlForm extends Model
     {
         return [
             [['pattern','url','pcurl','group_id'],'required'],
-            [['name','pattern','service','url','pcurl','group_id'],'string'],
+            [['id','name','pattern','service','url','pcurl','group_id'],'string'],
             [['service_list','conversions_list'],'safe'],
             [['url','pcurl'],'url'],
             [['name', 'url' , 'pcurl','group_id','service'], 'filter', 'filter' => 'trim'],
@@ -46,6 +48,7 @@ class StaticUrlForm extends Model
     public function attributeLabels() : array
     {
         return [
+            'id' => 'ID',
             'name' => '链接名称	',
             'pattern' => '模式',
             'service' => '公众号',
