@@ -142,7 +142,7 @@ abstract class AdminBaseController extends ActiveController
             $this->dto->setAttributes($this->request->post());
         }
         if ($this->dto->validate() === false) {
-            throw new IntegrityException($this->dto->getFirstError());
+            throw new IntegrityException('输入数据验证错误',$this->dto->getErrors());
         }
        $this->transaction = Yii::$app->db->beginTransaction();
         return parent::beforeAction($action);

@@ -5,9 +5,13 @@ namespace app\modules\v2\link\domain\aggregate;
 
 use app\modules\v2\link\domain\dto\StaticUrlDto;
 use app\modules\v2\link\domain\dto\StaticUrlForm;
+use app\modules\v2\link\domain\dto\StaticUrlIntervalAnalyzeDto;
+use app\modules\v2\link\domain\dto\StaticUrlReportDto;
+use app\modules\v2\link\domain\entity\StaticClientEntity;
 use app\modules\v2\link\domain\entity\StaticHitsEntity;
 use app\modules\v2\link\domain\entity\StaticServiceConversionsEntity;
 use app\modules\v2\link\domain\entity\StaticUrlGroupEntity;
+use app\modules\v2\link\domain\entity\StaticVisitEntity;
 use app\modules\v2\link\domain\enum\Pattern;
 use app\modules\v2\link\domain\repository\StaticUrlDoManager;
 use app\modules\v2\link\domain\entity\StaticUrlEntity as StaticListAggregateRoot;
@@ -20,6 +24,8 @@ use yii\db\Exception;
  * @property-read  StaticListAggregateRoot        $staticListAggregateRoot
  * @property-read  StaticUrlDoManager             $staticUrlDoManager
  * @property-read  staticHitsEntity               $staticHitsEntity
+ * @property-read  StaticClientEntity             $staticClientEntity
+ * @property-read  StaticVisitEntity              $staticVisitEntity
  * @property-read  staticServiceConversionsEntity $staticServiceConversionsEntity
  * @property-read  staticUrlGroupEntity           $staticUrlGroupEntity
  * @package app\modules\v2\link\domain\aggregate
@@ -32,6 +38,10 @@ class StaticListAggregate extends BaseObject
     private $staticUrlDoManager;
     /** @var StaticHitsEntity */
     private $staticHitsEntity;
+    /** @var StaticClientEntity */
+    private $staticClientEntity;
+    /** @var StaticVisitEntity */
+    private $staticVisitEntity;
     /** @var StaticServiceConversionsEntity */
     private $staticServiceConversionsEntity;
     /** @var StaticUrlGroupEntity */
@@ -40,6 +50,8 @@ class StaticListAggregate extends BaseObject
     public function __construct(StaticUrlDoManager $staticUrlDoManager,
                                 StaticListAggregateRoot $staticListAggregateRoot,
                                 StaticHitsEntity $staticHitsEntity,
+                                StaticClientEntity $staticClientEntity,
+                                StaticVisitEntity $staticVisitEntity,
                                 StaticServiceConversionsEntity $staticServiceConversionsEntity,
                                 StaticUrlGroupEntity $staticUrlGroupEntity,
                                 $config = [])
@@ -47,11 +59,25 @@ class StaticListAggregate extends BaseObject
         $this->staticListAggregateRoot        = $staticListAggregateRoot;
         $this->staticUrlDoManager             = $staticUrlDoManager;
         $this->staticHitsEntity               = $staticHitsEntity;
+        $this->staticVisitEntity              = $staticVisitEntity;
+        $this->staticClientEntity             = $staticClientEntity;
         $this->staticServiceConversionsEntity = $staticServiceConversionsEntity;
         $this->staticUrlGroupEntity           = $staticUrlGroupEntity;
         parent::__construct($config);
     }
 
+
+    /**
+     * 获取单条数据
+     * @param int $staticUrlId
+     * @return array
+     * @author zhuozhen
+     */
+    public function viewStaticUrl(int $staticUrlId): array
+    {
+        $row = $this->staticUrlDoManager->viewData($staticUrlId);
+        return ['list' => $row];
+    }
 
     /**
      * 获取列表数据
@@ -92,6 +118,7 @@ class StaticListAggregate extends BaseObject
         ];
     }
 
+
     /**
      * 添加统计链接
      * @param StaticUrlForm $staticUrlForm
@@ -109,7 +136,7 @@ class StaticListAggregate extends BaseObject
                 throw new Exception('创建统计链接失败');
             }
             $service = in_array($staticUrlForm->pattern, [Pattern::NOT_CIRCLE, Pattern::AUTO_CONVERSION], false) ? $staticUrlForm->service : trim(current($staticUrlForm->service_list));
-            $this->staticServiceConversionsEntity->createEntity($staticUrlForm,$this->staticServiceConversionsEntity,$this->staticListAggregateRoot);
+            $this->staticServiceConversionsEntity->createEntity($staticUrlForm, $this->staticServiceConversionsEntity, $this->staticListAggregateRoot);
             $this->staticListAggregateRoot->updateEntity($this->staticListAggregateRoot, $service);
             return true;
         } catch (\Exception $exception) {
@@ -143,9 +170,34 @@ class StaticListAggregate extends BaseObject
                 ['m_id' => $staticUrlForm->mId]));
             $this->staticListAggregateRoot->updateEntity($staticUrl, $service);
             return true;
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             Yii::info($exception->getMessage(), 'post_params');
             return false;
         }
+    }
+
+    /**
+     * 统计概况
+     * @param StaticUrlReportDto $staticUrlReportDto
+     * @return array
+     * @author zhuozhen
+     */
+    public function reportStaticUrl(StaticUrlReportDto $staticUrlReportDto): array
+    {
+        $hits   = $this->staticHitsEntity->queryByStaticUrl($staticUrlReportDto);
+        $client = $this->staticClientEntity->queryByStaticUrl($staticUrlReportDto);
+        $visit  = $this->staticVisitEntity->queryByStaticUrl($staticUrlReportDto);
+    }
+
+
+    /**
+     * 时段分析
+     * @param StaticUrlIntervalAnalyzeDto $staticUrlIntervalAnalyzeDto
+     * @return array
+     * @author zhuozhen
+     */
+    public function intervalAnalyzeStaticUrl(StaticUrlIntervalAnalyzeDto $staticUrlIntervalAnalyzeDto) : array
+    {
+
     }
 }

@@ -7,19 +7,21 @@ use app\common\facade\ExcelFacade;
 use app\common\rest\AdminBaseController;
 use app\models\dataObject\StaticUrlDo;
 use app\modules\v2\link\domain\aggregate\StaticListAggregate;
-use app\modules\v2\link\domain\dto\SingleStaticUrlDto;
 use app\modules\v2\link\domain\dto\StaticUrlDto;
 use app\modules\v2\link\domain\dto\StaticUrlForm;
+use app\modules\v2\link\domain\dto\StaticUrlIntervalAnalyzeDto;
+use app\modules\v2\link\domain\dto\StaticUrlReportDto;
 use yii\base\Model;
 use yii\db\ActiveRecord;
 
 /**
  * Class StaticController
- * @property StaticUrlDto        $staticUrlDto
- * @property SingleStaticUrlDto  $singleStaticUrlDto
- * @property staticUrlForm       $staticUrlForm
- * @property StaticListAggregate $staticListAggregate
- * @property ActiveRecord        $dto
+ * @property StaticUrlDto                $staticUrlDto
+ * @property staticUrlForm               $staticUrlForm
+ * @property StaticUrlReportDto          $staticUrlReportDto
+ * @property StaticUrlIntervalAnalyzeDto $staticUrlIntervalAnalyzeDto
+ * @property StaticListAggregate         $staticListAggregate
+ * @property ActiveRecord                $dto
  * @package app\modules\v2\link\rest
  */
 class StaticController extends AdminBaseController
@@ -29,10 +31,12 @@ class StaticController extends AdminBaseController
     public $staticListAggregate;
     /** @var StaticUrlDto */
     public $staticUrlDto;
-    /** @var SingleStaticUrlDto */
-    public $singleStaticUrlDto;
     /** @var StaticUrlForm */
     public $staticUrlForm;
+    /** @var StaticUrlReportDto */
+    public $staticUrlReportDto;
+    /** @var StaticUrlIntervalAnalyzeDto */
+    public $staticUrlIntervalAnalyzeDto;
     /** @var ActiveRecord $dto */
     public $dto;
 
@@ -41,14 +45,16 @@ class StaticController extends AdminBaseController
     public function __construct($id, $module,
                                 StaticListAggregate $staticListAggregate,
                                 StaticUrlDto $staticUrlDto,
-                                SingleStaticUrlDto $singleStaticUrlDto,
                                 StaticUrlForm $staticUrlForm,
+                                StaticUrlReportDto $staticUrlReportDto,
+                                StaticUrlIntervalAnalyzeDto $staticUrlIntervalAnalyzeDto,
                                 $config = [])
     {
-        $this->staticListAggregate = $staticListAggregate;
-        $this->singleStaticUrlDto  = $singleStaticUrlDto;
-        $this->staticUrlDto        = $staticUrlDto;
-        $this->staticUrlForm       = $staticUrlForm;
+        $this->staticListAggregate         = $staticListAggregate;
+        $this->staticUrlDto                = $staticUrlDto;
+        $this->staticUrlForm               = $staticUrlForm;
+        $this->staticUrlReportDto          = $staticUrlReportDto;
+        $this->staticUrlIntervalAnalyzeDto = $staticUrlIntervalAnalyzeDto;
         parent::__construct($id, $module, $config);
     }
 
@@ -61,23 +67,27 @@ class StaticController extends AdminBaseController
     public function verbs(): array
     {
         return [
-            'index'  => ['GET', 'HEAD'],
-            'view'   => ['GET', 'HEAD'],
-            'create' => ['POST'],
-            'update' => ['PUT', 'PATCH'],
-            'delete' => ['DELETE'],
-            'export' => ['GET', 'HEAD'],
+            'index'           => ['GET', 'HEAD'],
+            'view'            => ['GET', 'HEAD'],
+            'create'          => ['POST'],
+            'update'          => ['PUT', 'PATCH'],
+            'delete'          => ['DELETE'],
+            'export'          => ['GET', 'HEAD'],
+            'report'          => ['GET', 'HEAD'],
+            'intervalAnalyze' => ['GET', 'HEAD'],
         ];
     }
 
     public function dtoMap(string $actionName): Model
     {
         return [
-            'actionIndex'  => $this->staticUrlDto,
-            'actionView'   => $this->staticUrlDto,
-            'actionExport' => $this->staticUrlDto,
-            'actionCreate' => $this->staticUrlForm,
-            'actionUpdate' => $this->staticUrlForm,
+            'actionIndex'           => $this->staticUrlDto,
+            'actionView'            => $this->staticUrlDto->setScenario(StaticUrlDto::ONE),
+            'actionExport'          => $this->staticUrlDto,
+            'actionCreate'          => $this->staticUrlForm,
+            'actionUpdate'          => $this->staticUrlForm,
+            'actionReport'          => $this->staticUrlReportDto,
+            'actionIntervalAnalyze' => $this->staticUrlIntervalAnalyzeDto,
         ][$actionName];
     }
 
@@ -91,15 +101,8 @@ class StaticController extends AdminBaseController
 
     public function actionView(): array
     {
-        $data      = $this->staticListAggregate->listStaticUrl();
-        return ['成功返回数据',200,$data];
-    }
-
-
-    public function actionExport(): array
-    {
-        $data      = $this->staticListAggregate->listStaticUrl($this->staticUrlDto);
-        ExcelFacade::export($data);        //TODO export DATA
+        $data = $this->staticListAggregate->viewStaticUrl((int)$this->staticUrlDto->id);
+        return ['成功返回数据', 200, $data];
     }
 
 
@@ -123,6 +126,25 @@ class StaticController extends AdminBaseController
     public function actionDelete(): array
     {
 
+    }
+
+    public function actionExport(): array
+    {
+        $data = $this->staticListAggregate->listStaticUrl($this->staticUrlDto);
+        ExcelFacade::export($data);        //TODO export DATA
+    }
+
+
+    public function actionReport(): array
+    {
+        $data = $this->staticListAggregate->reportStaticUrl($this->staticUrlReportDto);
+        return ['成功返回数据', 200, $data];
+    }
+
+    public function actionIntervalAnalyze(): array
+    {
+        $data = $this->staticListAggregate->intervalAnalyzeStaticUrl($this->staticUrlIntervalAnalyzeDto);
+        return ['成功返回数据', 200, $data];
     }
 
 

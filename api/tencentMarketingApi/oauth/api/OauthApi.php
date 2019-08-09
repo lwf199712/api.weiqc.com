@@ -49,7 +49,6 @@ class OauthApi extends ApiBaseController
      *
      * @param $accountUin
      * @return OauthTokenResponseDto
-     * @throws TencentMarketingApiException
      * @throws Exception
      * @author: lirong
      */

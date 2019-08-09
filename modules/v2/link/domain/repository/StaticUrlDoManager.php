@@ -8,21 +8,44 @@ use app\models\dataObject\StaticUrlDo;
 use app\modules\v2\link\domain\dto\StaticUrlDto;
 use app\modules\v2\link\domain\entity\StaticUrlGroupEntity;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 
 class StaticUrlDoManager extends BaseRepository
 {
+    /** @var string  资源类名 */
     public static $modelClass = StaticUrlDo::class;
 
-    public function listDataProvider(StaticUrlDto $staticUrlDto,StaticUrlGroupEntity $staticUrlGroupEntity): ActiveDataProvider
+    /**
+     * @param int $staticUrlId
+     * @return ActiveQuery
+     * @author zhuozhen
+     */
+    public function viewData(int $staticUrlId): ActiveQuery
+    {
+        return $this->query
+            ->alias('staticUrl')
+            ->select(['staticUrl.id', 'staticUrl.ident', 'staticUrl.url', 'staticUrl.pcurl', 'staticUrl.name', 'staticUrl.group_id', 'staticUrl.m_id',
+                'member.username',])
+            ->where(['=', 'staticUrl.id', $staticUrlId])
+            ->joinWith(['member'])
+            ->one();
+    }
+
+    /**
+     * @param StaticUrlDto         $staticUrlDto
+     * @param StaticUrlGroupEntity $staticUrlGroupEntity
+     * @return ActiveDataProvider
+     * @author zhuozhen
+     */
+    public function listDataProvider(StaticUrlDto $staticUrlDto, StaticUrlGroupEntity $staticUrlGroupEntity): ActiveDataProvider
     {
         $this->query
             ->alias('staticUrl')
-            ->select(['staticUrl.id', 'staticUrl.ident', 'staticUrl.url', 'staticUrl.pcurl', 'staticUrl.name', 'staticUrl.group_id', 'staticUrl.m_id' ,
+            ->select(['staticUrl.id', 'staticUrl.ident', 'staticUrl.url', 'staticUrl.pcurl', 'staticUrl.name', 'staticUrl.group_id', 'staticUrl.m_id',
                 'member.username',
-                'staticUrlGroup.groupname','staticUrlGroup.desc'])
+                'staticUrlGroup.groupname', 'staticUrlGroup.desc'])
             ->andWhere(['BETWEEN', 'staticUrl.createtime', $staticUrlDto->getBeginDate(), $staticUrlDto->getEndDate()])
-            ->joinWith(['member','staticUrlGroup']);
-
+            ->joinWith(['member', 'staticUrlGroup']);
 
 
         if ($staticUrlDto->fieldValue === 'username') {     //username的情况需特殊处理
