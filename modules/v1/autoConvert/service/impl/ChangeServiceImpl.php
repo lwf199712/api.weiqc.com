@@ -52,4 +52,42 @@ class ChangeServiceImpl extends BaseObject implements ChangeService
         }
         return true;
     }
+
+    /**
+     * 还原链接的公众号
+     * @param string $currentDept
+     * @param AutoConvertStaticUrlService $autoConvertStaticUrlService
+     * @param AutoConvertStaticConversionService $autoConvertStaticConversionService
+     * @return bool
+     * @author dengkai
+     * @date 2019-08-08
+     */
+    public function restoreAllLinks(string $currentDept,AutoConvertStaticUrlService $autoConvertStaticUrlService,
+                                    AutoConvertStaticConversionService $autoConvertStaticConversionService):bool
+    {
+        $urlSet = $autoConvertStaticUrlService->getServiceUrlExceptSomeOne($currentDept);
+
+        if (empty($urlSet)){
+            return false;
+        }
+        foreach ($urlSet as $key => $value){
+            $url = $value['url'];
+            $pcUrl = $value['pcurl'];
+            if (strpos($url, 'wxh') && strpos($pcUrl, 'wxh')) {
+                $url = substr($url, 0, strrpos($url, '?'));
+                $pcUrl = substr($pcUrl, 0, strrpos($pcUrl, '?'));
+            }
+            $url = $url . '?wxh=' . $value['original_service'];
+            $pcUrl = $pcUrl . '?wxh=' . $value['original_service'];
+
+            try {
+                $autoConvertStaticUrlService->updateUrl((int)$value['url_id'], $url, $pcUrl, $currentDept, $value['original_service']);
+                $autoConvertStaticConversionService->updateService((int)$value['service_id'], $value['original_service']);
+                Yii::info('自动转粉：' . $currentDept . '切换为' . $value['original_service'] . '成功！');
+            } catch (Throwable $e) {
+                Yii::info('自动转粉系统切换公众号时候catch到了异常，异常信息为：' . $e->getMessage());
+            }
+        }
+        return true;
+    }
 }

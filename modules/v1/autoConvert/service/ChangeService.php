@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace app\modules\v1\autoConvert\service;
 
@@ -17,5 +17,17 @@ interface ChangeService
     public function __invoke(string $currentDept,
                              string $lackFansDept,
                              AutoConvertStaticUrlService $autoConvertStaticUrlService,
-                             AutoConvertStaticConversionService $autoConvertStaticConversionService) : bool ;
+                             AutoConvertStaticConversionService $autoConvertStaticConversionService): bool;
+
+    /**
+     * 还原链接为初始公众号
+     * @param string $currentDept
+     * @param AutoConvertStaticUrlService $autoConvertStaticUrlService
+     * @param AutoConvertStaticConversionService $autoConvertStaticConversionService
+     * @return bool
+     * @author dengkai
+     * @date 2019-08-08
+     */
+    public function restoreAllLinks(string $currentDept, AutoConvertStaticUrlService $autoConvertStaticUrlService,
+                                    AutoConvertStaticConversionService $autoConvertStaticConversionService): bool;
 }

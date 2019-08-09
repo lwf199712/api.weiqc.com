@@ -22,7 +22,7 @@ interface AutoConvertStaticUrlService
     public function getServiceUrl(string $currentDept): array;
 
     /**
-     * @param int    $id
+     * @param int $id
      * @param string $url
      * @param string $pcUrl
      * @param string $oldDept
@@ -30,6 +30,15 @@ interface AutoConvertStaticUrlService
      * @return int
      * @author zhuozhen
      */
-    public function updateUrl(int $id, string $url, string $pcUrl, string $oldDept, string $newDept): int ;
+    public function updateUrl(int $id, string $url, string $pcUrl, string $oldDept, string $newDept): int;
+
+    /**
+     * 获取特定模式下除了某公众号对应的url
+     * @param string $currentDept
+     * @return array
+     * @author dengkai
+     * @date 2019-08-08
+     */
+    public function getServiceUrlExceptSomeOne(string $currentDept): array;
 
 }

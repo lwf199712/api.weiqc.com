@@ -227,6 +227,7 @@ class AutoConvertSubscriber implements EventSubscriberInterface
         $diffVal = $event->convertRequestInfo->fansCount - $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department, 'fullFansCount');
         if ($diffVal <= 0) {
             $event->setReturnDept($event->convertRequestInfo->department);
+            $event->setRestoreAllLinks(true);
             $event->stopPropagation();
         }
     }

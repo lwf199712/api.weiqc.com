@@ -11,15 +11,15 @@ use app\modules\v1\autoConvert\service\AutoConvertService;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * @property ConvertRequestVo                     $convertRequestInfo
- * @property AutoConvertService                   $autoConvertService
+ * @property ConvertRequestVo $convertRequestInfo
+ * @property AutoConvertService $autoConvertService
  * @property AutoConvertSectionRealtimeMsgService $autoConvertSectionRealtimeMsgService
- * @property SMS                                  $SMS
- * @property RedisUtils                           $redisUtils
- * @property string                               $distribute
- * @property string                               $stopSupport
- * @property string                               $whiteList
- * @property int                                  $scenarioType
+ * @property SMS $SMS
+ * @property RedisUtils $redisUtils
+ * @property string $distribute
+ * @property string $stopSupport
+ * @property string $whiteList
+ * @property int $scenarioType
  * Class AutoConvertEvent
  */
 class AutoConvertEvent extends Event
@@ -28,7 +28,7 @@ class AutoConvertEvent extends Event
 
     public const FULL_FANS_SCENE = 'FullFansScene';
 
-    public const FIRST_IN_FULL_FANS  = 1;
+    public const FIRST_IN_FULL_FANS = 1;
 
     public const NEXT_IN_FULL_FANS = 2;
 
@@ -44,6 +44,8 @@ class AutoConvertEvent extends Event
     public $SMS;
     /** @var string */
     public $returnDept;
+    /** @var bool 恢复所有自动转粉模式的链接原有的公众号 false-不恢复/true-恢复*/
+    public $restoreAllLinks;
     /** @var string $distribute 是否可分配 */
     public $distribute;
     /** @var string $stopSupport 是否停止供粉 */
@@ -66,15 +68,16 @@ class AutoConvertEvent extends Event
                                 int $scenarioType
     )
     {
-        $this->convertRequestInfo                   = $convertRequestInfo;
-        $this->autoConvertService                   = $autoConvertService;
+        $this->convertRequestInfo = $convertRequestInfo;
+        $this->autoConvertService = $autoConvertService;
         $this->autoConvertSectionRealtimeMsgService = $autoConvertSectionRealtimeMsgService;
-        $this->SMS                                  = $SMS;
-        $this->redisUtils                           = $redisUtils;
-        $this->distribute                           = $distribute;
-        $this->stopSupport                          = $stopSupport;
-        $this->whiteList                            = $whiteList;
-        $this->scenarioType                         = $scenarioType;
+        $this->SMS = $SMS;
+        $this->redisUtils = $redisUtils;
+        $this->distribute = $distribute;
+        $this->stopSupport = $stopSupport;
+        $this->whiteList = $whiteList;
+        $this->scenarioType = $scenarioType;
+        $this->restoreAllLinks = false;
     }
 
     /**
@@ -96,6 +99,28 @@ class AutoConvertEvent extends Event
     public function setReturnDept(string $dept = null): void
     {
         $this->returnDept = $dept;
+    }
+
+    /**
+     *
+     * @return bool
+     * @author dengkai
+     * @date 2019-08-07
+     */
+    public function getRestoreAllLinks(): bool
+    {
+        return $this->restoreAllLinks;
+    }
+
+    /**
+     * 设置是否还原所有链接标志 true-还原/false-不还原
+     * @param bool $restoreAllLinks
+     * @author dengkai
+     * @date 2019-08-07
+     */
+    public function setRestoreAllLinks(bool $restoreAllLinks): void
+    {
+        $this->restoreAllLinks = $restoreAllLinks;
     }
 
     /**
@@ -123,7 +148,7 @@ class AutoConvertEvent extends Event
      * @param int $scenarioType
      * @author zhuozhen
      */
-    public function setScenarioType(int $scenarioType) : void
+    public function setScenarioType(int $scenarioType): void
     {
         $this->scenarioType = $scenarioType;
     }
@@ -133,8 +158,8 @@ class AutoConvertEvent extends Event
      * @return int
      * @author zhuozhen
      */
-    public function getScenarioType() :int
+    public function getScenarioType(): int
     {
-        return $this->scenarioType ;
+        return $this->scenarioType;
     }
 }
