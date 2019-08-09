@@ -94,22 +94,17 @@ class AuthorizeController extends WebBaseController
      */
     public function actionToken()
     {
-        try {
-            $tokenDto = new AuthorizeResponseVo();
-            $tokenDto->authorization_code = $this->request->get('authorization_code');
-            //TODO 用于验证
-            $tokenDto->state = $this->request->get('state');
-            $authorizationTokenDto = new OauthTokenRequestDto();
-            $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
-            $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
-            $authorizationTokenDto->grant_type = AuthorizationTokenEnum::AUTHORIZATION_CODE;
-            $authorizationTokenDto->authorization_code = $tokenDto->authorization_code;
-            $authorizationTokenDto->redirect_uri = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['redirect_uri'];//回调地址
-            $oauthDto = $this->oauthApi->authorizeToken($authorizationTokenDto);
-            $this->oauthApi->cacheToken($oauthDto);
-            return $this->render('@app/views/v1/oauth/token', ['oauthDto' => $oauthDto]);
-        } catch (TencentMarketingApiException|RedisException|ConnectionException $e) {
-            return $this->render('@app/views/site/error', ['message' => $e->getMessage(), 'name' => 'token获取失败!']);
-        }
+        $tokenDto = new AuthorizeResponseVo();
+        $tokenDto->authorization_code = $this->request->get('authorization_code');
+        //TODO 用于验证
+        $tokenDto->state = $this->request->get('state');
+        $authorizationTokenDto = new OauthTokenRequestDto();
+        $authorizationTokenDto->client_id = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_id'];
+        $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
+        $authorizationTokenDto->grant_type = AuthorizationTokenEnum::AUTHORIZATION_CODE;
+        $authorizationTokenDto->authorization_code = $tokenDto->authorization_code;
+        $authorizationTokenDto->redirect_uri = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['redirect_uri'];//回调地址
+        $oauthDto = $this->oauthApi->authorizeToken($authorizationTokenDto);
+        return $this->render('@app/views/v1/oauth/token', ['oauthDto' => $oauthDto]);
     }
 }

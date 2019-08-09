@@ -5,13 +5,16 @@ namespace app\api\tencentMarketingApi\oauth\service\impl;
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenAuthorizerInfoResponseDto;
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenRequestDto;
 use app\api\tencentMarketingApi\oauth\domain\dto\OauthTokenResponseDto;
+use app\api\tencentMarketingApi\oauth\service\OauthCacheService;
 use app\api\tencentMarketingApi\oauth\service\OauthService;
 use app\common\client\ClientBaseService;
+use app\common\exception\RedisException;
 use app\common\exception\TencentMarketingApiException;
 use app\common\utils\RedisUtils;
 use app\models\dataObject\StaticConversionDo;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Predis\Connection\ConnectionException;
 use Yii;
 
 /**
@@ -42,11 +45,14 @@ class OauthImpl extends ClientBaseService implements OauthService
      * 通过 Authorization Code 获取 Access Token 或刷新 Access Token
      *
      * @param OauthTokenRequestDto $authorizationTokenDto
+     * @param OauthCacheService    $oauthCacheService
      * @return OauthTokenResponseDto
      * @throws TencentMarketingApiException
+     * @throws ConnectionException
+     * @throws RedisException
      * @author: lirong
      */
-    public function authorizeToken(OauthTokenRequestDto $authorizationTokenDto): OauthTokenResponseDto
+    public function authorizeToken(OauthTokenRequestDto $authorizationTokenDto, OauthCacheService $oauthCacheService): OauthTokenResponseDto
     {
         $oauthDto = new OauthTokenResponseDto();
         try {
@@ -64,6 +70,8 @@ class OauthImpl extends ClientBaseService implements OauthService
             $oauthDto->authorizer_info->account_uin = $response->data->authorizer_info->account_uin ?? '';
             $oauthDto->authorizer_info->account_id = $response->data->authorizer_info->account_id ?? '';
             $oauthDto->authorizer_info->scope_list = $response->data->authorizer_info->scope_list ?? '';
+            //刷新redis中的token对象
+            $oauthCacheService->cacheToken($oauthDto);
         } catch (GuzzleException $e) {
             throw new TencentMarketingApiException($e->getMessage(), $e->getCode());
         }

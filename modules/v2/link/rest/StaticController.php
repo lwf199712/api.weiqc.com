@@ -91,8 +91,8 @@ class StaticController extends AdminBaseController
 
     public function actionView(): array
     {
-        $this->dto = $this->singleStaticUrlDto;
         $data      = $this->staticListAggregate->listStaticUrl();
+        return ['成功返回数据',200,$data];
     }
 
 
