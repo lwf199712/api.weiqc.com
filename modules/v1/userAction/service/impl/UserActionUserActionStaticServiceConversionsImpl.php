@@ -49,7 +49,6 @@ class UserActionUserActionStaticServiceConversionsImpl extends BaseObject implem
         }
         $staticServiceConversions->conversions++;
         $staticServiceConversions->conversions_time = time();
-        $staticServiceConversions->save();
         if (!$staticServiceConversions->save()) {
             throw new ValidateException($staticServiceConversions, '表单参数校验异常！', 302);
         }
