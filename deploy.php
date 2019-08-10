@@ -80,9 +80,9 @@ task('deploy:vendors-dev', static function () {
     run('cd {{release_path}} && {{bin/composer}} install');
 })->onStage('test')->desc('deploy all packing for vendor');
 
-rbac权限数据迁移
- usr/bin/php yii migrate --migrationPath=@mdm/admin/migrations yii2-admin 权限数据表迁移
- usr/bin/php yii migrate --migrationPath=@yii/rbac/migrations  rbac 权限数据表迁移
+//rbac权限数据迁移
+// usr/bin/php yii migrate --migrationPath=@mdm/admin/migrations yii2-admin 权限数据表迁移
+// usr/bin/php yii migrate --migrationPath=@yii/rbac/migrations  rbac 权限数据表迁移
 task('deploy:run_rbac_migrations', static function () {
     run('{{bin/php}} {{release_path}}/yii migrate --migrationPath=@mdm/admin/migrations up --interactive=0');
     run('{{bin/php}} {{release_path}}/yii migrate --migrationPath=@yii/rbac/migrations up --interactive=0');
