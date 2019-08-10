@@ -8,7 +8,7 @@ use yii\base\Module as BaseModule;
  * Module module definition class
  * Class Module
  *
- * @package app\modules\v1
+ * @package app\modules\v2
  * @author: lirong
  */
 class Module extends BaseModule

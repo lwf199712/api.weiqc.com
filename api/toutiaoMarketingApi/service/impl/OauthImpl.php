@@ -81,6 +81,7 @@ class OauthImpl extends ClientBaseService implements Oauth
         if ($tokenResponseDto->validate() === false) {
             throw new ToutiaoMarketingApiException(ToutiaoMarketingApiException::defaultMessage($response));
         }
+        $this->cacheToken($tokenResponseDto);
         return $tokenResponseDto;
     }
 

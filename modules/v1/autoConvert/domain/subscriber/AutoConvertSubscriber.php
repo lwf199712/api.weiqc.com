@@ -62,8 +62,8 @@ class AutoConvertSubscriber implements EventSubscriberInterface
                 ['supportRule', -3],
                 ['convertAim', -4],
                 ['calculateDisparity', -5],
-                ['raiseConvertAim', -6],
-                ['fullFansConvertAim', -7],
+                ['raiseConvertAim', -6],        //全部满分，增量10%
+                ['fullFansConvertAim', -7],     //计算增量后是否满粉
                 ['fullFansCalculateDisparity', -8],
             ],
             AutoConvertEvent::FULL_FANS_SCENE => [       //满粉循环
@@ -144,7 +144,8 @@ class AutoConvertSubscriber implements EventSubscriberInterface
         $redis               = $event->redisUtils->getRedis();
         $diffVal             = $event->convertRequestInfo->fansCount - $redis->get(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department . MessageEnum::getHalfHour(MessageEnum::DC_REAL_TIME_MESSAGE));
         $thirtyMinFansTarget = $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department, SectionRealtimeMsgEnum::getThirtyMinFansTarget(SectionRealtimeMsgEnum::SECTION_REALTIME_MSG));
-        if ($diffVal <= $thirtyMinFansTarget) {
+//        var_dump($diffVal.'++++'.$thirtyMinFansTarget);die();
+        if ($diffVal < $thirtyMinFansTarget) {
             $event->setReturnDept();
             $event->stopPropagation();
         } else {
@@ -226,6 +227,7 @@ class AutoConvertSubscriber implements EventSubscriberInterface
         $diffVal = $event->convertRequestInfo->fansCount - $redis->hGet(MessageEnum::DC_REAL_TIME_MESSAGE . $event->convertRequestInfo->department, 'fullFansCount');
         if ($diffVal <= 0) {
             $event->setReturnDept($event->convertRequestInfo->department);
+            $event->setRestoreAllLinks(true);
             $event->stopPropagation();
         }
     }

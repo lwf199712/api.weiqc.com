@@ -1,9 +1,15 @@
 <?php
 declare(strict_types=1);
+
 namespace app\modules\v2;
 
 use yii\base\Module as BaseModule;
 use app\modules\v2\oauth\Module as OauthModule;
+use app\modules\v2\link\Module as LinkModule;
+use app\modules\v2\advertDept\Module as advertDeptModule;
+use app\modules\v2\marketDept\Module as marketDeptModule;
+use app\modules\v2\saleDept\Module as saleDeptModule;
+
 use Yii;
 
 /**
@@ -11,7 +17,7 @@ use Yii;
  * Class Module
  *
  * @package app\modules\v1
- * @author: lirong
+ * @author  : lirong
  */
 class Module extends BaseModule
 {
@@ -26,13 +32,30 @@ class Module extends BaseModule
         parent::init();
         //Disable session
         Yii::$app->user->enableSession = false;
-        Yii::$app->user->loginUrl = null;
+        Yii::$app->user->loginUrl      = null;
 
         $this->modules = [
             //鉴权
-            'oauth'       => [
+            'oauth'      => [
                 'class' => OauthModule::class,
             ],
+            //link
+            'link'       => [
+                'class' => LinkModule::class,
+            ],
+            //广告部
+            'advertDept' => [
+                'class' => advertDeptModule::class,
+            ],
+            //市场部
+            'marketDept' => [
+                'class' => marketDeptModule::class,
+            ],
+            //营销部
+            'saleDept'   => [
+                'class' => saleDeptModule::class,
+            ],
+
         ];
     }
 }

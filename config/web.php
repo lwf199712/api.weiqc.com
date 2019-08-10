@@ -8,14 +8,6 @@
 
 use app\common\rest\RestBaseController;
 use mdm\admin\components\AccessControl;
-use mdm\admin\controllers\AssignmentController;
-use mdm\admin\controllers\DefaultController;
-use mdm\admin\controllers\MenuController;
-use mdm\admin\controllers\PermissionController;
-use mdm\admin\controllers\RoleController;
-use mdm\admin\controllers\RouteController;
-use mdm\admin\controllers\RuleController;
-use mdm\admin\controllers\UserController;
 use mdm\admin\Module;
 use yii\rbac\DbManager;
 use yii\debug\Module as DebugModule;
@@ -179,7 +171,8 @@ $config = [
             'admin/*',
             'v1/*',
             'gii/*',
-            'debug/*'
+            'debug/*',
+            'v2/*',
             //此处的action列表，允许任何人（包括游客）访问
             //所以如果是正式环境（线上环境），不应该在这里配置任何东西，为空即可
             //但是为了在开发环境更简单的使用，可以在此处配置你所需要的任何权限
