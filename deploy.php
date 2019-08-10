@@ -61,7 +61,7 @@ task('deploy', [
     'deploy:vendors-dev',
 
     //数据迁移
-    //'deploy:run_rbac_migrations',
+    'deploy:run_rbac_migrations',
     'deploy:run_migrations',
     //'deploy:run_workflow_migrations',
 
@@ -80,13 +80,13 @@ task('deploy:vendors-dev', static function () {
     run('cd {{release_path}} && {{bin/composer}} install');
 })->onStage('test')->desc('deploy all packing for vendor');
 
-//rbac权限数据迁移
-// usr/bin/php yii migrate --migrationPath=@mdm/admin/migrations yii2-admin 权限数据表迁移
-// usr/bin/php yii migrate --migrationPath=@yii/rbac/migrations  rbac 权限数据表迁移
-//task('deploy:run_rbac_migrations', static function () {
-//    run('{{bin/php}} {{release_path}}/yii migrate --migrationPath=@mdm/admin/migrations up --interactive=0');
-//    run('{{bin/php}} {{release_path}}/yii migrate --migrationPath=@yii/rbac/migrations up --interactive=0');
-//})->desc('migrations rbac');
+rbac权限数据迁移
+ usr/bin/php yii migrate --migrationPath=@mdm/admin/migrations yii2-admin 权限数据表迁移
+ usr/bin/php yii migrate --migrationPath=@yii/rbac/migrations  rbac 权限数据表迁移
+task('deploy:run_rbac_migrations', static function () {
+    run('{{bin/php}} {{release_path}}/yii migrate --migrationPath=@mdm/admin/migrations up --interactive=0');
+    run('{{bin/php}} {{release_path}}/yii migrate --migrationPath=@yii/rbac/migrations up --interactive=0');
+})->desc('migrations rbac');
 
 //yii2-workflow 工作流程数据迁移
 //task('deploy:run_workflow_migrations', static function () {
