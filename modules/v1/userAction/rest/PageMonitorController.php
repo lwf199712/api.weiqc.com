@@ -68,7 +68,7 @@ class PageMonitorController extends RestBaseController
         $origin                = $this->request->getOrigin();
         $host                  = $this->request->getHostName();
         $pageMonitorRequestDto = new PageMonitorRequestDto($this->request->post());
-        if (in_array($host, Yii::$app->params['params']['cross_domain'], false)) {
+        if (in_array($host, Yii::$app->params['cross_domain'], false)) {
             header('Access-Control-Allow-Origin:' . $origin);
         }
         if (empty($pageMonitorRequestDto->token)) {
