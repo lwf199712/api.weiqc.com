@@ -20,17 +20,17 @@ use yii\base\Model;
 class PageMonitorModuleVo extends Model
 {
     /** @var string */
-    protected $ip;
+    public $ip;
     /** @var int */
-    protected $url_id;
+    public $url_id;
     /** @var int */
-    protected $page_id;
+    public $page_id;
     /** @var int */
-    protected $current_module;
+    public $current_module;
     /** @var int */
-    protected $duration;
+    public $duration;
     /** @var int */
-    protected $create_time;
+    public $create_time;
 
     /**
      * Returns the validation rules for attributes.
