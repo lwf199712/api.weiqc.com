@@ -4,6 +4,7 @@ namespace app\models\dataObject;
 
 use Yii;
 use yii\behaviors\AttributeBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -105,18 +106,18 @@ class StaticUrlDo extends ActiveRecord
     }
 
 
-    public function getStaticUrlGroup(): void
+    public function getStaticUrlGroup() : ActiveQuery
     {
-        $this->hasOne(StaticUrlGroup::class, ['id' => 'group_id']);
+        return $this->hasOne(StaticUrlGroup::class, ['id' => 'group_id'])->alias('staticUrlGroup');
     }
 
-    public function getStaticServiceConversions(): void
+    public function getStaticServiceConversions() : ActiveQuery
     {
-        $this->hasOne(StaticServiceConversions::class, ['u_id' => 'u_id']);
+        return $this->hasOne(StaticServiceConversions::class, ['u_id' => 'u_id'])->alias('staticServiceConversions');
     }
 
-    public function getMember(): void
+    public function getMember() : ActiveQuery
     {
-        $this->hasOne(Member::class, ['id' => 'm_id']);
+        return $this->hasOne(Member::class, ['id' => 'm_id'])->alias('member')->select(['id','username']);
     }
 }

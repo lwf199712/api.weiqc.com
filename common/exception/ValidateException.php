@@ -24,32 +24,8 @@ class ValidateException extends UserException
      */
     public function __construct(ActiveRecord $model, $message = null, $code = 0, Exception $previous = null)
     {
-        $this->message = $message . $this->getModelErrors($model);
+        $this->message = $message . implode(',',$model->getErrors());
         $this->code = $code;
         parent::__construct($message, $code, $previous);
     }
-
-
-    /**
-     * get model errors
-     *
-     * @param ActiveRecord $model
-     * @return string
-     * @author: lirong
-     */
-    private function getModelErrors(ActiveRecord $model): string
-    {
-        $errors = '';
-        if (is_array($model->errors)) {
-            foreach ($model->errors as $errors) {
-                if (is_array($errors)) {
-                    foreach ($errors as $error) {
-                        $errors .= $error;
-                    }
-                }
-            }
-        }
-        return $errors;
-    }
-
 }

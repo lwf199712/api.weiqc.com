@@ -4,11 +4,14 @@ namespace app\models;
 
 use mdm\admin\components\UserStatus;
 use Yii;
+use yii\base\Action;
 use yii\base\Exception;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\filters\RateLimitInterface;
 use yii\web\IdentityInterface;
+use yii\web\Request;
 
 
 /**
@@ -24,8 +27,14 @@ use yii\web\IdentityInterface;
  * @property int $created_at
  * @property int $updated_at
  */
-class User extends ActiveRecord implements IdentityInterface
+class User extends ActiveRecord implements IdentityInterface,RateLimitInterface
 {
+    public $rateLimit = 100;
+
+    public $allowance;
+
+    public $allowance_updated_at;
+
 
     public static function tableName() : string
     {
@@ -210,5 +219,43 @@ class User extends ActiveRecord implements IdentityInterface
     public function generateAuthKey()
     {
         $this->auth_key = Yii::$app->security->generateRandomString();
+    }
+
+    /**
+     * Returns the maximum number of allowed requests and the window size.
+     * @param Request $request the current request
+     * @param Action $action  the action to be executed
+     * @return array an array of two elements. The first element is the maximum number of allowed requests,
+     *                                  and the second element is the size of the window in seconds.
+     */
+    public function getRateLimit($request, $action) :array
+    {
+        return [$this->rateLimit, 600];
+    }
+
+    /**
+     * Loads the number of allowed requests and the corresponding timestamp from a persistent storage.
+     * @param Request $request          the current request
+     * @param Action  $action           the action to be executed
+     * @return array|void
+     *                                  and the second element is the corresponding UNIX timestamp.
+     */
+    public function loadAllowance($request, $action) :array
+    {
+        return [$this->allowance, $this->allowance_updated_at];
+    }
+
+    /**
+     * Saves the number of allowed requests and the corresponding timestamp to a persistent storage.
+     * @param Request $request   the current request
+     * @param Action $action    the action to be executed
+     * @param int              $allowance the number of allowed requests remaining.
+     * @param int              $timestamp the current timestamp.
+     */
+    public function saveAllowance($request, $action, $allowance, $timestamp)
+    {
+        $this->allowance = $allowance;
+        $this->allowance_updated_at = $timestamp;
+        $this->save();
     }
 }

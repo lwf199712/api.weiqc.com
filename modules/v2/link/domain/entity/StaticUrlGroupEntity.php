@@ -15,6 +15,20 @@ class StaticUrlGroupEntity extends StaticUrlGroup
      */
     public  function getDefaultGroup() : array
     {
-        return self::find()->select(['groupname','id'])->where(['=',0,'parent'])->orderBy('groupname')->all();
+        return self::find()->select(['groupname','id'])->where(['=','parent',0])->orderBy('groupname')->all();
+    }
+
+    /**
+     * 获取二级分组Id
+     * @param int $firstGroup
+     * @return array
+     * @author zhuozhen
+     */
+    public function getSecondGroup(int $firstGroup) : array
+    {
+        if ($firstGroup !== 0){
+            return array_column(self::find()->select('id')->where(['=','parent',$firstGroup])->asArray()->all(),'id');
+        }
+        return array_column(self::find()->select('id')->where(['!=','parent',0])->asArray()->all(),'id');
     }
 }
