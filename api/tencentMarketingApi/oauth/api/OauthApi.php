@@ -64,7 +64,7 @@ class OauthApi extends ApiBaseController
             $authorizationTokenDto->client_secret = Yii::$app->params['oauth']['tencent_marketing_api']['user_actions']['client_secret'];
             $authorizationTokenDto->grant_type    = AuthorizationTokenEnum::REFRESH_TOKEN;
             $authorizationTokenDto->refresh_token = $oauthDto->refresh_token;   //刷新token
-            $oauthDto                             = $this->authorizeToken($authorizationTokenDto);
+            $oauthDto                             = $this->authorizeToken($authorizationTokenDto,$this->oauthCacheService);
             if (!$oauthDto) {
                 throw new Exception('刷新token失败!', [], 500);
             }

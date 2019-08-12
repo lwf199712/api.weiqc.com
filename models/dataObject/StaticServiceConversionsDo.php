@@ -4,6 +4,7 @@ namespace app\models\dataObject;
 
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\BaseActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -68,7 +69,7 @@ class StaticServiceConversionsDo extends ActiveRecord
             [
                 'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'create_time',
-                'value' => new Expression('NOW()'),
+                'updatedAtAttribute' =>  false,
             ],
         ];
     }
