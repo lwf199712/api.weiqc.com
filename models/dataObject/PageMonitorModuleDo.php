@@ -23,7 +23,7 @@ class PageMonitorModuleDo extends ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%age_monitor_module}}';
+        return '{{%page_monitor_module}}';
     }
 
     /**

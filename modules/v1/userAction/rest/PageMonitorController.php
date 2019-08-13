@@ -102,7 +102,6 @@ class PageMonitorController extends RestBaseController
             }
             $effectRow = $this->userActionPageMonitorService->batchInsertPageData($insertData);
 
-
             $currentModuleList  = explode(',', $pageMonitorRequestDto->current_module);
             $moduleDurationList = explode(',', $pageMonitorRequestDto->module_duration);
 
@@ -125,8 +124,8 @@ class PageMonitorController extends RestBaseController
             return ['统计成功', 200];
 
         }catch (Exception $exception){
-            Yii::info($exception->getTrace());
-            return ['失敗！！！'. $exception->getTrace(), 500];
+            Yii::info($exception->getMessage());
+            return ['失敗！！！',500,$exception->getMessage()];
         }
     }
 }
