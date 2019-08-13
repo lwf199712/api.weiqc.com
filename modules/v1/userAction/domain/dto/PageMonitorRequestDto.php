@@ -57,7 +57,7 @@ class PageMonitorRequestDto extends Model
     {
         return [
             [['token'], 'string', 'max' => 128],
-            [['current_page' . 'duration', 'total_page', 'total_module', 'visit_deep', 'jumpout_module', 'current_module', 'module_duration'], 'integer', 'max' => 11],
+            [['current_page' , 'duration', 'total_page', 'total_module', 'visit_deep', 'jumpout_module', 'current_module', 'module_duration'], 'integer', 'max' => 11],
         ];
     }
 
