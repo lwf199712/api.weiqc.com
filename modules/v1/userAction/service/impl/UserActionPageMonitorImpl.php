@@ -10,6 +10,7 @@ use app\modules\v1\userAction\domain\vo\PageMonitorPageVo;
 use app\modules\v1\userAction\service\UserActionPageMonitorService;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 
 class UserActionPageMonitorImpl implements UserActionPageMonitorService
 {
@@ -17,7 +18,7 @@ class UserActionPageMonitorImpl implements UserActionPageMonitorService
      * 批量插入页面数据
      * @param array $pageMonitorPageVoList
      * @return int
-     * @throws InvalidConfigException
+     * @throws Exception
      * @author zhuozhen
      */
     public function batchInsertPageData(array $pageMonitorPageVoList): int
@@ -27,14 +28,15 @@ class UserActionPageMonitorImpl implements UserActionPageMonitorService
         foreach ($pageMonitorPageVoList as $pageMonitorPageVo){
             $insertData[] = $pageMonitorPageVo->attributes;
         }
-        Yii::$app->db->createCommand()->batchInsert(PageMonitorPageDo::tableName(), array_diff(PageMonitorPageDo::getTableSchema()->columns,['id']), $insertData);
+
+         return Yii::$app->db->createCommand()->batchInsert(PageMonitorPageDo::tableName(), array_keys($insertData[0]), $insertData)->execute();
 }
 
     /**
      * 批量插入模块数据
      * @param array[]PageMonitorModuleVo $insertData
      * @return int
-     * @throws InvalidConfigException
+     * @throws Exception
      * @author zhuozhen
      */
     public function batchInsertPageModuleData(array $pageMonitorModuleVoList): int
@@ -44,6 +46,7 @@ class UserActionPageMonitorImpl implements UserActionPageMonitorService
         foreach ($pageMonitorModuleVoList as $pageMonitorModuleVo){
             $insertData[] = $pageMonitorModuleVo->attributes;
         }
-        Yii::$app->db->createCommand()->batchInsert(PageMonitorPageDo::tableName(), array_diff(PageMonitorModuleDo::getTableSchema()->columns,['id']), $insertData);
+
+       return Yii::$app->db->createCommand()->batchInsert(PageMonitorModuleDo::tableName(),array_keys($insertData[0]), $insertData)->execute();
     }
 }

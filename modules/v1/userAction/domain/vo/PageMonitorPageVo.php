@@ -23,28 +23,28 @@ use yii\base\Model;
  */
 class PageMonitorPageVo extends Model
 {
+    /** @var int */
+    public $url_id;
     /** @var string */
-    protected $ip;
+    public $ip;
     /** @var int */
-    protected $current_page;
+    public $current_page;
     /** @var int */
-    protected $duration;
+    public $duration;
     /** @var int */
-    protected $total_duration;
+    public $total_duration;
     /** @var int */
-    protected $url_id;
+    public $total_page;
     /** @var int */
-    protected $total_page;
+    public $total_module;
     /** @var int */
-    protected $total_module;
+    public $visit_deep;
     /** @var int */
-    protected $visit_deep;
+    public $jumpout_module;
     /** @var int */
-    protected $jumpout_module;
+    public $jumpout_url;
     /** @var int */
-    protected $jumpout_url;
-    /** @var int */
-    protected $create_time;
+    public $create_time;
 
 
     /**
