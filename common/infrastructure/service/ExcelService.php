@@ -6,8 +6,21 @@ namespace app\common\infrastructure\service;
 
 interface ExcelService
 {
-    public function export() : void ;
+    /**
+     * @param array  $data 导出数据
+     * @param string $filename
+     * @author zhuozhen
+     */
+    public function export(array $data,string $filename): void;
 
 
-    public function import() : void ;
+    /**
+     * @param string $filename   文件名
+     * @param int    $sheet      视图
+     * @param int    $columnCnt  导出列数
+     * @param bool   $needHeader 是否需要表头
+     * @return array
+     * @author zhuozhen
+     */
+    public function import(string $filename, int $sheet = 0, int $columnCnt = 0, bool $needHeader = false): array;
 }
