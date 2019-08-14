@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace application\modules\common\exception;
+namespace app\common\exception;
 
 use yii\base\Exception;
 

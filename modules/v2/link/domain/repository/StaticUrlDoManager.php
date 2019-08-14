@@ -17,10 +17,10 @@ class StaticUrlDoManager extends BaseRepository
 
     /**
      * @param int $staticUrlId
-     * @return ActiveQuery
+     * @return array
      * @author zhuozhen
      */
-    public function viewData(int $staticUrlId): ActiveQuery
+    public function viewData(int $staticUrlId): array
     {
         return $this->query
             ->alias('staticUrl')
@@ -28,6 +28,7 @@ class StaticUrlDoManager extends BaseRepository
                 'member.username',])
             ->where(['=', 'staticUrl.id', $staticUrlId])
             ->joinWith(['member'])
+            ->asArray()
             ->one();
     }
 

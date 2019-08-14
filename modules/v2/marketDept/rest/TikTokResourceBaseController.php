@@ -20,7 +20,7 @@ use yii\base\Model;
  * @property-read TikTokResourceBaseImport    $tikTokResourceBaseImport
  * @package app\modules\v2\marketDept\rest
  */
-class TikTokResourceBase extends AdminBaseController
+class TikTokResourceBaseController extends AdminBaseController
 {
     /** @var TikTokResourceBaseAggregate */
     public $tikTokResourceBaseAggregate;
@@ -48,11 +48,13 @@ class TikTokResourceBase extends AdminBaseController
     public function verbs()
     {
         return [
-            'index'  => ['GET', 'HEAD'],
-            'view'   => ['GET', 'HEAD'],
-            'update' => ['POST'],
-            'delete' => ['GET'],
-            'import' => ['POST']
+            'index'       => ['GET', 'HEAD'],
+            'update'      => ['PUT', 'PATCH'],
+            'delete'      => ['DELETE'],
+            'import'      => ['POST'],
+            'export'      => ['GET', 'HEAD'],
+            'download'    => ['GET', 'HEAD'],
+            'batchUpdate' => ['POST'],
         ];
     }
 
@@ -60,11 +62,13 @@ class TikTokResourceBase extends AdminBaseController
     public function dtoMap(string $actionName): Model
     {
         return [
-            'actionIndex'  => $this->tikTokResourceBaseDto,
-            'actionView'   => $this->tikTokResourceBaseDto,
-            'actionUpdate' => $this->tikTokResourceBaseForm,
-            'actionDelete' => $this->tikTokResourceBaseDto,
-            'actionImport' => $this->tikTokResourceBaseImport,
+            'actionIndex'       => $this->tikTokResourceBaseDto,
+            'actionUpdate'      => $this->tikTokResourceBaseForm,
+            'actionDelete'      => $this->tikTokResourceBaseDto,
+            'actionImport'      => $this->tikTokResourceBaseImport,
+            'actionExport'      => $this->tikTokResourceBaseDto,
+            'actionDownload'    => $this->tikTokResourceBaseDto,
+            'actionBatchUpdate' => $this->tikTokResourceBaseImport,
         ][$actionName];
     }
 
@@ -74,22 +78,20 @@ class TikTokResourceBase extends AdminBaseController
         return ['成功返回数据', 200, $data];
     }
 
-    public function actionView(): array
-    {
-        $data = $this->tikTokResourceBaseAggregate->viewTikTokResourceBase($this->tikTokResourceBaseDto->id);
-        return ['成功返回数据', 200, $data];
-    }
-
     public function actionUpdate(): array
     {
         $nums = $this->tikTokResourceBaseAggregate->updateTikTokResourceBase($this->tikTokResourceBaseForm);
         return ['更新成功', 200, $nums];
     }
 
-    public function actionDelete() : array
+    public function actionDelete(): array
     {
-        $nums = $this->tikTokResourceBaseAggregate->deleteTikTokResourceBase($this->tikTokResourceBaseDto->id);
-        return ['删除成功', 200 ,$nums];
+        try {
+            $nums = $this->tikTokResourceBaseAggregate->deleteTikTokResourceBase((int)$this->tikTokResourceBaseDto->id);
+            return ['删除成功', 200, $nums];
+        } catch (Exception $exception) {
+            return ['删除失败', 500, $exception->getMessage()];
+        }
     }
 
     public function actionImport(): array
@@ -103,7 +105,26 @@ class TikTokResourceBase extends AdminBaseController
     }
 
 
+    public function actionExport(): void
+    {
+        $this->tikTokResourceBaseAggregate->exportTikTokResourceBase($this->tikTokResourceBaseDto);
+    }
 
+
+    public function actionDownload(): void
+    {
+        $this->tikTokResourceBaseAggregate->exportTikTokResourceBaseExample();
+    }
+
+    public function actionBatchUpdate(): array
+    {
+        try {
+            $nums = $this->tikTokResourceBaseAggregate->batchUpdateTikTokResourceBase($this->tikTokResourceBaseImport);
+            return ['导入数据成功', 200, $nums];
+        } catch (Exception $exception) {
+            return ['导入数据失败', 500, $exception->getMessage()];
+        }
+    }
 
 
 }

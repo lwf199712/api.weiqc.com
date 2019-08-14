@@ -44,15 +44,15 @@ class Module extends BaseModule
                 'class' => LinkModule::class,
             ],
             //广告部
-            'advertDept' => [
+            'advert-dept' => [
                 'class' => advertDeptModule::class,
             ],
             //市场部
-            'marketDept' => [
+            'market-dept' => [
                 'class' => marketDeptModule::class,
             ],
             //营销部
-            'saleDept'   => [
+            'sale-dept'   => [
                 'class' => saleDeptModule::class,
             ],
 

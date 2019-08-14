@@ -25,6 +25,8 @@ $params = require __DIR__ . '/params.php';
 $db     = require __DIR__ . '/db.php';
 //v1容器注册
 require_once __DIR__ . '/container/v1_container.php';
+//v2容器注册
+require_once __DIR__ . '/container/v2_container.php';
 
 $config = [
     'id'         => 'basic',
