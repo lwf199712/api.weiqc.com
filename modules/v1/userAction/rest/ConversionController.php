@@ -186,6 +186,7 @@ class ConversionController extends RestBaseController
             $this->userActionsApi->add($userActionsDto);
             return [ '操作成功!', 200 ];
         } catch (ValidateException|Exception|TencentMarketingApiException $e) {
+            \Yii::info($e->getTraceAsString(),'post_params');
             return [ $e->getMessage(), $e->getCode() ];
         }
     }
