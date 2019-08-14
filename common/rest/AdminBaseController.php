@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace app\common\rest;
 
 use app\components\Auth;
-use http\Exception\InvalidArgumentException;
 use stdClass;
 use Yii;
 use yii\base\Model;
@@ -112,7 +111,7 @@ abstract class AdminBaseController extends ActiveController
      * @throws \yii\base\Exception
      * @author zhuozhen
      */
-    public function dtoMap(string $actionName) : Model
+    public function dtoMap(string $actionName) :  Model
     {
         throw new \yii\base\Exception($actionName . 'do not in  implement dto list');
     }
@@ -135,11 +134,6 @@ abstract class AdminBaseController extends ActiveController
 
         $actionName = $action->actionMethod ?? 'actionIndex' ;
         $this->dto  = $this->dtoMap($actionName);
-
-        if ($this->dto instanceof stdClass){
-            $this->transaction = Yii::$app->db->beginTransaction();
-            return parent::beforeAction($action);
-        }
 
         if (in_array($this->request->getMethod(),['GET', 'HEAD', 'OPTIONS'])){
             $this->dto->setAttributes($this->request->get());

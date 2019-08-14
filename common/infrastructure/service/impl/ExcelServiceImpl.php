@@ -5,15 +5,13 @@ namespace app\common\infrastructure\service\impl;
 
 
 use app\common\infrastructure\service\ExcelService;
-use application\modules\common\exception\SpreadSheetException;
+use app\common\exception\SpreadSheetException;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
-use PhpOffice\PhpSpreadsheet\Reader\IReader;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Writer\IWriter;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use yii\base\Component;
 
@@ -51,7 +49,7 @@ class ExcelServiceImpl extends Component implements ExcelService
         header('Content-Type:application/octet-stream');
         header('Content-Type:application/download');
         header('Content-Type: application/vnd.ms-excel;charset=utf-8');
-        header('Content-Disposition:attachment;filename="$filename.xlsx"');
+        header('Content-Disposition:attachment;filename='."$filename.xlsx");
         header('Content-Transfer-Encoding:binary');
         $writer->save('php://output');
     }
