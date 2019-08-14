@@ -23,6 +23,8 @@ use yii\base\Model;
  */
 class PageMonitorPageVo extends Model
 {
+    /** @var int */
+    public $url_id;
     /** @var string */
     public $ip;
     /** @var int */
@@ -31,8 +33,6 @@ class PageMonitorPageVo extends Model
     public $duration;
     /** @var int */
     public $total_duration;
-    /** @var int */
-    public $url_id;
     /** @var int */
     public $total_page;
     /** @var int */
