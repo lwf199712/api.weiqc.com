@@ -38,7 +38,9 @@ class StaticClientDo extends ActiveRecord
             [['u_id', 'ip', 'date', 'createtime'], 'required'],
             [['u_id', 'ip', 'date', 'createtime'], 'integer'],
             [['country', 'area'], 'string', 'max' => 40],
-            [['page', 'referer', 'agent'], 'string', 'max' => 255],
+            [['page', 'referer'], 'string', 'max' => 255],
+            ['agent','string','max' => 325],
+
         ];
     }
 

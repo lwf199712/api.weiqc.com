@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace app\common\repository;
 
 use yii\base\BaseObject;
+use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
@@ -40,6 +41,4 @@ abstract class BaseRepository extends BaseObject
         $this->query = $this->model::find();
         parent::__construct($config);
     }
-
-
 }

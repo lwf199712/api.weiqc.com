@@ -22,23 +22,23 @@ use yii\base\Model;
 class PageMonitorRequestDto extends Model
 {
     /** @var string */
-    protected $token;
+    public $token;
     /** @var int */
-    protected $current_page;
+    public $current_page;
     /** @var int */
-    protected $duration;
+    public $duration;
     /** @var int */
-    protected $total_page;
+    public $total_page;
     /** @var int */
-    protected $total_module;
+    public $total_module;
     /** @var int */
-    protected $visit_deep;
+    public $visit_deep;
     /** @var int */
-    protected $jumpout_module;
+    public $jumpout_module;
     /** @var int */
-    protected $current_module;
+    public $current_module;
     /** @var int */
-    protected $module_duration;
+    public $module_duration;
 
     public function __construct(array $attributes,$config = [])
     {
@@ -57,7 +57,7 @@ class PageMonitorRequestDto extends Model
     {
         return [
             [['token'], 'string', 'max' => 128],
-            [['current_page' . 'duration', 'total_page', 'total_module', 'visit_deep', 'jumpout_module', 'current_module', 'module_duration'], 'integer', 'max' => 11],
+            [['current_page' , 'duration', 'total_page', 'total_module', 'visit_deep', 'jumpout_module', 'current_module', 'module_duration'], 'integer', 'max' => 11],
         ];
     }
 
