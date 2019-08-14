@@ -19,10 +19,10 @@ use yii\base\Model;
  */
 class PageMonitorModuleVo extends Model
 {
-    /** @var string */
-    public $ip;
     /** @var int */
     public $url_id;
+    /** @var string */
+    public $ip;
     /** @var int */
     public $page_id;
     /** @var int */

@@ -29,7 +29,7 @@ class UserActionPageMonitorImpl implements UserActionPageMonitorService
         foreach ($pageMonitorPageVoList as $pageMonitorPageVo){
             $insertData[] = $pageMonitorPageVo->attributes;
         }
-//        var_dump(array_keys(PageMonitorPageDo::getTableSchema()->columns));die();
+
          return Yii::$app->db->createCommand()->batchInsert(PageMonitorPageDo::tableName(), array_diff(array_keys(PageMonitorPageDo::getTableSchema()->columns),['id']), $insertData)->execute();
 }
 
@@ -48,6 +48,7 @@ class UserActionPageMonitorImpl implements UserActionPageMonitorService
         foreach ($pageMonitorModuleVoList as $pageMonitorModuleVo){
             $insertData[] = $pageMonitorModuleVo->attributes;
         }
+
        return Yii::$app->db->createCommand()->batchInsert(PageMonitorModuleDo::tableName(), array_diff(array_keys(PageMonitorModuleDo::getTableSchema()->columns),['id']), $insertData)->execute();
     }
 }
