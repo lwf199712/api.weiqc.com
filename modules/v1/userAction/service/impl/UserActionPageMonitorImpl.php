@@ -18,7 +18,6 @@ class UserActionPageMonitorImpl implements UserActionPageMonitorService
      * 批量插入页面数据
      * @param array $pageMonitorPageVoList
      * @return int
-     * @throws InvalidConfigException
      * @throws Exception
      * @author zhuozhen
      */
@@ -30,14 +29,13 @@ class UserActionPageMonitorImpl implements UserActionPageMonitorService
             $insertData[] = $pageMonitorPageVo->attributes;
         }
 
-         return Yii::$app->db->createCommand()->batchInsert(PageMonitorPageDo::tableName(), array_diff(array_keys(PageMonitorPageDo::getTableSchema()->columns),['id']), $insertData)->execute();
+         return Yii::$app->db->createCommand()->batchInsert(PageMonitorPageDo::tableName(), array_keys($insertData[0]), $insertData)->execute();
 }
 
     /**
      * 批量插入模块数据
      * @param array[]PageMonitorModuleVo $insertData
      * @return int
-     * @throws InvalidConfigException
      * @throws Exception
      * @author zhuozhen
      */
@@ -49,6 +47,6 @@ class UserActionPageMonitorImpl implements UserActionPageMonitorService
             $insertData[] = $pageMonitorModuleVo->attributes;
         }
 
-       return Yii::$app->db->createCommand()->batchInsert(PageMonitorModuleDo::tableName(), array_diff(array_keys(PageMonitorModuleDo::getTableSchema()->columns),['id']), $insertData)->execute();
+       return Yii::$app->db->createCommand()->batchInsert(PageMonitorModuleDo::tableName(),array_keys($insertData[0]), $insertData)->execute();
     }
 }
