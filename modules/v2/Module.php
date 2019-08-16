@@ -9,7 +9,6 @@ use app\modules\v2\link\Module as LinkModule;
 use app\modules\v2\advertDept\Module as advertDeptModule;
 use app\modules\v2\marketDept\Module as marketDeptModule;
 use app\modules\v2\saleDept\Module as saleDeptModule;
-
 use Yii;
 
 /**
@@ -35,7 +34,7 @@ class Module extends BaseModule
         Yii::$app->user->loginUrl      = null;
 
         $this->modules = [
-            //鉴权
+            //头条鉴权
             'oauth'      => [
                 'class' => OauthModule::class,
             ],

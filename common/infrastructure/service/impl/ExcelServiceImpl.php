@@ -9,13 +9,13 @@ use app\common\exception\SpreadSheetException;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use yii\base\Component;
-use yii\rest\DeleteAction;
 
 /**
  * Class ExcelServiceImpl
@@ -88,25 +88,15 @@ class ExcelServiceImpl extends Component implements ExcelService
                 yield $self->readCell($columnCnt, $_row, $currSheet);
             }
         };
-        $resultSet = $asyncResult($this);
-        foreach ($resultSet as $item){
-            $data[] = $item;
+        $resultSetGenerator = $asyncResult($this);
+        foreach ($resultSetGenerator as $item){
+            $data[] = current($item);
         }
-
-        foreach ($data as $_row){
-            $isNull = true;
-            foreach($_row as $cell){
-                if (!empty($cell)) {
-                    $isNull = false;
-                }
-            }
-            if ($isNull) {
-                unset($data[$_row]);
-            }
-        }
+        //去除空行
+        $data = $this->removeEmptyRow($data);
 
         if ($needHeader === false) {
-            unset($data[1]);  //去除表头
+            unset($data[0]);  //去除表头
         }
 
         return $data;
@@ -177,10 +167,10 @@ class ExcelServiceImpl extends Component implements ExcelService
      * @param int       $columnCnt
      * @param int       $_row
      * @param Worksheet $currSheet
-     * @return mixed
+     * @return array
      * @author zhuozhen
      */
-    private function readCell(int $columnCnt,int $_row,Worksheet $currSheet)
+    private function readCell(int $columnCnt,int $_row,Worksheet $currSheet) : array
     {
         $data = [];
         $asyncResult = static function () use ($columnCnt,$_row,$currSheet) {
@@ -205,6 +195,28 @@ class ExcelServiceImpl extends Component implements ExcelService
                 $data[$_row][$tempKey] = $item;
             }
             $i++;
+        }
+        return $data;
+    }
+
+    /**
+     * 去除空行
+     * @param array $data
+     * @return array
+     * @author zhuozhen
+     */
+    private function removeEmptyRow(array $data) : array
+    {
+        foreach ($data as $_row){
+            $isNull = true;
+            foreach($_row as $cell){
+                if (!empty($cell)) {
+                    $isNull = false;
+                }
+            }
+            if ($isNull) {
+                unset($data[$_row]);
+            }
         }
         return $data;
     }
