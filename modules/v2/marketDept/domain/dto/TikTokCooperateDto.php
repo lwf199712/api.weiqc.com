@@ -14,9 +14,10 @@ use yii\base\Model;
  */
 class TikTokCooperateDto extends Model
 {
-    //注意：前端需要传 scenario 字段，值为 以下四个
 
     public const SEARCH = 'search';
+
+    //注意：编辑时前端需要传 scenario 字段，值为 以下仨个
 
     public const EDIT = 'edit';
 
