@@ -32,14 +32,14 @@ class ExcelServiceImpl extends Component implements ExcelService
 
 
     /**
-     * @param array  $data 导出数据
+     * @param array $data 导出数据
      * @param string $filename
      * @throws SpreadSheetException
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
      * @author zhuozhen
      */
-    public function export(array $data,string $filename): void
+    public function export(array $data, string $filename): void
     {
         $this->spreadsheet = $this->getXlsxTemplate($data);
         $writer            = new Xlsx($this->spreadsheet);
@@ -51,16 +51,16 @@ class ExcelServiceImpl extends Component implements ExcelService
         header('Content-Type:application/octet-stream');
         header('Content-Type:application/download');
         header('Content-Type: application/vnd.ms-excel;charset=utf-8');
-        header('Content-Disposition:attachment;filename='."$filename.xlsx");
+        header('Content-Disposition:attachment;filename=' . "$filename.xlsx");
         header('Content-Transfer-Encoding:binary');
         $writer->save('php://output');
     }
 
     /**
      * @param string $filename
-     * @param int    $sheet
-     * @param int    $columnCnt
-     * @param bool   $needHeader
+     * @param int $sheet
+     * @param int $columnCnt
+     * @param bool $needHeader
      * @return array
      * @throws Exception
      * @throws \PhpOffice\PhpSpreadsheet\Exception
@@ -83,13 +83,13 @@ class ExcelServiceImpl extends Component implements ExcelService
         $data   = [];
 
         /* 读取内容 */
-        $asyncResult = static function (self $self) use ($columnCnt,$rowCnt,$currSheet) {
+        $asyncResult        = static function (self $self) use ($columnCnt, $rowCnt, $currSheet) {
             for ($_row = 1; $_row <= $rowCnt; $_row++) {
                 yield $self->readCell($columnCnt, $_row, $currSheet);
             }
         };
         $resultSetGenerator = $asyncResult($this);
-        foreach ($resultSetGenerator as $item){
+        foreach ($resultSetGenerator as $item) {
             $data[] = current($item);
         }
         //去除空行
@@ -126,15 +126,15 @@ class ExcelServiceImpl extends Component implements ExcelService
         //样式=边框线+对准
         $sheet->getStyle('A1:' . $this->intToChr(count(current($source)) - 1) . count($source))->applyFromArray(
             [
-                'borders'   => [
+                'borders' => [
                     'allBorders' => [
                         'borderStyle' => Border::BORDER_THIN,
-                        'color'       => ['argb' => '00000000'],
+                        'color' => ['argb' => '00000000'],
                     ],
                 ],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical'   => Alignment::VERTICAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
                 ],
             ]
         );
@@ -164,34 +164,34 @@ class ExcelServiceImpl extends Component implements ExcelService
 
     /**
      * 异步协程读取单元格(列数少时效果不明显)
-     * @param int       $columnCnt
-     * @param int       $_row
+     * @param int $columnCnt
+     * @param int $_row
      * @param Worksheet $currSheet
      * @return array
      * @author zhuozhen
      */
-    private function readCell(int $columnCnt,int $_row,Worksheet $currSheet) : array
+    private function readCell(int $columnCnt, int $_row, Worksheet $currSheet): array
     {
-        $data = [];
-        $asyncResult = static function () use ($columnCnt,$_row,$currSheet) {
+        $data        = [];
+        $asyncResult = static function () use ($columnCnt, $_row, $currSheet) {
             for ($_column = 1; $_column <= $columnCnt; $_column++) {
                 $cellName = Coordinate::stringFromColumnIndex($_column);
                 yield $cellName;
-                $cellId   = $cellName . $_row;
-                $cell     = $currSheet->getCell($cellId);
+                $cellId = $cellName . $_row;
+                $cell   = $currSheet->getCell($cellId);
                 if ($cell === null) {
                     throw new SpreadSheetException("单元格$cellId 异常");
                 }
                 yield  trim($cell->getFormattedValue());
             }
         };
-        $resultSet = $asyncResult();
-        $i = 1;
-        $tempKey = null;
-        foreach ($resultSet as $item){
-            if ($i & 2 !== 0){
+        $resultSet   = $asyncResult();
+        $i           = 1;
+        $tempKey     = null;
+        foreach ($resultSet as $item) {
+            if ($i & 2 !== 0) {
                 $tempKey = $item;
-            }else{
+            } else {
                 $data[$_row][$tempKey] = $item;
             }
             $i++;
@@ -199,17 +199,52 @@ class ExcelServiceImpl extends Component implements ExcelService
         return $data;
     }
 
+
+    /**
+     * 异步协程读取单元格(列数少时效果不明显)
+     * @param int $columnCnt
+     * @param int $_row
+     * @param Worksheet $currSheet
+     * @return array
+     * @author zhuozhen
+     */
+    private function readCellByGo(int $columnCnt, int $_row, Worksheet $currSheet): array
+    {
+        $data    = [];
+        $keyChan = new chan($columnCnt);
+        $valueChan = new chan($columnCnt);
+
+        for ($_column = 1; $_column <= $columnCnt; $_column++) {
+            go(function () use ($keyChan,$valueChan,$_column,$_row,$currSheet) {
+                $cellName = Coordinate::stringFromColumnIndex($_column);
+                $keyChan->push($cellName);
+                $cellId = $cellName . $_row;
+                $cell   = $currSheet->getCell($cellId);
+                if ($cell === null) {
+                    throw new SpreadSheetException("单元格$cellId 异常");
+                }
+                $valueChan->push(trim($cell->getFormattedValue()));
+            });
+        }
+        while($columnCnt--){
+            $tempKey = $keyChan->pop();
+            $data[$_row][$tempKey] = $valueChan->pop();
+        }
+        return $data;
+    }
+
+
     /**
      * 去除空行
      * @param array $data
      * @return array
      * @author zhuozhen
      */
-    private function removeEmptyRow(array $data) : array
+    private function removeEmptyRow(array $data): array
     {
-        foreach ($data as $_row){
+        foreach ($data as $_row) {
             $isNull = true;
-            foreach($_row as $cell){
+            foreach ($_row as $cell) {
                 if (!empty($cell)) {
                     $isNull = false;
                 }
