@@ -98,7 +98,30 @@ task('deploy:index', static function () {
     run('cd {{release_path}}/web && cp index-prod.php index.php');
 })->onStage('product')->desc('Deploy index for product');
 
+//比较使用版本和正在发布的版本，如果vendor 包没有更新，则直接使用当前版本的 vendor包
+task('deploy:vendors', static function () {
+    //比较两个版本之间的 composer.lock 文件，如果不一致则去更新 vendor
+    $currentPath = get('current_path');
+    $releasePath = get('release_path');
 
+    //比较两个版本之间的 vendor 包是否有改变
+    $signCurrent = run('md5sum {{current_path}}' . '/composer.lock');
+    $signRelease = run('md5sum {{release_path}}' . '/composer.lock');
+
+    if (
+        $currentPath !== $releasePath  //非首次发布
+        && $signCurrent !== $signRelease  //版本之间没有变化
+    ) {
+        // 如果版本之间没有变化，直接 copy 上一个版本的vendor 包信息
+        run('cp -r {{current_path}}/vendor {{release_path}}/');
+    } else {
+        //如果初次发布或者是有版本更新
+        if (!commandExist('unzip')) {
+            writeln('<comment>To speed up composer installation setup "unzip" command with PHP zip extension https://goo.gl/sxzFcD</comment>');
+        }
+        run('cd {{release_path}} && {{bin/composer}} {{composer_options}}');
+    }
+})->desc('Installing vendors');
 
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');

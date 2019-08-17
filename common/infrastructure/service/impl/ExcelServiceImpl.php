@@ -9,9 +9,11 @@ use app\common\exception\SpreadSheetException;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use yii\base\Component;
 
@@ -62,7 +64,6 @@ class ExcelServiceImpl extends Component implements ExcelService
      * @return array
      * @throws Exception
      * @throws \PhpOffice\PhpSpreadsheet\Exception
-     * @throws SpreadSheetException
      * @author zhuozhen
      */
     public function import(string $filename, int $sheet = 0, int $columnCnt = 0, bool $needHeader = false): array
@@ -82,29 +83,22 @@ class ExcelServiceImpl extends Component implements ExcelService
         $data   = [];
 
         /* 读取内容 */
-        for ($_row = 1; $_row <= $rowCnt; $_row++) {
-            $isNull = true;
-
-            for ($_column = 1; $_column <= $columnCnt; $_column++) {
-                $cellName = Coordinate::stringFromColumnIndex($_column);
-                $cellId   = $cellName . $_row;
-                $cell     = $currSheet->getCell($cellId);
-                if ($cell === null) {
-                    throw new SpreadSheetException("单元格$cellId 异常");
-                }
-                $data[$_row][$cellName] = trim($cell->getFormattedValue());
-
-                if (!empty($data[$_row][$cellName])) {
-                    $isNull = false;
-                }
+        $asyncResult = static function (self $self) use ($columnCnt,$rowCnt,$currSheet) {
+            for ($_row = 1; $_row <= $rowCnt; $_row++) {
+                yield $self->readCell($columnCnt, $_row, $currSheet);
             }
-            if ($isNull) {
-                unset($data[$_row]);
-            }
+        };
+        $resultSetGenerator = $asyncResult($this);
+        foreach ($resultSetGenerator as $item){
+            $data[] = current($item);
         }
+        //去除空行
+        $data = $this->removeEmptyRow($data);
+
         if ($needHeader === false) {
-            unset($data[1]);  //去除表头
+            unset($data[0]);  //去除表头
         }
+
         return $data;
     }
 
@@ -166,5 +160,64 @@ class ExcelServiceImpl extends Component implements ExcelService
             $str .= $this->intToChr(floor($index / 26) - 1);
         }
         return $str . chr($index % 26 + $start);
+    }
+
+    /**
+     * 异步协程读取单元格(列数少时效果不明显)
+     * @param int       $columnCnt
+     * @param int       $_row
+     * @param Worksheet $currSheet
+     * @return array
+     * @author zhuozhen
+     */
+    private function readCell(int $columnCnt,int $_row,Worksheet $currSheet) : array
+    {
+        $data = [];
+        $asyncResult = static function () use ($columnCnt,$_row,$currSheet) {
+            for ($_column = 1; $_column <= $columnCnt; $_column++) {
+                $cellName = Coordinate::stringFromColumnIndex($_column);
+                yield $cellName;
+                $cellId   = $cellName . $_row;
+                $cell     = $currSheet->getCell($cellId);
+                if ($cell === null) {
+                    throw new SpreadSheetException("单元格$cellId 异常");
+                }
+                yield  trim($cell->getFormattedValue());
+            }
+        };
+        $resultSet = $asyncResult();
+        $i = 1;
+        $tempKey = null;
+        foreach ($resultSet as $item){
+            if ($i & 2 !== 0){
+                $tempKey = $item;
+            }else{
+                $data[$_row][$tempKey] = $item;
+            }
+            $i++;
+        }
+        return $data;
+    }
+
+    /**
+     * 去除空行
+     * @param array $data
+     * @return array
+     * @author zhuozhen
+     */
+    private function removeEmptyRow(array $data) : array
+    {
+        foreach ($data as $_row){
+            $isNull = true;
+            foreach($_row as $cell){
+                if (!empty($cell)) {
+                    $isNull = false;
+                }
+            }
+            if ($isNull) {
+                unset($data[$_row]);
+            }
+        }
+        return $data;
     }
 }
