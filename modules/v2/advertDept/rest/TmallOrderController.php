@@ -44,7 +44,6 @@ class TmallOrderController extends AdminBaseController
         ];
     }
 
-
     public function dtoMap(string $actionName): Model
     {
         return [
@@ -59,6 +58,9 @@ class TmallOrderController extends AdminBaseController
         return ['成功返回数据',200,$data];
     }
 
+
+    //TODO 预留天猫导单接口，目前采用前后不分离的方式，且没有权限验证
+    /**@var TmallOrderWebController  */
     public function actionImport()
     {
         try {

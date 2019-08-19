@@ -79,15 +79,9 @@ class Auth extends Component
             'authMethods' => [
                 HttpBasicAuth::class,
                 HttpBearerAuth::class,
+                QueryParamAuth::class,
             ],
         ];
-
-        //调试模式下可使用access-token接收参数
-        if (YII_DEBUG) {
-            //http://localhost/user/index/index?access-token=123
-            $behaviors['authenticator']['authMethods'][] = QueryParamAuth::class;
-        }
-
         return $behaviors;
     }
 

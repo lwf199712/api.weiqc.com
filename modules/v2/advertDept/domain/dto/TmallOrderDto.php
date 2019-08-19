@@ -8,6 +8,7 @@ use yii\base\Model;
 
 class TmallOrderDto extends Model
 {
+
     /** @var int */
     public $start_at;
     /** @var int */
@@ -31,4 +32,5 @@ class TmallOrderDto extends Model
             'end_at'   => '结束时间',
         ];
     }
+
 }
