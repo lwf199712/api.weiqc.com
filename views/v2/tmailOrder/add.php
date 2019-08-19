@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /* @var $this yii\web\View */
 /**@var $tmallOrderImport TmallOrderImport */
@@ -18,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $form = ActiveForm::begin([
                         'id'                   => 'form-id',
                         'options'              => ['enctype' => 'multipart/form-data'],
-                        'action'               => Url::to('tmall-order-web/upload'),
+                        'action'               => Url::to('upload'),
                         'method'               => 'POST',
                         ])?>
 

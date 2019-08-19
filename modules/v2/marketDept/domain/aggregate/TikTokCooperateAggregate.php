@@ -58,11 +58,16 @@ class TikTokCooperateAggregate extends BaseObject
     /**
      * @param TikTokCooperatePersonalInfoForm $tikTokCooperatePersonalInfoForm
      * @return bool
+     * @throws Exception
      * @author zhuozhen
      */
     public function createTikTokCooperate(tikTokCooperatePersonalInfoForm $tikTokCooperatePersonalInfoForm): bool
     {
-        return $this->tikTokCooperateAggregateRoot->createEntity($tikTokCooperatePersonalInfoForm);
+        $result =  $this->tikTokCooperateAggregateRoot->createEntity($tikTokCooperatePersonalInfoForm);
+        if ($result === false){
+            throw new Exception('新增抖音合作核实失败');
+        }
+        return $result;
     }
 
     /**
@@ -73,7 +78,11 @@ class TikTokCooperateAggregate extends BaseObject
      */
     public function updateTikTokCooperate(TikTokCooperateDto $tikTokCooperateDto): bool
     {
-        return $this->tikTokCooperateAggregateRoot->updateEntity($tikTokCooperateDto);
+        $result =  $this->tikTokCooperateAggregateRoot->updateEntity($tikTokCooperateDto);
+        if ($result === false){
+            throw new Exception('更新抖音合作核实失败');
+        }
+        return $result;
     }
 
     /**

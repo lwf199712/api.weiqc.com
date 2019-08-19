@@ -54,6 +54,7 @@ class TikTokCooperateDto extends Model
     public function rules(): array
     {
         return [
+            ['dept','required','on' => self::SEARCH],
             [['cooperate_pattern', 'nickname', 'product', 'follow'], 'string', 'on' => self::SEARCH],
             [['id', 'draft_verify', 'final_verify'], 'integer', 'on' => self::SEARCH],
             [['final_price', 'product', 'cooperate_pattern'], 'string', 'on' => self::EDIT],
@@ -63,7 +64,7 @@ class TikTokCooperateDto extends Model
             [['authorize_performance', 'authorize_time', 'authorize_remark'], 'required', 'on' => self::AUTHORIZE_MANAGE],
             [['authorize_performance', 'authorize_time', 'authorize_remark'], 'string', 'on' => self::AUTHORIZE_MANAGE],
             ['id', 'integer', 'on' => self::AUTHORIZE_MANAGE],
-            ['scenario','string','ranges' => [ self::EDIT , self::EDIT_IMPORT ,self::AUTHORIZE_MANAGE] ,'message' => '场景值错误' ]
+            ['scenario','in','range' => [ self::EDIT , self::EDIT_IMPORT ,self::AUTHORIZE_MANAGE] ,'message' => '场景值错误' ]
         ];
     }
 
@@ -134,7 +135,7 @@ class TikTokCooperateDto extends Model
     /**
      * @return int
      */
-    public function getBeginTime(): int
+    public function getBeginTime(): ?int
     {
         return $this->beginTime;
     }
@@ -150,7 +151,7 @@ class TikTokCooperateDto extends Model
     /**
      * @return int
      */
-    public function getEndTime(): int
+    public function getEndTime(): ?int
     {
         return $this->endTime;
     }

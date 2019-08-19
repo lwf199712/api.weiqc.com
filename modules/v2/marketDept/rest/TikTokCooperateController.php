@@ -85,8 +85,8 @@ class TikTokCooperateController extends AdminBaseController
     public function actionCreate(): array
     {
         try {
-            $this->tikTokCooperateAggregate->createTikTokCooperate($this->tikTokCooperatePersonalInfoForm);
-            return ['新增成功', 200];
+            $result = $this->tikTokCooperateAggregate->createTikTokCooperate($this->tikTokCooperatePersonalInfoForm);
+            return ['新增成功', 200,$result];
         } catch (Exception $exception) {
             return ['新增失败', 500, $exception->getMessage()];
         }
