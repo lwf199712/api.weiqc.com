@@ -6,20 +6,18 @@ namespace app\modules\v2\advertDept\domain\dto;
 
 use yii\base\Model;
 
+/**
+ * Class TmallOrderDto
+ * @property-read int $start_at
+ * @property-read int $end_at
+ * @package app\modules\v2\advertDept\domain\dto
+ */
 class TmallOrderDto extends Model
 {
-
-    /** @var int */
-    public $start_at;
-    /** @var int */
-    public $end_at;
 
     public function rules(): array
     {
         return [
-            [['start_at', 'end_at'], 'required', 'message' => '开始时间和结束时间必填'],
-            [['start_at', 'end_at'], 'integer', 'message' => '时间格式错误'],
-            ['start_at', 'compare', 'compareAttribute' => 'end_at', 'operator' => '<', 'enableClientValidation' => false, 'message' => '开始时间必须小于结束时间'],
         ];
     }
 
@@ -31,6 +29,22 @@ class TmallOrderDto extends Model
             'start_at' => '开始时间',
             'end_at'   => '结束时间',
         ];
+    }
+
+    /**
+     * @return int
+     */
+    public function getStartAt(): int
+    {
+        return strtotime(date('Y-m-d')) - 3600 * 24;    //两天前
+    }
+
+    /**
+     * @return int
+     */
+    public function getEndAt(): int
+    {
+        return strtotime(date('Y-m-d')) + 3600 * 24;
     }
 
 }

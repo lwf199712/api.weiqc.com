@@ -15,7 +15,9 @@ class TikTokCooperatePersonalInfoForm extends Model
 
    public $time;
 
-   public $kol_name;
+   public $fans_num;
+
+   public $kol_info;
 
    public $follow;
 
@@ -23,12 +25,13 @@ class TikTokCooperatePersonalInfoForm extends Model
 
    public $draft_quotation;
 
+   public $dept;
+
 
     public function rules()
     {
         return [
-            [['nickname', 'channel', 'fans_num', 'time', 'kol_info', 'follow', 'link', 'draft_quotation'], 'required'],
-            [['nickname'], 'unique'],
+            [['nickname', 'channel', 'fans_num', 'time', 'kol_info', 'follow', 'link', 'draft_quotation','dept'], 'required'],
         ];
     }
 
@@ -44,6 +47,7 @@ class TikTokCooperatePersonalInfoForm extends Model
             'follow'                => '跟进人',
             'link'                  => '链接',
             'draft_quotation'       => '初步报价',
+            'dept'                  => '部门',
         ];
     }
 }

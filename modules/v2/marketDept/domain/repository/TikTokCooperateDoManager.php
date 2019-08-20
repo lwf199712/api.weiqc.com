@@ -17,6 +17,7 @@ class TikTokCooperateDoManager extends BaseRepository
     public function listDataProvider(TikTokCooperateDto $tikTokCooperateDto): ActiveDataProvider
     {
         $this->query
+            ->andWhere(['=','dept',$tikTokCooperateDto->dept])
             ->andFilterWhere(['>', 'time', $tikTokCooperateDto->beginTime])
             ->andFilterWhere(['<', 'time', $tikTokCooperateDto->endTime])
             ->andFilterWhere(['=', 'nickname', $tikTokCooperateDto->nickname])

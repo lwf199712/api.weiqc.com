@@ -45,9 +45,8 @@ class TikTokCooperateDo extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nickname', 'channel', 'fans_num', 'time', 'kol_info', 'follow', 'link', 'draft_quotation', 'draft_verify_remark', 'dept'], 'required'],
+            [['nickname', 'channel', 'fans_num', 'time', 'kol_info', 'follow', 'link', 'draft_quotation', 'dept'], 'required'],
             [['fans_num', 'time', 'authorize_time', 'draft_verify', 'video_num', 'final_verify'], 'integer'],
-            [['nickname', 'channel', 'authorize_performance', 'authorize_remark', 'kol_info', 'follow', 'link', 'draft_quotation', 'draft_verify_remark', 'final_price', 'final_verify_remark', 'product', 'cooperate_pattern', 'dept'], 'string', 'max' => 255],
             [['nickname'], 'unique'],
         ];
     }

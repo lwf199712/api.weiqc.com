@@ -16,7 +16,7 @@ class TmallOrderDoManager extends BaseRepository
     {
         $this->query
             ->select(['create_at','phone','price'])
-            ->andWhere(['between','create_at',$tmallOrderDto->start_at,$tmallOrderDto->end_at]);
+            ->andWhere(['between','create_at',$tmallOrderDto->getStartAt(),$tmallOrderDto->getEndAt()]);
 
         return new ActiveDataProvider([
             'query'      => $this->query->asArray(),
