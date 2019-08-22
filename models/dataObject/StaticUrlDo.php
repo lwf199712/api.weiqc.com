@@ -108,16 +108,16 @@ class StaticUrlDo extends ActiveRecord
 
     public function getStaticUrlGroup() : ActiveQuery
     {
-        return $this->hasOne(StaticUrlGroup::class, ['id' => 'group_id'])->alias('staticUrlGroup');
+        return $this->hasOne(StaticUrlGroupDo::class, ['id' => 'group_id'])->alias('staticUrlGroup');
     }
 
     public function getStaticServiceConversions() : ActiveQuery
     {
-        return $this->hasOne(StaticServiceConversions::class, ['u_id' => 'u_id'])->alias('staticServiceConversions');
+        return $this->hasOne(StaticServiceConversionsDo::class, ['u_id' => 'u_id'])->alias('staticServiceConversions');
     }
 
     public function getMember() : ActiveQuery
     {
-        return $this->hasOne(Member::class, ['id' => 'm_id'])->alias('member')->select(['id','username']);
+        return $this->hasOne(MemberDo::class, ['id' => 'm_id'])->alias('member')->select(['id','username']);
     }
 }

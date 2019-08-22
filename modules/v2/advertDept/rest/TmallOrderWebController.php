@@ -15,6 +15,7 @@ use yii\web\UploadedFile;
 /**
  * Class TmallOrderWebController
  * @property-read TmallOrderImport $tmallOrderImport
+ * @property-read tmallOrderDo     $tmallOrderDo
  * @package app\modules\v2\advertDept\rest
  */
 class TmallOrderWebController extends WebBaseController
@@ -30,7 +31,7 @@ class TmallOrderWebController extends WebBaseController
                                 $config = [])
     {
         $this->tmallOrderImport = $tmallOrderImport;
-        $this->tmallOrderDo = $tmallOrderDo;
+        $this->tmallOrderDo     = $tmallOrderDo;
         parent::__construct($id, $module, $config);
     }
 
@@ -81,7 +82,7 @@ class TmallOrderWebController extends WebBaseController
     public function actionUpload()
     {
         $this->tmallOrderImport->excelFile = UploadedFile::getInstance($this->tmallOrderImport, 'excelFile');
-        $data                        = ExcelFacade::import($this->tmallOrderImport->excelFile->tempName);
+        $data                              = ExcelFacade::import($this->tmallOrderImport->excelFile->tempName);
         foreach ($data as &$item) {
             $item['A'] = strtotime($item['A']); //A为订单创建时间
         }
