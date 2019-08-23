@@ -52,7 +52,7 @@ class SourceDetectionUtil extends BaseObject
     {
         $mobileBrowserList = Yii::$app->params['mobile'];
         $useragent         = strtolower($_SERVER['HTTP_USER_AGENT']);
-        if (($this->dstrpos($useragent, $mobileBrowserList))) {
+        if ($this->dstrpos($useragent, $mobileBrowserList)) {
             return true;
         }
 
@@ -60,12 +60,8 @@ class SourceDetectionUtil extends BaseObject
         if($this->dstrpos($useragent, $browser)) {
             return false;
         }
+        return false;
 
-//        if($_GET['mobile'] === 'yes') {
-//            return true;
-//        } else {
-//            return false;
-//        }
     }
 
 
@@ -77,8 +73,7 @@ class SourceDetectionUtil extends BaseObject
         }
         foreach ((array)$arr as $v) {
             if (strpos($string, $v) !== false) {
-                $return = $returnValue ? $v : true;
-                return $return;
+                return $returnValue ? $v : true;
             }
         }
         return false;

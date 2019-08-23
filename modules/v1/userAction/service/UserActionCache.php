@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace app\modules\v1\userAction\service;
 
 use app\common\exception\RedisException;
 use app\daemon\course\conversion\domain\dto\RedisAddViewDto;
-use app\daemon\course\conversion\domain\dto\RedisUrlConvertDto;
+use app\daemon\course\urlConvert\domain\dto\RedisUrlConvertDto;
 
 /**
  * Interface UserActionStaticConversionService
