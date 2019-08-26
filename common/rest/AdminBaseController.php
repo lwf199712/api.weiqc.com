@@ -135,6 +135,11 @@ abstract class AdminBaseController extends ActiveController
         $actionName = $action->actionMethod ?? 'actionIndex' ;
         $this->dto  = $this->dtoMap($actionName);
 
+        if ($this->dto instanceof EmptyDto){
+            $this->transaction = Yii::$app->db->beginTransaction();
+            return parent::beforeAction($action);
+        }
+
         if (in_array($this->request->getMethod(),['GET', 'HEAD', 'OPTIONS'])){
             $this->dto->setAttributes($this->request->get());
         }else{

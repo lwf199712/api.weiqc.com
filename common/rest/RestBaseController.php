@@ -16,11 +16,11 @@ use yii\web\BadRequestHttpException;
  * rest base controller
  * Class ConversionController
  *
- * @property Request $request The request component. This property is read-only.
- * @property Response $response The response component. This property is read-only.
+ * @property Request     $request  The request component. This property is read-only.
+ * @property Response    $response The response component. This property is read-only.
  * @property Transaction $transaction
  * @package app\modules\v1\rest
- * @author: lirong
+ * @author  : lirong
  */
 abstract class RestBaseController extends ActiveController
 {
@@ -60,7 +60,7 @@ abstract class RestBaseController extends ActiveController
         $actions = parent::actions();
         //Unified processing of cross-domain authentication interfaces
         $actions['options'] = [
-            'class' => OptionsAction::class
+            'class' => OptionsAction::class,
         ];
         unset($actions['create'], $actions['view'], $actions['update'], $actions['delete']);
         $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
@@ -81,7 +81,7 @@ abstract class RestBaseController extends ActiveController
         if (!in_array($action->actionMethod, $this->transactionClose(), false)) {
             $this->transaction = Yii::$app->db->beginTransaction();
         }
-        $this->request = Yii::$app->request;
+        $this->request  = Yii::$app->request;
         $this->response = Yii::$app->response;
         return parent::beforeAction($action);
     }
@@ -102,7 +102,7 @@ abstract class RestBaseController extends ActiveController
      * commit transaction
      *
      * @param yii\base\InlineAction $action the action just executed.
-     * @param mixed $result the action return result.
+     * @param mixed                 $result the action return result.
      * @return mixed the processed action result.
      * @throws Exception
      * @author: lirong
@@ -111,10 +111,16 @@ abstract class RestBaseController extends ActiveController
     {
         if (!in_array($action->actionMethod, $this->transactionClose(), false)) {
             //indicating whether this transaction is active
-            if ($result && $result[1] !== 200 && $this->transaction->getIsActive()) {
+            if ($result && is_array($result) && $result[1] !== 200 && $this->transaction->getIsActive()) {
                 $this->transaction->rollBack();
             }
-            if ($result && $result[1] === 200 && $this->transaction->getIsActive()) {
+            if ($result && is_object($result) && $result->statusCode !== 200 && $this->transaction->getIsActive()) {
+                $this->transaction->rollBack();
+            }
+            if ($result && is_array($result) && $result[1] === 200 && $this->transaction->getIsActive()) {
+                $this->transaction->commit();
+            }
+            if ($result && is_object($result) && $result->statusCode === 200 && $this->transaction->getIsActive()) {
                 $this->transaction->commit();
             }
         }

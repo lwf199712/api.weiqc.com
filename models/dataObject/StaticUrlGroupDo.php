@@ -18,7 +18,7 @@ use yii\db\ActiveRecord;
  * @property string $channel_name 分组渠道名
  * @property int $group_channel_id 分组渠道表id
  */
-class StaticUrlGroup extends ActiveRecord
+class StaticUrlGroupDo extends ActiveRecord
 {
     /**
      * {@inheritdoc}

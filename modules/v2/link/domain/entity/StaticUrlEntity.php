@@ -7,6 +7,15 @@ use app\models\dataObject\StaticUrlDo;
 
 class StaticUrlEntity extends StaticUrlDo
 {
+    /**
+     * @param int $id
+     * @return bool
+     * @author zhuozhen
+     */
+    public function checkExist(int $id) : bool
+    {
+        return self::find()->where(['id' => $id])->exists();
+    }
 
     /**
      * 更新统计链接实体

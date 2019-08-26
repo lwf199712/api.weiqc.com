@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 
 use app\common\utils\ArrayUtils;
 use app\common\utils\RedisUtils;
 use app\daemon\common\utils\CommandsBatchInsertUtils;
-use app\daemon\course\conversion\domain\dto\RedisUrlConvertDto;
+use app\daemon\course\urlConvert\domain\dto\RedisUrlConvertDto;
 use app\models\dataObject\StaticHitsDo;
 use yii\db\Exception;
 
