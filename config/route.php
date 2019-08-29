@@ -1,12 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 use yii\rest\UrlRule;
 
 /**
  * restful 路由规则匹配
  *
- * @author lirong
- * @data: 2019-04-02
+ * @author  lirong
+ * @data    : 2019-04-02
  * @version 1.0
  */
 return [
@@ -26,5 +26,9 @@ return [
         ],
         //禁用末尾采用复数的形式
         'pluralize'     => false,
+    ],
+    //短链转长链路由
+    [
+        'class' => app\components\SortUrlRule::class,
     ],
 ];

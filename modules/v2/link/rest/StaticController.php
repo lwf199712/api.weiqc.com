@@ -7,10 +7,13 @@ use app\common\facade\ExcelFacade;
 use app\common\rest\AdminBaseController;
 use app\models\dataObject\StaticUrlDo;
 use app\modules\v2\link\domain\aggregate\StaticListAggregate;
+use app\modules\v2\link\domain\dto\StaticUrlDeviceDto;
 use app\modules\v2\link\domain\dto\StaticUrlDto;
 use app\modules\v2\link\domain\dto\StaticUrlForm;
 use app\modules\v2\link\domain\dto\StaticUrlIntervalAnalyzeDto;
 use app\modules\v2\link\domain\dto\StaticUrlReportDto;
+use app\modules\v2\link\domain\dto\StaticUrlVisitDetailDto;
+use Exception;
 use yii\base\Model;
 use yii\db\ActiveRecord;
 
@@ -20,6 +23,8 @@ use yii\db\ActiveRecord;
  * @property staticUrlForm               $staticUrlForm
  * @property StaticUrlReportDto          $staticUrlReportDto
  * @property StaticUrlIntervalAnalyzeDto $staticUrlIntervalAnalyzeDto
+ * @property StaticUrlVisitDetailDto     $staticUrlVisitDetailDto
+ * @property StaticUrlDeviceDto          $staticUrlDeviceDto
  * @property StaticListAggregate         $staticListAggregate
  * @property ActiveRecord                $dto
  * @package app\modules\v2\link\rest
@@ -37,6 +42,10 @@ class StaticController extends AdminBaseController
     public $staticUrlReportDto;
     /** @var StaticUrlIntervalAnalyzeDto */
     public $staticUrlIntervalAnalyzeDto;
+    /** @var StaticUrlVisitDetailDto */
+    public $staticUrlVisitDetailDto;
+    /** @var StaticUrlDeviceDto */
+    public $staticUrlDeviceDto;
     /** @var ActiveRecord $dto */
     public $dto;
 
@@ -48,6 +57,8 @@ class StaticController extends AdminBaseController
                                 StaticUrlForm $staticUrlForm,
                                 StaticUrlReportDto $staticUrlReportDto,
                                 StaticUrlIntervalAnalyzeDto $staticUrlIntervalAnalyzeDto,
+                                StaticUrlVisitDetailDto $staticUrlVisitDetailDto,
+                                StaticUrlDeviceDto $staticUrlDeviceDto,
                                 $config = [])
     {
         $this->staticListAggregate         = $staticListAggregate;
@@ -55,6 +66,8 @@ class StaticController extends AdminBaseController
         $this->staticUrlForm               = $staticUrlForm;
         $this->staticUrlReportDto          = $staticUrlReportDto;
         $this->staticUrlIntervalAnalyzeDto = $staticUrlIntervalAnalyzeDto;
+        $this->staticUrlVisitDetailDto     = $staticUrlVisitDetailDto;
+        $this->staticUrlDeviceDto          = $staticUrlDeviceDto;
         parent::__construct($id, $module, $config);
     }
 
@@ -75,6 +88,8 @@ class StaticController extends AdminBaseController
             'export'          => ['GET', 'HEAD'],
             'report'          => ['GET', 'HEAD'],
             'intervalAnalyze' => ['GET', 'HEAD'],
+            'visitDetail'     => ['GET', 'HEAD'],
+            'device'          => ['GET', 'HEAD'],
         ];
     }
 
@@ -88,21 +103,18 @@ class StaticController extends AdminBaseController
             'actionUpdate'          => $this->staticUrlForm,
             'actionReport'          => $this->staticUrlReportDto,
             'actionIntervalAnalyze' => $this->staticUrlIntervalAnalyzeDto,
+            'actionVisitDetail'     => $this->staticUrlVisitDetailDto,
+            'actionDevice'          => $this->staticUrlDeviceDto,
         ][$actionName];
     }
 
+    //-------------------------统计列表-----------------------------------//
 
     public function actionIndex(): array
     {
         $data = $this->staticListAggregate->listStaticUrl($this->staticUrlDto);
         return ['成功返回数据', 200, $data];
 
-    }
-
-    public function actionView(): array
-    {
-        $data = $this->staticListAggregate->viewStaticUrl((int)$this->staticUrlDto->id);
-        return ['成功返回数据', 200, $data];
     }
 
 
@@ -134,6 +146,14 @@ class StaticController extends AdminBaseController
         ExcelFacade::export($data);        //TODO export DATA
     }
 
+    //-----------------------统计详情-----------------------//
+
+    public function actionView(): array
+    {
+        $data = $this->staticListAggregate->viewStaticUrl((int)$this->staticUrlDto->id);
+        return ['成功返回数据', 200, $data];
+    }
+
 
     public function actionReport(): array
     {
@@ -146,6 +166,32 @@ class StaticController extends AdminBaseController
         $data = $this->staticListAggregate->intervalAnalyzeStaticUrl($this->staticUrlIntervalAnalyzeDto);
         return ['成功返回数据', 200, $data];
     }
+
+    public function actionVisitDetail(): array
+    {
+        try {
+            $data = $this->staticListAggregate->visitDetailStaticUrl($this->staticUrlVisitDetailDto);
+            return ['成功返回数据', 200, $data];
+        } catch (Exception $exception) {
+            return ['数据查询失败', 500, $exception->getMessage()];
+        }
+    }
+
+    //TODO 流量设备
+    public function actionDevice(): array
+    {
+        $data = $this->staticListAggregate->DeviceStaticUrl($this->staticUrlVisitDetailDto);
+        return ['成功返回数据', 200, $data];
+    }
+
+    //TODO 页面监控
+    public function actionPageMonitor(): array
+    {
+        $data = $this->staticListAggregate->pageMonitorStaticUrl();
+        return ['成功返回数据', 200, $data];
+    }
+
+
 
 
 }

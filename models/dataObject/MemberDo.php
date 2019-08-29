@@ -49,7 +49,7 @@ use yii\db\ActiveRecord;
  * @property int $planordernum 预计派单数
  * @property int $realordernum 实际派单数
  */
-class Member extends ActiveRecord
+class MemberDo extends ActiveRecord
 {
     /**
      * {@inheritdoc}

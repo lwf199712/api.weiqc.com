@@ -26,6 +26,10 @@ $worker->onWorkerStart = static function () {
     Timer::add(0.5, static function () {
         ConversionProcess::start();
     });
+    //落地页访问数据定时入库
+    Timer::add(10 , static function(){
+        UrlConvertProcess::start();
+    });
 };
 // 运行worker
 Worker::runAll();

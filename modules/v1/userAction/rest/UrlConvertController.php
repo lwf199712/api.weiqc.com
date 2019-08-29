@@ -6,17 +6,19 @@ namespace app\modules\v1\userAction\rest;
 
 use app\common\exception\RedisException;
 use app\common\rest\RestBaseController;
+use app\common\utils\ArrayUtils;
 use app\common\utils\IpLocationUtils;
 use app\common\utils\RequestUtils;
 use app\common\utils\ResponseUtils;
 use app\common\utils\SourceDetectionUtil;
-use app\daemon\course\conversion\domain\dto\RedisUrlConvertDto;
+use app\daemon\course\urlConvert\domain\dto\RedisUrlConvertDto;
 use app\modules\v1\userAction\domain\vo\UrlConvertRequestVo;
 use app\modules\v1\userAction\service\UserActionCache;
 use app\modules\v1\userAction\service\UserActionStaticHitsService;
 use app\modules\v1\userAction\service\UserActionStaticUrlService;
 use Exception;
 use yii\web\Cookie;
+use yii\web\Response;
 
 
 /**
@@ -29,6 +31,7 @@ use yii\web\Cookie;
  * @property RequestUtils                $requestUtils
  * @property ResponseUtils               $responseUtils
  * @property SourceDetectionUtil         $sourceDetectionUtil
+ * @property  RedisUrlConvertDto         $redisUrlConvertDto
  * @package app\modules\v1\userAction\rest
  */
 class UrlConvertController extends RestBaseController
@@ -47,6 +50,8 @@ class UrlConvertController extends RestBaseController
     protected $ipLocationUtils;
     /* @var RequestUtils */
     protected $requestUtils;
+    /** @var RedisUrlConvertDto */
+    protected $redisUrlConvertDto;
 
     /**
      * UrlConvertController constructor.
@@ -59,7 +64,8 @@ class UrlConvertController extends RestBaseController
      * @param ResponseUtils               $responseUtils
      * @param IpLocationUtils             $ipLocationUtils
      * @param RequestUtils                $requestUtils
-     * @param                             $config
+     * @param RedisUrlConvertDto          $redisUrlConvertDto
+     * @param array                       $config
      */
     public function __construct($id, $module,
                                 UserActionStaticHitsService $staticHitsService,
@@ -69,11 +75,13 @@ class UrlConvertController extends RestBaseController
                                 ResponseUtils $responseUtils,
                                 IpLocationUtils $ipLocationUtils,
                                 RequestUtils $requestUtils,
+                                RedisUrlConvertDto $redisUrlConvertDto,
                                 $config = [])
     {
-        $this->staticHitsService = $staticHitsService;
-        $this->staticUrlService  = $staticUrlService;
-        $this->userActionCache   = $userActionCache;
+        $this->staticHitsService  = $staticHitsService;
+        $this->staticUrlService   = $staticUrlService;
+        $this->userActionCache    = $userActionCache;
+        $this->redisUrlConvertDto = $redisUrlConvertDto;
         //工具类
         $this->responseUtils       = $responseUtils;
         $this->sourceDetectionUtil = $sourceDetectionUtil;
@@ -92,7 +100,11 @@ class UrlConvertController extends RestBaseController
     }
 
 
-    public function actionConvert(): array
+    /**
+     * @return Response
+     * @author zhuozhen
+     */
+    public function actionConvert(): Response
     {
         try {
             $this->sourceDetectionUtil->crossDomainDetection();
@@ -101,59 +113,63 @@ class UrlConvertController extends RestBaseController
             //检查落地页是否存在
             $staticUrl = $this->staticUrlService->findOne(['ident' => $conversionInfo->token]);
             if (!$staticUrl) {
-                return ['Token不存在', 500];
+                $this->response->statusCode = 500;
+                $this->response->content = '找不到该链接';
+                return $this->response;
             }
-            $linkUrl                        = ($this->sourceDetectionUtil->mobileDetection() && $staticUrl->pcurl) ? $staticUrl->pcurl : $staticUrl->url;
-            $redisUrlConvertDto             = new RedisUrlConvertDto();
-            $redisUrlConvertDto->u_id       = $staticUrl->id;
-            $redisUrlConvertDto->referer    = $this->request->getReferrer();
-            $redisUrlConvertDto->ip         = $this->responseUtils->ipToInt($this->request->getUserIP());
-            $redisUrlConvertDto->agent      = addslashes($_SERVER['HTTP_USER_AGENT']);
-            $redisUrlConvertDto->createtime = $_SERVER['REQUEST_TIME'];
+            $linkUrl                              = ($this->sourceDetectionUtil->mobileDetection() && $staticUrl->pcurl) ? $staticUrl->pcurl : $staticUrl->url;
+            $this->redisUrlConvertDto->u_id       = $staticUrl->id;
+            $this->redisUrlConvertDto->referer    = $this->request->getReferrer();
+            $this->redisUrlConvertDto->ip         = $this->responseUtils->ipToInt($this->request->getUserIP());
+            $this->redisUrlConvertDto->agent      = addslashes($_SERVER['HTTP_USER_AGENT']);
+            $this->redisUrlConvertDto->createtime = $_SERVER['REQUEST_TIME'];
 
-            if ($redisUrlConvertDto->ip) {
+            if ($this->redisUrlConvertDto->ip) {
                 $today    = strtotime(date('Y-m-d'));
-                $checkIp  = $this->staticHitsService->findOne(['ip' => $redisUrlConvertDto->ip, 'date' => $today, 'u_id' => $redisUrlConvertDto->u_id]);
+                $checkIp  = $this->staticHitsService->findOne(['ip' => $this->redisUrlConvertDto->ip, 'date' => $today, 'u_id' => $this->redisUrlConvertDto->u_id]);
                 $verifyIp = $checkIp ? false : true;
 
                 //检查Cookie
                 $cookieName = 'static_url_' . $staticUrl->ident;
                 $cookie     = $this->request->cookies->get($cookieName);
                 if ($cookie) {
-                    $visitDate    = strtotime(date('Y-m-d', $cookie->createtime));
-                    $verifyCookie = ($cookie->createtime > 0 && $today > $visitDate);
+                    $visitDate    = strtotime(date('Y-m-d', $cookie->value['createtime']));
+                    $verifyCookie = ($cookie->value['createtime'] > 0 && $today > $visitDate);
                 } else {
                     $verifyCookie = true;
                 }
                 $cookie = $this->response->cookies;
                 $cookie->add(new Cookie([
                     'name'  => $cookieName,
-                    'value' => $redisUrlConvertDto,
+                    'value' => ArrayUtils::attributesAsMap($this->redisUrlConvertDto),
                 ]));
 
-                $ipLocationUtils            = $this->ipLocationUtils->getlocation(long2ip($redisUrlConvertDto->ip));
+                $ipLocationUtils            = $this->ipLocationUtils->getlocation(long2ip($this->redisUrlConvertDto->ip));
                 $ipLocationUtils['country'] = iconv('gbk', 'utf-8', $ipLocationUtils['country']);
                 $ipLocationUtils['area']    = iconv('gbk', 'utf-8', $ipLocationUtils['area']);
 
-                $redisUrlConvertDto->country = $ipLocationUtils['country'] ? addslashes($ipLocationUtils['country']) : '';
-                $redisUrlConvertDto->area    = $ipLocationUtils['area'] ? addslashes($ipLocationUtils['area']) : '';
-                $redisUrlConvertDto->date    = $today;
-                $redisUrlConvertDto->page    = $linkUrl;
+                $this->redisUrlConvertDto->country = $ipLocationUtils['country'] ? addslashes($ipLocationUtils['country']) : '';
+                $this->redisUrlConvertDto->area    = $ipLocationUtils['area'] ? addslashes($ipLocationUtils['area']) : '';
+                $this->redisUrlConvertDto->date    = $today;
+                $this->redisUrlConvertDto->page    = $linkUrl;
 
                 if ($verifyIp) {
-                    $this->userActionCache->addUrConvertHits($redisUrlConvertDto);
+                    $this->userActionCache->addUrConvertHits($this->redisUrlConvertDto);
                 }
                 if ($verifyCookie) {
-                    $this->userActionCache->addUrConvertClient($redisUrlConvertDto);
+                    $this->userActionCache->addUrConvertClient($this->redisUrlConvertDto);
                 }
-                $this->userActionCache->addUrConvertVisit($redisUrlConvertDto);
+                $this->userActionCache->addUrConvertVisit($this->redisUrlConvertDto);
 
                 $linkUrl .= (strpos($linkUrl, '?') === false ? '?token=' : '&token=') . $staticUrl->ident;
 
-                $this->response->redirect($linkUrl);
+                $this->response->statusCode = 200;
+                return $this->response->redirect($linkUrl);
             }
         } catch (Exception|RedisException $e) {
-            return [$e->getMessage(), $e->getCode()];
+            $this->response->statusCode = $e->getCode();
+            $this->response->content = $e->getMessage();
+            return $this->response;
         }
     }
 

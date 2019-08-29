@@ -49,7 +49,7 @@ class StaticUrlDoManager extends BaseRepository
             ->joinWith(['member', 'staticUrlGroup']);
 
 
-        if ($staticUrlDto->fieldValue === 'username') {     //username的情况需特殊处理
+        if ($staticUrlDto->field === 'username') {     //username的情况需特殊处理
             $this->query->andWhere(['like', 'member.username', $staticUrlDto->fieldValue]);
         } else {
             $this->query->andFilterWhere(['=', 'staticUrl.' . $staticUrlDto->field, $staticUrlDto->fieldValue]);

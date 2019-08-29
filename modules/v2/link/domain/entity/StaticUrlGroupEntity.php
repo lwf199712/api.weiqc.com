@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace app\modules\v2\link\domain\entity;
 
 
-use app\models\dataObject\StaticUrlGroup;
+use app\models\dataObject\StaticUrlGroupDo;
 
-class StaticUrlGroupEntity extends StaticUrlGroup
+class StaticUrlGroupEntity extends StaticUrlGroupDo
 {
     /**
      * 获取默认一级分组
