@@ -3,8 +3,9 @@
 namespace app\modules\v2\link\service\impl;
 
 
-use app\modules\v2\link\domain\aggregate\DeliveryVolumeAggregate;
-use app\modules\v2\link\domain\aggregate\StaticListAggregate;
+use app\modules\v2\link\domain\entity\StaticConversionEntity;
+use app\modules\v2\link\domain\entity\StaticUrlEntity as StaticListAggregateRoot;
+use app\modules\v2\link\domain\entity\DeliveryVolumeEntity as DeliveryVolumeAggregateRoot;
 use app\modules\v2\link\domain\dto\DeliveryVolumeDto;
 use app\modules\v2\link\domain\dto\DeliveryVolumeForm;
 use app\modules\v2\link\domain\dto\DeliveryVolumeGeneratedDto;
@@ -16,22 +17,26 @@ use yii\db\Exception;
 
 class StaticUrlDeliveryVolumeImpl extends BaseObject implements StaticUrlDeliveryVolumeService
 {
-    /** @var StaticListAggregate */
-    public $staticListAggregate;
-    /** @var DeliveryVolumeAggregate */
-    public $deliveryVolumeAggregate;
+    /** @var StaticListAggregateRoot */
+    public $staticListAggregateRoot;
+    /** @var DeliveryVolumeAggregateRoot */
+    public $deliveryVolumeAggregateRoot;
     /** @var DeliveryVolumeHandledDto */
     public $deliveryVolumeHandledDto;
+    /** @var StaticConversionEntity */
+    public $staticConversionEntity;
 
     public function __construct(
-        StaticListAggregate $staticListAggregate,
-        DeliveryVolumeAggregate $deliveryVolumeAggregate,
+        StaticListAggregateRoot $staticListAggregateRoot,
+        StaticConversionEntity $staticConversionEntity,
+        DeliveryVolumeAggregateRoot $deliveryVolumeAggregateRoot,
         DeliveryVolumeHandledDto $deliveryVolumeHandledDto,
         $config = [])
     {
-        $this->staticListAggregate     = $staticListAggregate;
-        $this->deliveryVolumeAggregate = $deliveryVolumeAggregate;
-        $this->deliveryVolumeHandledDto = $deliveryVolumeHandledDto;
+        $this->staticListAggregateRoot     = $staticListAggregateRoot;
+        $this->staticConversionEntity      = $staticConversionEntity;
+        $this->deliveryVolumeAggregateRoot = $deliveryVolumeAggregateRoot;
+        $this->deliveryVolumeHandledDto    = $deliveryVolumeHandledDto;
         parent::__construct($config);
     }
 
@@ -45,11 +50,11 @@ class StaticUrlDeliveryVolumeImpl extends BaseObject implements StaticUrlDeliver
     public function processDeliveryVolumeData(DeliveryVolumeForm $deliveryVolumeForm): DeliveryVolumeHandledDto
     {
         $beginTime = $deliveryVolumeForm->date;
-        $endTime = strtotime('+1 day',$beginTime) - 1 ;
+        $endTime   = strtotime('+1 day', $beginTime) - 1;
         //获取转化成本
-        $cvCount =  $this->staticListAggregate->staticConversionEntity->getCvCountById($beginTime,$endTime,$deliveryVolumeForm->static_id);
+        $cvCount        = $this->staticConversionEntity->getCvCountById($beginTime, $endTime, $deliveryVolumeForm->static_id);
         $conversionCost = empty($cvCount) ? $_POST['put_volume'] : round($_POST['put_volume'] / $cvCount, 2);
-        $this->deliveryVolumeHandledDto->setAttributes(array_merge($deliveryVolumeForm->getAttributes(),[
+        $this->deliveryVolumeHandledDto->setAttributes(array_merge($deliveryVolumeForm->getAttributes(), [
             'conversion_cost' => $conversionCost,
         ]));
         return $this->deliveryVolumeHandledDto;
@@ -62,16 +67,16 @@ class StaticUrlDeliveryVolumeImpl extends BaseObject implements StaticUrlDeliver
      * @throws Exception
      * @author zhuozhen
      */
-    public function generateDeliveryData(DeliveryVolumeDto $deliveryVolumeDto) : DeliveryVolumeGeneratedDto
+    public function generateDeliveryData(DeliveryVolumeDto $deliveryVolumeDto): DeliveryVolumeGeneratedDto
     {
         //TODO 采用领域事件来解耦生成投放数据过程, tip : 长时处理过程
         /** @var DeliveryVolumeEntity $deliveryVolumeEntity */
-        $deliveryVolumeEntity = $this->deliveryVolumeAggregate->deliveryVolumeAggregateRoot::findOne(['id' => $deliveryVolumeDto->id]);
-        if ($deliveryVolumeEntity === null || (int)$deliveryVolumeEntity->is_delete === 1){
+        $deliveryVolumeEntity = $this->deliveryVolumeAggregateRoot::findOne(['id' => $deliveryVolumeDto->id]);
+        if ($deliveryVolumeEntity === null || (int)$deliveryVolumeEntity->is_delete === 1) {
             throw new Exception('找不到投放量数据或该数据被删除');
         }
         //deprecated
-        $this->staticListAggregate->getServiceCvAndConsume($deliveryVolumeEntity);
+//        $this->staticListAggregate->getServiceCvAndConsume($deliveryVolumeEntity);
 
     }
 
@@ -83,7 +88,7 @@ class StaticUrlDeliveryVolumeImpl extends BaseObject implements StaticUrlDeliver
      * @return array
      * @author zhuozhen
      */
-    public function countPage(array $hits,string $groupBy): array
+    public function countPage(array $hits, string $groupBy): array
     {
         $list = [];
         array_map(static function ($hit) use ($groupBy, $list) {

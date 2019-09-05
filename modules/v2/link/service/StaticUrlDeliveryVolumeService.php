@@ -3,8 +3,8 @@
 
 namespace app\modules\v2\link\service;
 
-use app\modules\v2\link\domain\aggregate\DeliveryVolumeAggregate;
-use app\modules\v2\link\domain\aggregate\StaticListAggregate;
+use app\modules\v2\link\domain\entity\DeliveryVolumeEntity as DeliveryVolumeAggregateRoot;
+use app\modules\v2\link\domain\entity\StaticUrlEntity as StaticListAggregateRoot;
 use app\modules\v2\link\domain\dto\DeliveryVolumeDto;
 use app\modules\v2\link\domain\dto\DeliveryVolumeForm;
 use app\modules\v2\link\domain\dto\DeliveryVolumeGeneratedDto;
@@ -12,8 +12,8 @@ use app\modules\v2\link\domain\dto\DeliveryVolumeHandledDto;
 
 /**
  * Class StaticUrlDeliveryVolumeService
- * @property-read StaticListAggregate     $staticListAggregate
- * @property-read DeliveryVolumeAggregate $deliveryVolumeAggregate
+ * @property-read StaticListAggregateRoot     $staticListAggregateRoot
+ * @property-read DeliveryVolumeAggregateRoot $deliveryVolumeAggregateRoot
  * @package app\modules\v2\link\service
  */
 interface StaticUrlDeliveryVolumeService
