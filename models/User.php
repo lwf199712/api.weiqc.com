@@ -26,6 +26,7 @@ use yii\web\Request;
  * @property int $status
  * @property int $created_at
  * @property int $updated_at
+ * @property string $access_token
  */
 class User extends ActiveRecord implements IdentityInterface,RateLimitInterface
 {
