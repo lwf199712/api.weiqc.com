@@ -170,6 +170,7 @@ $config = [
         'class'        => AccessControl::class,
         'allowActions' => [
             'site/*',
+            'login/*',
             'v1/*', //v1版本下的所有接口，接口通过接口内部来做权限控制
             'v2/*', //v2版本下的所有接口，接口通过接口内部来做权限控制
             //此处的action列表，允许任何人（包括游客）访问
