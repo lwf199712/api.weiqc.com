@@ -9,12 +9,13 @@ use yii\web\UploadedFile;
 
 class DesignCenterForm extends Model
 {
+    /** @var int */
     public $id;
-
+    /** @var string */
     public $version;
-
+    /** @var string */
     public $name;
-
+    /** @var string */
     public $stylist;
 
     /**
@@ -26,6 +27,7 @@ class DesignCenterForm extends Model
     {
         return [
             [['version', 'name', 'stylist'], 'required'],
+            [['id','version', 'name', 'stylist'], 'string'],
         ];
     }
 
@@ -33,6 +35,7 @@ class DesignCenterForm extends Model
     public function attributeLabels()
     {
         return [
+            'id' => 'ID',
             'version' => '版本',
             'name' => '名称',
             'stylist' => '设计师',
@@ -43,7 +46,7 @@ class DesignCenterForm extends Model
     public function upload()
     {
         if ($this->validate()) {
-            $this->imageFile->saveAs(Yii::$app->basePath.'/uploads/designCenter/' . $this->imageFile->baseName . '.' . $this->imageFile->extension);
+            $this->imageFile->saveAs(Yii::$app->basePath . '/uploads/designCenter/' . $this->imageFile->baseName . '.' . $this->imageFile->extension);
             return true;
         }
         return false;

@@ -16,10 +16,9 @@ class DesignCenterDto extends Model
     public const SEARCH = 'search';
 
     //注意：编辑时前端需要传 scenario 字段，值为edit
-
     public const EDIT = 'edit';
-    public const AUDIT = 'audit';
     public const READ = 'read';
+    public const AUDIT = 'audit';
 
     public $scenario;
 
@@ -42,41 +41,42 @@ class DesignCenterDto extends Model
     /** @var string */
     public $auditor;
     /** @var int */
-    private $beginTime;
+    public $beginTime;
     /** @var int */
-    private $endTime;
+    public $endTime;
 
     public function rules(): array
     {
         return [
-            [['upload_time', 'audit_status'], 'integer', 'on' => self::SEARCH],
-            [['name', 'stylist'], 'string', 'on' => self::SEARCH],
+            [['name', 'stylist','audit_status','upload_time','beginTime','endTime'], 'string', 'on' => self::SEARCH],
             [['version', 'name', 'stylist', 'picture_address'], 'string', 'on' => self::EDIT],
             ['id', 'integer', 'on' => self::EDIT],
             ['id', 'integer', 'on' => self::READ],
             [['id', 'audit_status'], 'integer', 'on' => self::AUDIT],
-            ['scenario', 'in', 'range' => [self::EDIT,self::READ,self::AUDIT], 'message' => '场景值错误']
+            [['audit_opinion','auditor'], 'string', 'on' => self::AUDIT],
+            ['scenario', 'in', 'range' => [self::SEARCH,self::READ,self::AUDIT], 'message' => '场景值错误'],
         ];
     }
+
+
 
 
     public function attributeLabels(): array
     {
         return [
             //-----------搜索--------------
-            'upload_time'         => '上传时间',
-            'name'                => '名称',
-            'stylist'             => '设计师',
-            'audit_status'        => '审核状态',
+            'upload_time' => '上传时间',
+            'name' => '名称',
+            'stylist' => '设计师',
+            'audit_status' => '审核状态',
             //-----------编辑---------------
-            'version'             => '版本',
-            'picture_address'     => '图片地址',
+            'version' => '版本',
+            'picture_address' => '图片地址',
             //-----------审核-----------
-            'audit_opinion'       => '审核意见',
-            'auditor'             => '审核人',
+            'audit_opinion' => '审核意见',
+            'auditor' => '审核人',
         ];
     }
-
 
 
     public function fields(): array
@@ -91,14 +91,12 @@ class DesignCenterDto extends Model
                     'stylist',
                     'picture_address',
                 ];
-
             case self::AUDIT :
                 return [
                     'audit_status',
                     'audit_opinion',
                     'auditor',
                 ];
-
             default:
                 return parent::fields();
         }
@@ -142,6 +140,23 @@ class DesignCenterDto extends Model
     public function setEndTime(string $endTime): void
     {
         $this->endTime = strtotime($endTime);
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getUploadTime(): int
+    {
+        return $this->upload_time;
+    }
+
+    /**
+     * @param int $upload_time
+     */
+    public function setUploadTime(int $upload_time): void
+    {
+        $this->upload_time = strtotime($upload_time);
     }
 
 

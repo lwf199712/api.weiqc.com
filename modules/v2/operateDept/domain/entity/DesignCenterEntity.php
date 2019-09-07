@@ -73,7 +73,7 @@ class DesignCenterEntity extends DesignCenterDo
     public function auditEntity(DesignCenterDto $designCenterDto): bool
     {
         $model = self::findOne($designCenterDto->id);
-
+        $model->setAttributes($designCenterDto->toArray(),false);
         return $model->save();
     }
 

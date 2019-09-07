@@ -1,5 +1,7 @@
 <?php
 namespace app\models\dataObject;
+use app\models\User;
+use yii\behaviors\AttributeBehavior;
 use yii\db\ActiveRecord;
 
 /**
@@ -53,5 +55,25 @@ class DesignCenterDo extends ActiveRecord
             'audit_opinion' => 'Audit Opinion',
             'auditor' => 'Auditor',
         ];
+    }
+
+
+    public function behaviors()
+    {
+            return [
+                [
+                    'class'  => AttributeBehavior::class,
+                    'attributes' =>[
+                        self::EVENT_BEFORE_INSERT => 'auditor',
+                        self::EVENT_BEFORE_UPDATE => 'auditor',
+                    ],
+                    'value' => static function(){
+                       $id = \Yii::$app->user->getId();
+                       /** @var User $user */
+                       $user = User::findOne(['id' => $id]);
+                       return $user->username;
+                    }
+                ]
+            ];
     }
 }

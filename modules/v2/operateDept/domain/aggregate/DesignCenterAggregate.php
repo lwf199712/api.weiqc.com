@@ -102,7 +102,6 @@ class DesignCenterAggregate extends BaseObject
 
     public function auditDesignCenter(DesignCenterDto $designCenterDto): bool
     {
-
         $result = $this->designCenterAggregateRoot->auditEntity($designCenterDto);
         if ($result === false) {
             throw new Exception('审核失败');

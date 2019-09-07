@@ -12,9 +12,9 @@ use yii\base\Model;
 
 /**
  * Class DesignCenterController
- * @property-read DesignCenterAggregate             $designCenterAggregate
- * @property DesignCenterDto                        $designCenterDto
- * @property DesignCenterForm                       $designCenterForm
+ * @property-read DesignCenterAggregate $designCenterAggregate
+ * @property DesignCenterDto $designCenterDto
+ * @property DesignCenterForm $designCenterForm
  * @package app\modules\v2\operateDept\rest
  */
 class DesignCenterController extends AdminBaseController
@@ -29,14 +29,14 @@ class DesignCenterController extends AdminBaseController
     public $designCenterForm;
 
     public function __construct($id, $module,
-                                DesignCenterAggregate       $designCenterAggregate,
-                                DesignCenterDto             $designCenterDto,
-                                DesignCenterForm            $designCenterForm,
+                                DesignCenterAggregate $designCenterAggregate,
+                                DesignCenterDto $designCenterDto,
+                                DesignCenterForm $designCenterForm,
                                 $config = [])
     {
-        $this->designCenterAggregate    = $designCenterAggregate;
-        $this->designCenterDto          = $designCenterDto;
-        $this->designCenterForm         = $designCenterForm;
+        $this->designCenterAggregate = $designCenterAggregate;
+        $this->designCenterDto = $designCenterDto;
+        $this->designCenterForm = $designCenterForm;
         parent::__construct($id, $module, $config);
     }
 
@@ -45,24 +45,30 @@ class DesignCenterController extends AdminBaseController
         return [
             'index'  => ['GET', 'HEAD'],
             'create' => ['POST'],
-            'update' => ['PUT', 'PATCH'],
+            'update' => ['POST'],
             'delete' => ['DELETE'],
-            'audit'  => ['GET', 'HEAD'],
+            'audit'  => ['POST'],
             'read'   => ['GET', 'HEAD'],
         ];
     }
 
 
-    public function dtoMap(string $actionName) : Model
+    public function dtoMap(string $actionName): Model
     {
-        return [
-            'actionIndex'  => $this->designCenterDto->setScenario(DesignCenterDto::SEARCH),
-            'actionCreate' => $this->designCenterForm,
-            'actionUpdate' => $this->designCenterForm->setScenario(DesignCenterDto::EDIT),
-            'actionDelete' => $this->designCenterDto,
-            'actionAudit'  => $this->designCenterDto->setScenario(DesignCenterDto::AUDIT),
-            'actionRead'   => $this->designCenterDto->setScenario(DesignCenterDto::READ),
-        ][$actionName];
+        switch ($actionName) {
+            case 'actionIndex':
+                return $this->designCenterDto->setScenario(DesignCenterDto::SEARCH);
+            case 'actionCreate':
+                return $this->designCenterForm;
+            case 'actionUpdate':
+                return $this->designCenterForm;
+            case 'actionDelete':
+                return $this->designCenterDto;
+            case 'actionAudit':
+                return $this->designCenterDto->setScenario(DesignCenterDto::AUDIT);
+            case 'actionRead':
+                return $this->designCenterDto->setScenario(DesignCenterDto::READ);
+        }
     }
 
     public function actionIndex(): array
@@ -112,7 +118,7 @@ class DesignCenterController extends AdminBaseController
         try {
             $imgUrl = $this->designCenterAggregate->readDesignCenter((int)$this->designCenterDto->id);
             return ['查看成功', 200, $imgUrl];
-        }catch (Exception $exception){
+        } catch (Exception $exception) {
             return ['查看失败', 500, $exception->getMessage()];
         }
     }
