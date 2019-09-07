@@ -48,6 +48,7 @@ class DesignCenterDto extends Model
     public function rules(): array
     {
         return [
+            ['id', 'integer'],
             [['name', 'stylist','audit_status','upload_time'], 'string', 'on' => self::SEARCH],
             [['beginTime', 'endTime'], 'integer','on' => self::SEARCH],
             [['version', 'name', 'stylist', 'picture_address'], 'string', 'on' => self::EDIT],
