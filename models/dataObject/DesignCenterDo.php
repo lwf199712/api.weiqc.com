@@ -64,7 +64,6 @@ class DesignCenterDo extends ActiveRecord
                 [
                     'class'  => AttributeBehavior::class,
                     'attributes' =>[
-                        self::EVENT_BEFORE_INSERT => 'auditor',
                         self::EVENT_BEFORE_UPDATE => 'auditor',
                     ],
                     'value' => static function(){
