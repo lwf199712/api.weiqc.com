@@ -9,6 +9,7 @@ use app\modules\v2\operateDept\domain\dto\DesignCenterDto;
 use app\modules\v2\operateDept\domain\dto\DesignCenterForm;
 use Exception;
 use yii\base\Model;
+use yii\filters\VerbFilter;
 
 /**
  * Class DesignCenterController
@@ -38,6 +39,16 @@ class DesignCenterController extends AdminBaseController
         $this->designCenterDto = $designCenterDto;
         $this->designCenterForm = $designCenterForm;
         parent::__construct($id, $module, $config);
+    }
+
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+        $behaviors['verbFilter'] =  [
+            'class' => VerbFilter::className(),
+            'actions' => $this->verbs(),
+        ];
+        return $behaviors;
     }
 
     public function verbs(): array
