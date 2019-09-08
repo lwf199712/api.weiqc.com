@@ -23,7 +23,12 @@ class LoginController extends Controller
         $response = new Response();
         $response->format = Response::FORMAT_JSON;
 
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        $post = Yii::$app->request->post();
+        foreach (Yii::$app->request->post() as $value){
+            $post = $value;
+        }
+
+        if ($model->load($post) && $model->login()) {
             /** @var User $user */
             $user =  $model->getUser();
             $response->data = [
