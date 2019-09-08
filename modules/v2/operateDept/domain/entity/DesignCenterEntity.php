@@ -6,7 +6,6 @@ namespace app\modules\v2\operateDept\domain\entity;
 use app\models\dataObject\DesignCenterDo;
 use app\modules\v2\operateDept\domain\dto\DesignCenterDto;
 use app\modules\v2\operateDept\domain\dto\DesignCenterForm;
-use Yii;
 use yii\db\Exception;
 
 class DesignCenterEntity extends DesignCenterDo
@@ -87,5 +86,20 @@ class DesignCenterEntity extends DesignCenterDo
         $model = self::findOne($id);
         return $model->picture_address;
     }
+
+    /**
+     * 设计中心详情实体
+     * @param int $id
+     * @return DesignCenterEntity|null
+     * @author: weifeng
+     */
+
+    public function detailEntity(int $id): ?DesignCenterEntity
+    {
+        $model = self::findOne($id);
+        return $model;
+    }
+
+
 
 }

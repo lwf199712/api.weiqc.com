@@ -7,6 +7,7 @@ use app\modules\v2\operateDept\domain\dto\DesignCenterForm;
 use app\modules\v2\operateDept\domain\repository\DesignCenterDoManager;
 use app\modules\v2\operateDept\domain\entity\DesignCenterEntity as DesignCenterAggregateRoot;
 use yii\base\BaseObject;
+use yii\base\Model;
 use yii\db\Exception;
 use yii\web\UploadedFile;
 
@@ -120,6 +121,13 @@ class DesignCenterAggregate extends BaseObject
     public function readDesignCenter(int $designCenterId): string
     {
         return $this->designCenterAggregateRoot->readEntity($designCenterId);
+    }
+
+
+
+    public function detailDesignCenter(int $designCenterId): Model
+    {
+        return $this->designCenterAggregateRoot->detailEntity($designCenterId);
     }
 
 }

@@ -60,6 +60,7 @@ class DesignCenterController extends AdminBaseController
             'delete' => ['DELETE'],
             'audit'  => ['POST'],
             'read'   => ['GET', 'HEAD'],
+            'detail' => ['GET', 'HEAD'],
         ];
     }
 
@@ -79,7 +80,12 @@ class DesignCenterController extends AdminBaseController
                 return $this->designCenterDto->setScenario(DesignCenterDto::AUDIT);
             case 'actionRead':
                 return $this->designCenterDto->setScenario(DesignCenterDto::READ);
+            case 'actionDetail':
+                return $this->designCenterDto;
+            default:
+                throw new Exception('unKnow actionName ');
         }
+
     }
 
     public function actionIndex(): array
@@ -130,6 +136,16 @@ class DesignCenterController extends AdminBaseController
             $imgUrl = $this->designCenterAggregate->readDesignCenter((int)$this->designCenterDto->id);
             return ['查看成功', 200, $imgUrl];
         } catch (Exception $exception) {
+            return ['查看失败', 500, $exception->getMessage()];
+        }
+    }
+
+    public function actionDetail(): array
+    {
+        try {
+            $result = $this->designCenterAggregate->detailDesignCenter((int)$this->designCenterDto->id);
+            return ['查看成功', 200, $result];
+        }catch (Exception $exception){
             return ['查看失败', 500, $exception->getMessage()];
         }
     }
