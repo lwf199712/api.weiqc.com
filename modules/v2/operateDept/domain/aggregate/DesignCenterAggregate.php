@@ -77,7 +77,7 @@ class DesignCenterAggregate extends BaseObject
         $imageFile  = UploadedFile::getInstanceByName('imageFile');
         $designCenterForm->imageFile = $imageFile;
         $status = $this->designCenterAggregateRoot->detailEntity((int)$designCenterForm->id);
-        if ((int)$status === 1){
+        if ($status['audit_status'] === 1){
             throw new Exception('审核状态为已通过');
         }
         $result = $this->designCenterAggregateRoot->updateEntity($designCenterForm);
