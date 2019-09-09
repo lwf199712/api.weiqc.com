@@ -81,6 +81,7 @@ class DesignCenterController extends AdminBaseController
     public function actionIndex(): array
     {
         $data = $this->designCenterAggregate->listDesignCenter($this->designCenterDto);
+        var_dump($data);die;
         return ['成功返回数据', 200, $data];
     }
 
