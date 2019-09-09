@@ -34,8 +34,9 @@ class DesignCenterEntity extends DesignCenterDo
      * @param DesignCenterForm $designCenterForm
      * @return bool
      * @throws Exception
-     * @author weifeng
+     * @author: weifeng
      */
+
     public function updateEntity(DesignCenterForm $designCenterForm): bool
     {
         $model = self::findOne($designCenterForm->id);
@@ -54,7 +55,7 @@ class DesignCenterEntity extends DesignCenterDo
      * 删除设计中心实体
      * @param int $id
      * @return int
-     * @author weifeng
+     * @author: weifeng
      */
     public function deleteEntity(int $id): int
     {
@@ -66,7 +67,6 @@ class DesignCenterEntity extends DesignCenterDo
      * @param DesignCenterDto $designCenterDto
      * @return bool
      * @author: weifeng
-     * @Date: 2019/9/6
      */
 
     public function auditEntity(DesignCenterDto $designCenterDto): bool
@@ -80,6 +80,7 @@ class DesignCenterEntity extends DesignCenterDo
      * 查看设计中心图片实体
      * @param int $id
      * @return string
+     * @author: weifeng
      */
     public function readEntity(int $id): string
     {
@@ -90,14 +91,14 @@ class DesignCenterEntity extends DesignCenterDo
     /**
      * 设计中心详情实体
      * @param int $id
-     * @return DesignCenterEntity|null
+     * @return array
      * @author: weifeng
      */
 
-    public function detailEntity(int $id): ?DesignCenterEntity
+    public function detailEntity(int $id): array
     {
         $model = self::findOne($id);
-        return $model;
+        return $model->attributes;
     }
 
 

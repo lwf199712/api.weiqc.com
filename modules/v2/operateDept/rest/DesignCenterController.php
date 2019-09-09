@@ -30,14 +30,14 @@ class DesignCenterController extends AdminBaseController
     public $designCenterForm;
 
     public function __construct($id, $module,
-                                DesignCenterAggregate $designCenterAggregate,
-                                DesignCenterDto $designCenterDto,
-                                DesignCenterForm $designCenterForm,
+                                DesignCenterAggregate   $designCenterAggregate,
+                                DesignCenterDto         $designCenterDto,
+                                DesignCenterForm        $designCenterForm,
                                 $config = [])
     {
-        $this->designCenterAggregate = $designCenterAggregate;
-        $this->designCenterDto = $designCenterDto;
-        $this->designCenterForm = $designCenterForm;
+        $this->designCenterAggregate    = $designCenterAggregate;
+        $this->designCenterDto          = $designCenterDto;
+        $this->designCenterForm         = $designCenterForm;
         parent::__construct($id, $module, $config);
     }
 

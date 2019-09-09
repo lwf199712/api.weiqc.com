@@ -14,7 +14,6 @@ use yii\base\Model;
 class DesignCenterDto extends Model
 {
     public const SEARCH = 'search';
-
     //注意：编辑时前端需要传 scenario 字段，值为edit
     public const EDIT = 'edit';
     public const READ = 'read';
@@ -67,16 +66,16 @@ class DesignCenterDto extends Model
     {
         return [
             //-----------搜索--------------
-            'upload_time' => '上传时间',
-            'name' => '名称',
-            'stylist' => '设计师',
-            'audit_status' => '审核状态',
+            'upload_time'       => '上传时间',
+            'name'              => '名称',
+            'stylist'           => '设计师',
+            'audit_status'      => '审核状态',
             //-----------编辑---------------
-            'version' => '版本',
-            'picture_address' => '图片地址',
+            'version'           => '版本',
+            'picture_address'   => '图片地址',
             //-----------审核-----------
-            'audit_opinion' => '审核意见',
-            'auditor' => '审核人',
+            'audit_opinion'     => '审核意见',
+            'auditor'           => '审核人',
         ];
     }
 

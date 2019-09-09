@@ -75,6 +75,10 @@ class DesignCenterAggregate extends BaseObject
     {
         $imageFile  = UploadedFile::getInstanceByName('imageFile');
         $designCenterForm->imageFile = $imageFile;
+        $status = $this->designCenterAggregateRoot->detailEntity((int)$designCenterForm->id);
+        if ((int)$status === 1){
+            throw new Exception('审核状态为已通过');
+        }
         $result = $this->designCenterAggregateRoot->updateEntity($designCenterForm);
         if ($result === false) {
             throw new Exception('更新设计中心核实失败');
@@ -125,7 +129,7 @@ class DesignCenterAggregate extends BaseObject
 
 
 
-    public function detailDesignCenter(int $designCenterId): Model
+    public function detailDesignCenter(int $designCenterId): array
     {
         return $this->designCenterAggregateRoot->detailEntity($designCenterId);
     }
