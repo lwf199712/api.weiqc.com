@@ -16,11 +16,11 @@ class DesignCenterDoManager extends BaseRepository
     public function listDataProvider(DesignCenterDto $designCenterDto): ActiveDataProvider
     {
         $this->query
-            ->andFilterWhere(['>', 'upload_time', $designCenterDto->beginTime])
-            ->andFilterWhere(['<', 'upload_time', $designCenterDto->endTime])
-            ->andFilterWhere(['=', 'name', $designCenterDto->name])
-            ->andFilterWhere(['=', 'stylist', $designCenterDto->stylist])
-            ->andFilterWhere(['=', 'audit_status', $designCenterDto->audit_status]);
+            ->andFilterWhere(['>', 'upload_time',    $designCenterDto->beginTime])
+            ->andFilterWhere(['<', 'upload_time',    $designCenterDto->endTime])
+            ->andFilterWhere(['=', 'name',           $designCenterDto->name])
+            ->andFilterWhere(['=', 'stylist',        $designCenterDto->stylist])
+            ->andFilterWhere(['=', 'audit_status',   $designCenterDto->audit_status]);
 
         return new ActiveDataProvider([
             'query' => $this->query->asArray(),

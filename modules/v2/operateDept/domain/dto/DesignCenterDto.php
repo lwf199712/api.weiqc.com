@@ -44,10 +44,15 @@ class DesignCenterDto extends Model
     /** @var int */
     public $endTime;
 
+    /** @var int */
+    private $page;
+    /** @var int */
+    private $perPage;
+
     public function rules(): array
     {
         return [
-            ['id', 'integer'],
+            [['id','page','page'], 'integer'],
             [['name', 'stylist','audit_status','upload_time'], 'string', 'on' => self::SEARCH],
             [['beginTime', 'endTime'], 'integer','on' => self::SEARCH],
             [['version', 'name', 'stylist', 'picture_address'], 'string', 'on' => self::EDIT],
@@ -158,6 +163,38 @@ class DesignCenterDto extends Model
     public function setUploadTime(int $upload_time): void
     {
         $this->upload_time = strtotime($upload_time);
+    }
+
+    /**
+     * @return int
+     */
+    public function getPage(): int
+    {
+        return $this->page;
+    }
+
+    /**
+     * @param int $page
+     */
+    public function setPage(int $page): void
+    {
+        $this->page = $page;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPerPage(): int
+    {
+        return $this->perPage;
+    }
+
+    /**
+     * @param int $perPage
+     */
+    public function setPerPage(int $perPage): void
+    {
+        $this->perPage = $perPage;
     }
 
 

@@ -41,12 +41,12 @@ class DesignCenterAggregate extends BaseObject
 
     /**
      * @param DesignCenterDto $DesignCenterDto
-     * @return ActiveDataProvider
+     * @return array
      * @author weifeng
      */
-    public function listDesignCenter(DesignCenterDto $DesignCenterDto): ActiveDataProvider
+    public function listDesignCenter(DesignCenterDto $DesignCenterDto): array
     {
-        return $this->designCenterDoManager->listDataProvider($DesignCenterDto);
+        return $this->designCenterDoManager->listDataProvider($DesignCenterDto)->getModels();
     }
 
     /**
