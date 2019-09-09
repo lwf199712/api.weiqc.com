@@ -44,13 +44,13 @@ class DesignCenterController extends AdminBaseController
     public function verbs(): array
     {
         return [
-            'index'  => ['GET', 'HEAD'],
-            'create' => ['POST'],
-            'update' => ['POST'],
-            'delete' => ['DELETE'],
-            'audit'  => ['POST'],
-            'read'   => ['GET', 'HEAD'],
-            'detail' => ['GET', 'HEAD'],
+            'index'  => ['GET', 'HEAD', 'OPTIONS'],
+            'create' => ['POST', 'OPTIONS'],
+            'update' => ['POST', 'OPTIONS'],
+            'delete' => ['DELETE', 'OPTIONS'],
+            'audit'  => ['POST', 'OPTIONS'],
+            'read'   => ['GET', 'HEAD', 'OPTIONS'],
+            'detail' => ['GET', 'HEAD', 'OPTIONS'],
         ];
     }
 
