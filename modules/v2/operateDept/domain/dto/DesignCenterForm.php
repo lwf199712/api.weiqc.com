@@ -46,7 +46,7 @@ class DesignCenterForm extends Model
     public function upload()
     {
         if ($this->validate()) {
-            $this->imageFile->saveAs(Yii::$app->basePath . '/uploads/designCenter/' . $this->imageFile->baseName . '.' . $this->imageFile->extension);
+            $this->imageFile->saveAs(Yii::$app->basePath . '/web/uploads/designCenter/' . $this->imageFile->baseName . '.' . $this->imageFile->extension);
             return true;
         }
         return false;

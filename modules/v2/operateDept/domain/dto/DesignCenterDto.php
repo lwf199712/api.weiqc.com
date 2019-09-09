@@ -40,6 +40,8 @@ class DesignCenterDto extends Model
     /** @var string */
     public $auditor;
     /** @var int */
+    public $audit_time;
+    /** @var int */
     public $beginTime;
     /** @var int */
     public $endTime;
@@ -58,7 +60,7 @@ class DesignCenterDto extends Model
             [['version', 'name', 'stylist', 'picture_address'], 'string', 'on' => self::EDIT],
             ['id', 'integer', 'on' => self::EDIT],
             ['id', 'integer', 'on' => self::READ],
-            [['id', 'audit_status'], 'integer', 'on' => self::AUDIT],
+            [['id', 'audit_status','audit_time'], 'integer', 'on' => self::AUDIT],
             [['audit_opinion','auditor'], 'string', 'on' => self::AUDIT],
             ['scenario', 'in', 'range' => [self::SEARCH,self::READ,self::AUDIT], 'message' => '场景值错误'],
         ];
@@ -81,6 +83,7 @@ class DesignCenterDto extends Model
             //-----------审核-----------
             'audit_opinion'     => '审核意见',
             'auditor'           => '审核人',
+            'audit_time'        => '审核时间',
         ];
     }
 
@@ -102,6 +105,7 @@ class DesignCenterDto extends Model
                     'audit_status',
                     'audit_opinion',
                     'auditor',
+                    'audit_time',
                 ];
             default:
                 return parent::fields();

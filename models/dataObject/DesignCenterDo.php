@@ -19,6 +19,7 @@ use yii\db\ActiveRecord;
  * @property int $audit_status 审核状态(0/待审核，1/通过，2/不通过)
  * @property string $audit_opinion 审核意见
  * @property string $auditor 审核人
+ * @property int $audit_time 审核时间
  */
 class DesignCenterDo extends ActiveRecord
 {
@@ -55,6 +56,7 @@ class DesignCenterDo extends ActiveRecord
             'audit_status' => 'Audit Status',
             'audit_opinion' => 'Audit Opinion',
             'auditor' => 'Auditor',
+            'audit_time' => 'Audit Time',
         ];
     }
 

@@ -73,6 +73,7 @@ class DesignCenterEntity extends DesignCenterDo
     {
         $model = self::findOne($designCenterDto->id);
         $model->setAttributes($designCenterDto->toArray(),false);
+        $model->audit_time = time();
         return $model->save();
     }
 
