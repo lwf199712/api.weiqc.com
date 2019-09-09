@@ -12,7 +12,7 @@ class m190909_111805_add_column_t_design_center_audit_time extends Migration
      */
     public function safeUp()
     {
-        $this->addColumn('{{%design_center}}','audit_time',$this->integer(11)->Null()->defaultValue(0)->comment('审核时间'));
+        $this->addColumn('{{%design_center}}','audit_time',$this->integer(11)->defaultValue(0)->comment('审核时间'));
     }
 
     /**
