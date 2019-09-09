@@ -55,10 +55,10 @@ class DesignCenterController extends AdminBaseController
     {
         return [
             'index'  => ['GET', 'HEAD','OPTIONS'],
-            'create' => ['POST'],
-            'update' => ['POST'],
-            'delete' => ['DELETE'],
-            'audit'  => ['POST'],
+            'create' => ['POST','OPTIONS'],
+            'update' => ['POST','OPTIONS'],
+            'delete' => ['DELETE','OPTIONS'],
+            'audit'  => ['POST','OPTIONS'],
             'read'   => ['GET', 'HEAD','OPTIONS'],
             'detail' => ['GET', 'HEAD','OPTIONS'],
         ];
