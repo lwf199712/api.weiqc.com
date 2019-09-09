@@ -9,7 +9,6 @@ use app\modules\v2\operateDept\domain\dto\DesignCenterDto;
 use app\modules\v2\operateDept\domain\dto\DesignCenterForm;
 use Exception;
 use yii\base\Model;
-use yii\filters\VerbFilter;
 
 /**
  * Class DesignCenterController
@@ -30,37 +29,28 @@ class DesignCenterController extends AdminBaseController
     public $designCenterForm;
 
     public function __construct($id, $module,
-                                DesignCenterAggregate   $designCenterAggregate,
-                                DesignCenterDto         $designCenterDto,
-                                DesignCenterForm        $designCenterForm,
+                                DesignCenterAggregate $designCenterAggregate,
+                                DesignCenterDto $designCenterDto,
+                                DesignCenterForm $designCenterForm,
                                 $config = [])
     {
-        $this->designCenterAggregate    = $designCenterAggregate;
-        $this->designCenterDto          = $designCenterDto;
-        $this->designCenterForm         = $designCenterForm;
+        $this->designCenterAggregate = $designCenterAggregate;
+        $this->designCenterDto       = $designCenterDto;
+        $this->designCenterForm      = $designCenterForm;
         parent::__construct($id, $module, $config);
     }
 
-    public function behaviors()
-    {
-        $behaviors = parent::behaviors();
-        $behaviors['verbFilter'] =  [
-            'class' => VerbFilter::className(),
-            'actions' => $this->verbs(),
-        ];
-        return $behaviors;
-    }
 
     public function verbs(): array
     {
         return [
-            'index'  => ['GET', 'HEAD','OPTIONS'],
-            'create' => ['POST','OPTIONS'],
-            'update' => ['POST','OPTIONS'],
-            'delete' => ['DELETE','OPTIONS'],
-            'audit'  => ['POST','OPTIONS'],
-            'read'   => ['GET', 'HEAD','OPTIONS'],
-            'detail' => ['GET', 'HEAD','OPTIONS'],
+            'index'  => ['GET', 'HEAD'],
+            'create' => ['POST'],
+            'update' => ['POST'],
+            'delete' => ['DELETE'],
+            'audit'  => ['POST'],
+            'read'   => ['GET', 'HEAD'],
+            'detail' => ['GET', 'HEAD'],
         ];
     }
 
@@ -145,7 +135,7 @@ class DesignCenterController extends AdminBaseController
         try {
             $result = $this->designCenterAggregate->detailDesignCenter((int)$this->designCenterDto->id);
             return ['查看成功', 200, $result];
-        }catch (Exception $exception){
+        } catch (Exception $exception) {
             return ['查看失败', 500, $exception->getMessage()];
         }
     }
