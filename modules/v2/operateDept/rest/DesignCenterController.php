@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace app\modules\v2\operateDept\rest;
 
 use app\common\rest\AdminBaseController;
-use app\models\dataObject\DesignCenterDo;
 use app\modules\v2\operateDept\domain\aggregate\DesignCenterAggregate;
 use app\modules\v2\operateDept\domain\dto\DesignCenterDto;
 use app\modules\v2\operateDept\domain\dto\DesignCenterForm;

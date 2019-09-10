@@ -21,10 +21,11 @@ class m190907_014130_create_table_design_center extends Migration
             'name'              => $this->string()->notNull()->comment('名称'),
             'stylist'           => $this->string()->notNull()->comment('设计师'),
             'picture_address'   => $this->string()->notNull()->comment('图片地址'),
-            'upload_time'       => $this->integer(11)->notNull()->comment('上传时间'),
+            'upload_time'       => $this->integer(11)->null()->defaultValue(0)->comment('上传时间'),
             'audit_status'      => $this->integer(1)->null()->defaultValue(0)->comment('审核状态(0/待审核，1/通过，2/不通过)'),
             'audit_opinion'     => $this->string()->null()->comment('审核意见'),
             'auditor'           => $this->string()->null()->comment('审核人'),
+            'audit_time'       => $this->integer(11)->null()->defaultValue(0)->comment('审核时间'),
         ]);
     }
 

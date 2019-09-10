@@ -7,8 +7,6 @@ use app\modules\v2\operateDept\domain\dto\DesignCenterForm;
 use app\modules\v2\operateDept\domain\repository\DesignCenterDoManager;
 use app\modules\v2\operateDept\domain\entity\DesignCenterEntity as DesignCenterAggregateRoot;
 use yii\base\BaseObject;
-use yii\base\Model;
-use yii\data\ActiveDataProvider;
 use yii\db\Exception;
 use yii\web\UploadedFile;
 
