@@ -44,7 +44,7 @@ class DeliveryVolumeAggregate extends BaseObject
     public function listDeliveryVolume(DeliveryVolumeDto $deliveryVolumeDto): array
     {
         //通过领域服务对聚合解耦，聚合对外唯一暴露聚合根
-        $urlInfo = $this->staticUrlDeliveryVolumeService->staticListAggregate->staticListAggregateRoot::findOne((int)$deliveryVolumeDto->static_id);
+        $urlInfo = $this->staticUrlDeliveryVolumeService->staticListAggregateRoot::findOne((int)$deliveryVolumeDto->static_id);
         $list = $this->deliveryVolumeAggregateRoot->query((int)$deliveryVolumeDto->id);
         return ['url_info' => $urlInfo , 'list' => $list];
     }

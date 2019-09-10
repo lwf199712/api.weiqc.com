@@ -9,6 +9,7 @@ use app\modules\v2\link\Module as LinkModule;
 use app\modules\v2\advertDept\Module as advertDeptModule;
 use app\modules\v2\marketDept\Module as marketDeptModule;
 use app\modules\v2\saleDept\Module as saleDeptModule;
+use app\modules\v2\operateDept\Module as operateDeptModule;
 use Yii;
 
 /**
@@ -31,15 +32,15 @@ class Module extends BaseModule
         parent::init();
         //Disable session
         Yii::$app->user->enableSession = false;
-        Yii::$app->user->loginUrl      = null;
+        Yii::$app->user->loginUrl = null;
 
         $this->modules = [
             //头条鉴权
-            'oauth'      => [
+            'oauth' => [
                 'class' => OauthModule::class,
             ],
             //link
-            'link'       => [
+            'link' => [
                 'class' => LinkModule::class,
             ],
             //广告部
@@ -51,8 +52,12 @@ class Module extends BaseModule
                 'class' => marketDeptModule::class,
             ],
             //营销部
-            'sale-dept'   => [
+            'sale-dept' => [
                 'class' => saleDeptModule::class,
+            ],
+            //运营部
+            'operate-dept' => [
+                'class' => operateDeptModule::class,
             ],
 
         ];
