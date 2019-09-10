@@ -121,8 +121,12 @@ class DesignCenterController extends AdminBaseController
     public function actionAudit(): array
     {
         try {
-            $this->designCenterAggregate->auditDesignCenter($this->designCenterDto);
-            return ['审核成功', 200];
+            $result = $this->designCenterAggregate->auditDesignCenter($this->designCenterDto);
+            $data = [];
+            if ($result){
+                $data = $this->designCenterAggregate->detailDesignCenter((int)$this->designCenterDto->id);
+            }
+            return ['审核成功', 200,[$data['audit_status'],$data['audit_opinion'],$data['auditor'],$data['audit_time']]];
         } catch (Exception $exception) {
             return ['审核失败', 500, $exception->getMessage()];
         }
