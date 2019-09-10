@@ -7,8 +7,6 @@ use app\modules\v2\operateDept\domain\dto\DesignCenterForm;
 use app\modules\v2\operateDept\domain\repository\DesignCenterDoManager;
 use app\modules\v2\operateDept\domain\entity\DesignCenterEntity as DesignCenterAggregateRoot;
 use yii\base\BaseObject;
-use yii\base\Model;
-use yii\data\ActiveDataProvider;
 use yii\db\Exception;
 use yii\web\UploadedFile;
 
@@ -46,7 +44,9 @@ class DesignCenterAggregate extends BaseObject
      */
     public function listDesignCenter(DesignCenterDto $DesignCenterDto): array
     {
-        return $this->designCenterDoManager->listDataProvider($DesignCenterDto)->getModels();
+
+        return [$this->designCenterDoManager->listDataProvider($DesignCenterDto)->getModels(),
+            'totalCount'=>$this->designCenterDoManager->listDataProvider($DesignCenterDto)->getTotalCount()];
     }
 
     /**
@@ -128,7 +128,12 @@ class DesignCenterAggregate extends BaseObject
         return $this->designCenterAggregateRoot->readEntity($designCenterId);
     }
 
-
+    /**
+     *
+     * @param int $designCenterId
+     * @return array
+     * @author: weifeng
+     */
 
     public function detailDesignCenter(int $designCenterId): array
     {

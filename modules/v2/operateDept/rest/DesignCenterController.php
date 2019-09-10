@@ -8,6 +8,7 @@ use app\modules\v2\operateDept\domain\aggregate\DesignCenterAggregate;
 use app\modules\v2\operateDept\domain\dto\DesignCenterDto;
 use app\modules\v2\operateDept\domain\dto\DesignCenterForm;
 use Exception;
+use Yii;
 use yii\base\Model;
 
 /**
@@ -44,13 +45,13 @@ class DesignCenterController extends AdminBaseController
     public function verbs(): array
     {
         return [
-            'index'  => ['GET', 'HEAD'],
-            'create' => ['POST'],
-            'update' => ['POST'],
-            'delete' => ['DELETE'],
-            'audit'  => ['POST'],
-            'read'   => ['GET', 'HEAD'],
-            'detail' => ['GET', 'HEAD'],
+            'index'  => ['GET', 'HEAD', 'OPTIONS'],
+            'create' => ['POST', 'OPTIONS'],
+            'update' => ['POST', 'OPTIONS'],
+            'delete' => ['DELETE', 'OPTIONS'],
+            'audit'  => ['POST', 'OPTIONS'],
+            'read'   => ['GET', 'HEAD', 'OPTIONS'],
+            'detail' => ['GET', 'HEAD', 'OPTIONS'],
         ];
     }
 
@@ -81,14 +82,21 @@ class DesignCenterController extends AdminBaseController
     public function actionIndex(): array
     {
         $data = $this->designCenterAggregate->listDesignCenter($this->designCenterDto);
-        return ['成功返回数据', 200, $data];
+        $totalCount = $data['totalCount'];
+        unset($data['totalCount']);
+        return ['成功返回数据', 200, $data[0], $totalCount];
     }
 
     public function actionCreate(): array
     {
         try {
             $result = $this->designCenterAggregate->createDesignCenter($this->designCenterForm);
-            return ['新增成功', 200, $result];
+            $data = [];
+            if ($result){
+                $data['id'] = Yii::$app->db->getLastInsertID();
+                $data = $this->designCenterAggregate->detailDesignCenter((int)$data['id']);
+            }
+            return ['新增成功', 200, $data];
         } catch (Exception $exception) {
             return ['新增失败', 500, $exception->getMessage()];
         }
@@ -113,8 +121,12 @@ class DesignCenterController extends AdminBaseController
     public function actionAudit(): array
     {
         try {
-            $this->designCenterAggregate->auditDesignCenter($this->designCenterDto);
-            return ['审核成功', 200];
+            $result = $this->designCenterAggregate->auditDesignCenter($this->designCenterDto);
+            $data = [];
+            if ($result){
+                $data = $this->designCenterAggregate->detailDesignCenter((int)$this->designCenterDto->id);
+            }
+            return ['审核成功', 200,[$data['audit_status'],$data['audit_opinion'],$data['auditor'],$data['audit_time']]];
         } catch (Exception $exception) {
             return ['审核失败', 500, $exception->getMessage()];
         }
