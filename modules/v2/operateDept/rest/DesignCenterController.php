@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace app\modules\v2\operateDept\rest;
 
 use app\common\rest\AdminBaseController;
+use app\models\dataObject\DesignCenterDo;
 use app\modules\v2\operateDept\domain\aggregate\DesignCenterAggregate;
 use app\modules\v2\operateDept\domain\dto\DesignCenterDto;
 use app\modules\v2\operateDept\domain\dto\DesignCenterForm;
 use Exception;
+use Yii;
 use yii\base\Model;
 
 /**
@@ -90,7 +92,12 @@ class DesignCenterController extends AdminBaseController
     {
         try {
             $result = $this->designCenterAggregate->createDesignCenter($this->designCenterForm);
-            return ['新增成功', 200, $result];
+            $data = [];
+            if ($result){
+                $data = $this->designCenterForm->getAttributes();
+                $data['id'] = Yii::$app->db->getLastInsertID();
+            }
+            return ['新增成功', 200, $data];
         } catch (Exception $exception) {
             return ['新增失败', 500, $exception->getMessage()];
         }
