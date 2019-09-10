@@ -44,9 +44,9 @@ class DesignCenterAggregate extends BaseObject
      */
     public function listDesignCenter(DesignCenterDto $DesignCenterDto): array
     {
-
-        return [$this->designCenterDoManager->listDataProvider($DesignCenterDto)->getModels(),
-            'totalCount'=>$this->designCenterDoManager->listDataProvider($DesignCenterDto)->getTotalCount()];
+        $list['lists'] = $this->designCenterDoManager->listDataProvider($DesignCenterDto)->getModels();
+        $list['totalCount'] = $this->designCenterDoManager->listDataProvider($DesignCenterDto)->getTotalCount();
+        return $list;
     }
 
     /**
