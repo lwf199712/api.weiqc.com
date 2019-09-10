@@ -46,8 +46,19 @@ class DesignCenterForm extends Model
     public function upload()
     {
         if ($this->validate()) {
-            $this->imageFile->saveAs(Yii::$app->basePath . '/web/uploads/designCenter/' . $this->imageFile->baseName . '.' . $this->imageFile->extension);
-            return true;
+            $basePath = Yii::$app->basePath . '/web/uploads/designCenter/';
+            $ext = $this->imageFile->extension;
+            $randName = time() . mt_rand(1000, 9999) . '.' . $ext;
+            $rootPath = $basePath . '/';
+            //判断该目录是否存在
+            if (!is_dir($rootPath)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $rootPath));
+            }
+            $re = $this->imageFile->saveAs($rootPath . $randName);
+            if ($re) {
+                return $randName;
+            }
+            return false;
         }
         return false;
     }

@@ -6,6 +6,7 @@ namespace app\modules\v2\operateDept\domain\entity;
 use app\models\dataObject\DesignCenterDo;
 use app\modules\v2\operateDept\domain\dto\DesignCenterDto;
 use app\modules\v2\operateDept\domain\dto\DesignCenterForm;
+use Yii;
 use yii\db\Exception;
 
 class DesignCenterEntity extends DesignCenterDo
@@ -21,12 +22,12 @@ class DesignCenterEntity extends DesignCenterDo
     {
         $model = new self;
         $model->setAttributes($designCenterForm->getAttributes());
-        if ($designCenterForm->upload()){
-            $model->picture_address = '/uploads/designCenter/' . $designCenterForm->imageFile->baseName . '.' . $designCenterForm->imageFile->extension;
+        if ($picture_address = $designCenterForm->upload()) {
+            $model->picture_address = '/uploads/designCenter/' . $picture_address;
             $model->upload_time = time();
             $model->audit_status = 0;
         }
-         return $model->save();
+        return $model->save();
     }
 
     /**
@@ -44,8 +45,8 @@ class DesignCenterEntity extends DesignCenterDo
             throw new Exception('找不到修改的数据');
         }
         $model->setAttributes($designCenterForm->getAttributes());
-        if($designCenterForm->upload()){
-            $model->picture_address = '/uploads/designCenter/' . $designCenterForm->imageFile->baseName . '.' . $designCenterForm->imageFile->extension;
+        if($picture_address = $designCenterForm->upload()){
+            $model->picture_address = '/uploads/designCenter/' . $picture_address;
             $model->upload_time = time();
         }
         return $model->save();
@@ -59,6 +60,8 @@ class DesignCenterEntity extends DesignCenterDo
      */
     public function deleteEntity(int $id): int
     {
+        $delPath = $this->detailEntity($id);
+        unlink(Yii::$app->basePath . '/web'.$delPath['picture_address'] );
         return self::deleteAll(['id' => $id]);
     }
 

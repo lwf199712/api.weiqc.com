@@ -128,7 +128,12 @@ class DesignCenterAggregate extends BaseObject
         return $this->designCenterAggregateRoot->readEntity($designCenterId);
     }
 
-
+    /**
+     *
+     * @param int $designCenterId
+     * @return array
+     * @author: weifeng
+     */
 
     public function detailDesignCenter(int $designCenterId): array
     {
