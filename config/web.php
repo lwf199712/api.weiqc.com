@@ -6,6 +6,7 @@
  * @author lirong
  */
 
+use app\common\rest\AdminBaseController;
 use app\common\rest\RestBaseController;
 use mdm\admin\components\AccessControl;
 use mdm\admin\Module;
@@ -72,20 +73,20 @@ $config = [
             'class'         => Response::class,
             'on beforeSend' => static function ($event) {
                 $response = $event->sender;
-                if ($event->sender->statusCode !== 500 && Yii::$app->controller instanceof  RestBaseController
+                if ($event->sender->statusCode !== 500 &&
+                    (Yii::$app->controller instanceof RestBaseController || Yii::$app->controller instanceof AdminBaseController) &&
+                    $response->data !== null && $event->sender->format === 'json'
                 ) {
-                    if ($response->data !== null && $event->sender->format === 'json') {
-                        $responseData   = $response->data;
-                        $message        = array_shift($responseData);
-                        $code           = array_shift($responseData);
-                        $data           = array_shift($responseData);
-                        $response->data = [
-                            'message' => (string)$message,
-                            'code'    => (int)$code,
-                            'data'    => is_string($data) ? [$data] : $data,
-                        ];
-                        ksort($response->data);
-                    }
+                    $responseData   = $response->data;
+                    $message        = array_shift($responseData);
+                    $code           = array_shift($responseData);
+                    $data           = array_shift($responseData);
+                    $response->data = [
+                        'message' => (string)$message,
+                        'code'    => (int)$code,
+                        'data'    => is_string($data) ? [$data] : $data,
+                    ];
+                    ksort($response->data);
                 }
             },
         ],
