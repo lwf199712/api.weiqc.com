@@ -25,7 +25,7 @@ class DesignCenterDoManager extends BaseRepository
         return new ActiveDataProvider([
             'query' => $this->query->asArray(),
             'pagination' => [
-                'pageSize' => $params['perPage'] ?? 10,
+                'pageSize' => $designCenterDto->getPerPage() ?? 10,
             ],
             'sort' => [
                 'attributes' => ['id'],
