@@ -56,6 +56,13 @@ class DesignCenterController extends AdminBaseController
     }
 
 
+    /**
+     *
+     * @param string $actionName
+     * @return Model
+     * @throws Exception
+     * @author: weifeng
+     */
     public function dtoMap(string $actionName): Model
     {
         switch ($actionName) {
@@ -133,7 +140,7 @@ class DesignCenterController extends AdminBaseController
     public function actionRead(): array
     {
         try {
-            $imgUrl = $this->designCenterAggregate->readDesignCenter((int)$this->designCenterDto->id);
+            $imgUrl = Yii::$app->request->getHostInfo().$this->designCenterAggregate->readDesignCenter((int)$this->designCenterDto->id);
             return ['查看成功', 200, $imgUrl];
         } catch (Exception $exception) {
             return ['查看失败', 500, $exception->getMessage()];
