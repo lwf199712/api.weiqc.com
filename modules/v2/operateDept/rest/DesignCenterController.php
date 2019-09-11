@@ -100,6 +100,7 @@ class DesignCenterController extends AdminBaseController
             if ($result) {
                 $data['id'] = Yii::$app->db->getLastInsertID();
                 $data['lists'] = $this->designCenterAggregate->detailDesignCenter((int)$data['id']);
+                $data['lists']['picture_address'] = Yii::$app->request->getHostInfo() . $data['lists']['picture_address'];
             }
             return ['新增成功', 200, $data];
         } catch (Exception $exception) {
