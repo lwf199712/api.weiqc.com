@@ -56,6 +56,13 @@ class DesignCenterController extends AdminBaseController
     }
 
 
+    /**
+     *
+     * @param string $actionName
+     * @return Model
+     * @throws Exception
+     * @author: weifeng
+     */
     public function dtoMap(string $actionName): Model
     {
         switch ($actionName) {
@@ -82,9 +89,7 @@ class DesignCenterController extends AdminBaseController
     public function actionIndex(): array
     {
         $data = $this->designCenterAggregate->listDesignCenter($this->designCenterDto);
-        $totalCount = $data['totalCount'];
-        unset($data['totalCount']);
-        return ['成功返回数据', 200, $data[0], $totalCount];
+        return ['成功返回数据', 200, $data];
     }
 
     public function actionCreate(): array
@@ -94,7 +99,7 @@ class DesignCenterController extends AdminBaseController
             $data = [];
             if ($result){
                 $data['id'] = Yii::$app->db->getLastInsertID();
-                $data = $this->designCenterAggregate->detailDesignCenter((int)$data['id']);
+                $data['lists'] = $this->designCenterAggregate->detailDesignCenter((int)$data['id']);
             }
             return ['新增成功', 200, $data];
         } catch (Exception $exception) {
@@ -126,7 +131,7 @@ class DesignCenterController extends AdminBaseController
             if ($result){
                 $data = $this->designCenterAggregate->detailDesignCenter((int)$this->designCenterDto->id);
             }
-            return ['审核成功', 200,[$data['audit_status'],$data['audit_opinion'],$data['auditor'],$data['audit_time']]];
+            return ['审核成功', 200, ['audit_status' => $data['audit_status'], 'audit_opinion' => $data['audit_opinion'], 'auditor' => $data['auditor'], 'audit_time' => $data['audit_time']]];
         } catch (Exception $exception) {
             return ['审核失败', 500, $exception->getMessage()];
         }
@@ -135,7 +140,7 @@ class DesignCenterController extends AdminBaseController
     public function actionRead(): array
     {
         try {
-            $imgUrl = $this->designCenterAggregate->readDesignCenter((int)$this->designCenterDto->id);
+            $imgUrl = Yii::$app->request->getHostInfo().$this->designCenterAggregate->readDesignCenter((int)$this->designCenterDto->id);
             return ['查看成功', 200, $imgUrl];
         } catch (Exception $exception) {
             return ['查看失败', 500, $exception->getMessage()];
