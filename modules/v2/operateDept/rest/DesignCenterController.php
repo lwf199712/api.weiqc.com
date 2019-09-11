@@ -97,9 +97,10 @@ class DesignCenterController extends AdminBaseController
         try {
             $result = $this->designCenterAggregate->createDesignCenter($this->designCenterForm);
             $data = [];
-            if ($result){
+            if ($result) {
                 $data['id'] = Yii::$app->db->getLastInsertID();
                 $data['lists'] = $this->designCenterAggregate->detailDesignCenter((int)$data['id']);
+                $data['lists']['picture_address'] = Yii::$app->request->getHostInfo() . $data['lists']['picture_address'];
             }
             return ['新增成功', 200, $data];
         } catch (Exception $exception) {
@@ -128,7 +129,7 @@ class DesignCenterController extends AdminBaseController
         try {
             $result = $this->designCenterAggregate->auditDesignCenter($this->designCenterDto);
             $data = [];
-            if ($result){
+            if ($result) {
                 $data = $this->designCenterAggregate->detailDesignCenter((int)$this->designCenterDto->id);
             }
             return ['审核成功', 200, ['audit_status' => $data['audit_status'], 'audit_opinion' => $data['audit_opinion'], 'auditor' => $data['auditor'], 'audit_time' => $data['audit_time']]];
