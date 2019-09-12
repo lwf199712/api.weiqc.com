@@ -48,8 +48,10 @@ class DesignCenterAggregate extends BaseObject
         $list['lists'] = $this->designCenterDoManager->listDataProvider($DesignCenterDto)->getModels();
         foreach ($list['lists'] as $key => $value) {
             $list['lists'][$key]['picture_address'] = Yii::$app->request->getHostInfo() . $value['picture_address'];
-            $pictureUrl = explode('_',$value['picture_address']);
-            $list['lists'][$key]['picture_name'] =$pictureUrl[0];
+            $pictureUrl = explode('_', $value['picture_address']);
+            $picture = $pictureUrl[0];
+            $pictureUrl = explode('/', $picture);
+            $list['lists'][$key]['picture_name'] = $pictureUrl[3];
         }
         $list['totalCount'] = $this->designCenterDoManager->listDataProvider($DesignCenterDto)->getTotalCount();
         return $list;

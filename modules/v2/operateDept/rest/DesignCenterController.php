@@ -101,7 +101,7 @@ class DesignCenterController extends AdminBaseController
                 $data['id'] = Yii::$app->db->getLastInsertID();
                 $data['lists'] = $this->designCenterAggregate->detailDesignCenter((int)$data['id']);
                 $data['lists']['picture_address'] = Yii::$app->request->getHostInfo() . $data['lists']['picture_address'];
-                $data['lists']['picture_name'] = $this->designCenterForm->imageFile->baseName;
+                $data['lists']['picture_name'] = $this->designCenterForm->imageFile->baseName.'.'.$this->designCenterForm->imageFile->extension;
             }
             return ['新增成功', 200, $data];
         } catch (Exception $exception) {
@@ -113,7 +113,7 @@ class DesignCenterController extends AdminBaseController
     {
         try {
             $this->designCenterAggregate->updateDesignCenter($this->designCenterForm);
-            return ['修改成功', 200,['picture_name'=>$this->designCenterForm->imageFile->baseName]];
+            return ['修改成功', 200,['picture_name'=>$this->designCenterForm->imageFile->baseName.'.'.$this->designCenterForm->imageFile->extension]];
         } catch (Exception $exception) {
             return ['修改失败', 500, $exception->getMessage()];
         }
