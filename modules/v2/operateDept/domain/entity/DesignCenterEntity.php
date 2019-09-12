@@ -48,6 +48,7 @@ class DesignCenterEntity extends DesignCenterDo
         if($picture_address = $designCenterForm->upload()){
             $model->picture_address = '/uploads/designCenter/' . $picture_address;
             $model->upload_time = time();
+            $model->audit_status = 0;
         }
         return $model->save();
     }
