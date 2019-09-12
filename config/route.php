@@ -19,6 +19,7 @@ return [
             'v2/advertDept/rest',
             'v2/marketDept/rest',
             'v2/saleDept/rest',
+            'v2/operateDept/rest'
         ],
         //统一处理OPTIONS请求
         'extraPatterns' => [

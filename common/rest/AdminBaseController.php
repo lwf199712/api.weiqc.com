@@ -71,13 +71,12 @@ abstract class AdminBaseController extends ActiveController
         $actions = parent::actions();
         //Unified processing of cross-domain authentication interfaces
         $actions['options'] = [
-            'class' => OptionsAction::class
+            'class' => OptionsAction::class,
         ];
         unset($actions['create'], $actions['view'], $actions['update'], $actions['delete']);
         $actions['index']['prepareDataProvider'] = [$this, 'actionIndex'];
         return $actions;
     }
-
 
 
     /**
@@ -94,8 +93,8 @@ abstract class AdminBaseController extends ActiveController
     /**
      * v2:API授权认证
      * @param string $action
-     * @param null   $model
-     * @param array  $params
+     * @param null $model
+     * @param array $params
      * @return bool|void
      * @throws ForbiddenHttpException
      * @author zhuozhen
@@ -111,7 +110,7 @@ abstract class AdminBaseController extends ActiveController
      * @throws \yii\base\Exception
      * @author zhuozhen
      */
-    public function dtoMap(string $actionName) :  Model
+    public function dtoMap(string $actionName): Model
     {
         throw new \yii\base\Exception($actionName . 'do not in  implement dto list');
     }
@@ -129,27 +128,30 @@ abstract class AdminBaseController extends ActiveController
      */
     public function beforeAction($action): bool
     {
-        $this->request = Yii::$app->request;
+        if (parent::beforeAction($action) !== true) {
+            return false;
+        }
+        $this->request  = Yii::$app->request;
         $this->response = Yii::$app->response;
 
-        $actionName = $action->actionMethod ?? 'actionIndex' ;
+        $actionName = $action->actionMethod ?? 'actionIndex';
         $this->dto  = $this->dtoMap($actionName);
 
-        if ($this->dto instanceof EmptyDto){
+        if ($this->dto instanceof EmptyDto) {
             $this->transaction = Yii::$app->db->beginTransaction();
             return parent::beforeAction($action);
         }
 
-        if (in_array($this->request->getMethod(),['GET', 'HEAD', 'OPTIONS'])){
+        if (in_array($this->request->getMethod(), ['GET', 'HEAD'])) {
             $this->dto->setAttributes($this->request->get());
-        }else{
+        } else {
             $this->dto->setAttributes($this->request->post());
         }
         if ($this->dto->validate() === false) {
-            throw new IntegrityException('输入数据验证错误',$this->dto->getErrors());
+            throw new IntegrityException('输入数据验证错误', $this->dto->getErrors());
         }
-       $this->transaction = Yii::$app->db->beginTransaction();
-        return parent::beforeAction($action);
+        $this->transaction = Yii::$app->db->beginTransaction();
+        return true;
     }
 
     /**
