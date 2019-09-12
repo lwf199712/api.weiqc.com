@@ -48,7 +48,7 @@ class DesignCenterForm extends Model
         if ($this->validate()) {
             $basePath = Yii::$app->basePath . '/web/uploads/designCenter/';
             $ext = $this->imageFile->extension;
-            $randName = time() . mt_rand(1000, 9999) . '.' . $ext;
+            $randName = $this->imageFile->baseName.'_'.time() . mt_rand(1000, 9999) . '.' . $ext;
             $rootPath = $basePath . '/';
             //判断该目录是否存在
             if (!is_dir($rootPath)) {
