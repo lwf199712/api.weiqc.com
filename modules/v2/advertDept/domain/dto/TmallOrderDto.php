@@ -15,9 +15,14 @@ use yii\base\Model;
 class TmallOrderDto extends Model
 {
 
+    private $since;
+
+
     public function rules(): array
     {
         return [
+            ['since','require'],
+            ['since','integer'],
         ];
     }
 
@@ -26,25 +31,24 @@ class TmallOrderDto extends Model
     public function attributeLabels(): array
     {
         return [
-            'start_at' => '开始时间',
-            'end_at'   => '结束时间',
+            'since' => '从此刻及此刻之后开始拉取',
         ];
     }
 
     /**
-     * @return int
+     * @return mixed
      */
-    public function getStartAt(): int
+    public function getSince() : int
     {
-        return strtotime(date('Y-m-d')) - 3600 * 24;    //两天前
+        return $this->since;
     }
 
     /**
-     * @return int
+     * @param mixed $since
      */
-    public function getEndAt(): int
+    public function setSince(int $since): void
     {
-        return strtotime(date('Y-m-d')) + 3600 * 24;
+        $this->since = $since;
     }
 
 }
