@@ -21,7 +21,7 @@ class TmallOrderDto extends Model
     public function rules(): array
     {
         return [
-            ['since','require'],
+            ['since','required'],
             ['since','integer'],
         ];
     }
