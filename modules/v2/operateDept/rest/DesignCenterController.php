@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace app\modules\v2\operateDept\rest;
 
@@ -10,6 +9,7 @@ use app\modules\v2\operateDept\domain\dto\DesignCenterForm;
 use Exception;
 use Yii;
 use yii\base\Model;
+use yii\web\HttpException;
 
 /**
  * Class DesignCenterController
@@ -81,7 +81,7 @@ class DesignCenterController extends AdminBaseController
             case 'actionDetail':
                 return $this->designCenterDto;
             default:
-                throw new Exception('unKnow actionName ');
+                throw new HttpException('unKnow actionName ');
         }
 
     }

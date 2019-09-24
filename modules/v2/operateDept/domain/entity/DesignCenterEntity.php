@@ -75,6 +75,7 @@ class DesignCenterEntity extends DesignCenterDo
 
     public function auditEntity(DesignCenterDto $designCenterDto): bool
     {
+        /** @var DesignCenterDo $model */
         $model = self::findOne($designCenterDto->id);
         $model->setAttributes($designCenterDto->toArray(),false);
         $model->audit_time = time();
@@ -89,6 +90,7 @@ class DesignCenterEntity extends DesignCenterDo
      */
     public function readEntity(int $id): string
     {
+        /** @var DesignCenterDo $model */
         $model = self::findOne($id);
         return $model->picture_address;
     }
@@ -99,9 +101,9 @@ class DesignCenterEntity extends DesignCenterDo
      * @return array
      * @author: weifeng
      */
-
     public function detailEntity(int $id): array
     {
+        /** @var DesignCenterDo $model */
         $model = self::findOne($id);
         return $model->attributes;
     }
