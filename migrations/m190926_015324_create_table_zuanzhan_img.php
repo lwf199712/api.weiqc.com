@@ -7,6 +7,7 @@ use yii\db\Migration;
  */
 class m190926_015324_create_table_zuanzhan_img extends Migration
 {
+    public $tableName = '{{%zuanzhan_img}}';
     /**
      * {@inheritdoc}
      */
