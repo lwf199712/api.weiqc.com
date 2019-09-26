@@ -22,7 +22,7 @@ class IndexImgEntiy extends IndexImgDo
         $model = new self;
         $model->setAttributes($indexImgForm->getAttributes());
         if ($picture_address = $indexImgForm->upload()) {
-            $model->picture_address = '/uploads/indexImg/' . $picture_address;
+            $model->picture_address = '/uploads/designCenter/index-img/' . $picture_address;
             $model->upload_time = time();
             $model->audit_status = 0;
         }
@@ -58,7 +58,7 @@ class IndexImgEntiy extends IndexImgDo
         }
         $model->setAttributes($indexImgForm->getAttributes());
         if($picture_address = $indexImgForm->upload()){
-            $model->picture_address = '/uploads/inedxImg/' . $picture_address;
+            $model->picture_address = '/uploads/designCenter/index-img/' . $picture_address;
             $model->upload_time = time();
             $model->audit_status = 0;
         }

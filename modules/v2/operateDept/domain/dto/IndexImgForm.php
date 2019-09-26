@@ -49,7 +49,7 @@ class IndexImgForm extends Model
     public function upload()
     {
         if ($this->validate()) {
-            $basePath = Yii::$app->basePath . '/web/uploads/indexImg/';
+            $basePath = Yii::$app->basePath . '/web/uploads/designCenter/index-img/';
             $ext = $this->imageFile->extension;
             $randName = $this->imageFile->baseName.'_'.time() . mt_rand(1000, 9999) . '.' . $ext;
             $rootPath = $basePath . '/';
