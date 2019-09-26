@@ -1,5 +1,5 @@
 <?php
-header('Access-Control-Allow-Origin:' . $_SERVER['HTTP_ORIGIN']);
+header('Access-Control-Allow-Origin:' . isset($_SERVER['HTTP_ORIGIN'])??'*');
 header('Access-Control-Allow-Headers:*');
 // comment out the following two lines when deployed to production
 use yii\base\InvalidConfigException;
