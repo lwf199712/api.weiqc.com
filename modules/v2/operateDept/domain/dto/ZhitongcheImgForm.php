@@ -7,7 +7,7 @@ use Yii;
 use yii\base\Model;
 use yii\web\UploadedFile;
 
-class ZuanzhanImgForm extends Model
+class ZhitongcheImgForm extends Model
 {
     /** @var int */
     public $id;
@@ -46,7 +46,7 @@ class ZuanzhanImgForm extends Model
     public function upload()
     {
         if ($this->validate()) {
-            $basePath = Yii::$app->basePath . '/web/uploads/designCenter/zuanzhan-img/';
+            $basePath = Yii::$app->basePath . '/web/uploads/designCenter/zhitongche-img/';
             $ext = $this->imageFile->extension;
             $randName = $this->imageFile->baseName.'_'.time() . mt_rand(1000, 9999) . '.' . $ext;
             $rootPath = $basePath . '/';

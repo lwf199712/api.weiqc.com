@@ -30,7 +30,7 @@ class ZhitongcheImgDo extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'bm_zhitongche_img';
+        return 'bm_design_center_zhitongche_img';
     }
 
     /**
@@ -40,9 +40,6 @@ class ZhitongcheImgDo extends ActiveRecord
     {
         return [
             [['version', 'name', 'stylist', 'picture_address'], 'required'],
-            [['upload_time', 'audit_status', 'audit_time'], 'integer'],
-            [['version', 'name', 'stylist', 'audit_opinion', 'auditor'], 'string', 'max' => 255],
-            [['picture_address'], 'string', 'max' => 1024],
         ];
     }
 
@@ -62,6 +59,24 @@ class ZhitongcheImgDo extends ActiveRecord
             'audit_opinion' => 'Audit Opinion',
             'auditor' => 'Auditor',
             'audit_time' => 'Audit Time',
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => AttributeBehavior::class,
+                'attributes' => [
+                    self::EVENT_BEFORE_UPDATE => 'auditor',
+                ],
+                'value' => static function () {
+                    $id = \Yii::$app->user->getId();
+                    /** @var User $user */
+                    $user = User::findOne(['id' => $id]);
+                    return $user->username;
+                }
+            ]
         ];
     }
 }

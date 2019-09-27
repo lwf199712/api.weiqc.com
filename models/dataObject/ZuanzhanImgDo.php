@@ -28,7 +28,7 @@ class ZuanzhanImgDo extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'bm_zuanzhan_img';
+        return 'bm_design_center_zuanzhan_img';
     }
 
     /**

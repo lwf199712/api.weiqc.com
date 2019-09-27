@@ -3,27 +3,27 @@ declare(strict_types=1);
 
 namespace app\modules\v2\operateDept\domain\entity;
 
-use app\models\dataObject\ZuanzhanImgDo;
-use app\modules\v2\operateDept\domain\dto\ZuanzhanImgDto;
-use app\modules\v2\operateDept\domain\dto\ZuanzhanImgForm;
+use app\models\dataObject\ZhitongcheImgDo;
+use app\modules\v2\operateDept\domain\dto\ZhitongcheImgDto;
+use app\modules\v2\operateDept\domain\dto\ZhitongcheImgForm;
 use Yii;
 use yii\db\Exception;
 
-class ZuanzhanImgEntity extends ZuanzhanImgDo
+class ZhitongcheImgEntity extends ZhitongcheImgDo
 {
 
     /**
      * 创建设计中心实体
-     * @param ZuanzhanImgForm $zuanzhanImgForm
+     * @param ZhitongcheImgForm $zhitongcheImgForm
      * @return bool
      * @author ctl
      */
-    public function createEntity(ZuanzhanImgForm $zuanzhanImgForm): bool
+    public function createEntity(ZhitongcheImgForm $zhitongcheImgForm): bool
     {
         $model = new self;
-        $model->setAttributes($zuanzhanImgForm->getAttributes());
-        if ($picture_address = $zuanzhanImgForm->upload()) {
-            $model->picture_address = '/uploads/designCenter/zuanzhan-img/' . $picture_address;
+        $model->setAttributes($zhitongcheImgForm->getAttributes());
+        if ($picture_address = $zhitongcheImgForm->upload()) {
+            $model->picture_address = '/uploads/designCenter/zhitongche-img/' . $picture_address;
             $model->upload_time = time();
             $model->audit_status = 0;
         }
@@ -32,21 +32,21 @@ class ZuanzhanImgEntity extends ZuanzhanImgDo
 
     /**
      * 更新设计中心实体
-     * @param ZuanzhanImgForm $zuanzhanImgForm
+     * @param ZhitongcheImgForm $zhitongcheImgForm
      * @return bool
      * @throws Exception
      * @author: ctl
      */
 
-    public function updateEntity(ZuanzhanImgForm $zuanzhanImgForm): bool
+    public function updateEntity(ZhitongcheImgForm $zhitongcheImgForm): bool
     {
-        $model = self::findOne($zuanzhanImgForm->id);
+        $model = self::findOne($zhitongcheImgForm->id);
         if ($model === null) {
             throw new Exception('找不到修改的数据');
         }
-        $model->setAttributes($zuanzhanImgForm->getAttributes());
-        if($picture_address = $zuanzhanImgForm->upload()){
-            $model->picture_address = '/uploads/designCenter/zuanzhan-img/' . $picture_address;
+        $model->setAttributes($zhitongcheImgForm->getAttributes());
+        if($picture_address = $zhitongcheImgForm->upload()){
+            $model->picture_address = '/uploads/designCenter/zhitongche-img/' . $picture_address;
             $model->upload_time = time();
             $model->audit_status = 0;
         }
@@ -68,15 +68,15 @@ class ZuanzhanImgEntity extends ZuanzhanImgDo
 
     /**
      *
-     * @param ZuanzhanImgDto $zuanzhanImgDto
+     * @param ZhitongcheImgDto $zhitongcheImgDto
      * @return bool
      * @author: ctl
      */
 
-    public function auditEntity(ZuanzhanImgDto $zuanzhanImgDto): bool
+    public function auditEntity(ZhitongcheImgDto $zhitongcheImgDto): bool
     {
-        $model = self::findOne($zuanzhanImgDto->id);
-        $model->setAttributes($zuanzhanImgDto->toArray(),false);
+        $model = self::findOne($zhitongcheImgDto->id);
+        $model->setAttributes($zhitongcheImgDto->toArray(),false);
         $model->audit_time = time();
         return $model->save();
     }

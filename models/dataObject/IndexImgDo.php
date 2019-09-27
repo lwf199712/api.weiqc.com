@@ -29,7 +29,7 @@ class IndexImgDo extends ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%index_img}}';
+        return '{{%design_center_index_img}}';
     }
 
     /**
