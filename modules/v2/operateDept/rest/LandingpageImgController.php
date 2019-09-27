@@ -4,41 +4,33 @@ declare(strict_types=1);
 namespace app\modules\v2\operateDept\rest;
 
 use app\common\rest\AdminBaseController;
-use app\modules\v2\operateDept\domain\aggregate\IndexImgAggregate;
-use app\modules\v2\operateDept\domain\dto\IndexImgDto;
-use app\modules\v2\operateDept\domain\dto\IndexImgForm;
+use app\modules\v2\operateDept\domain\aggregate\LandingpageImgAggregate;
+use app\modules\v2\operateDept\domain\dto\LandingpageImgDto;
+use app\modules\v2\operateDept\domain\dto\LandingpageImgForm;
 use Exception;
 use Yii;
 use yii\base\Model;
 
-/**
- * Class DesignCenterController
- * @property-read IndexImgAggregate $indexImgAggregate
- * @property IndexImgDto $indexImgDto
- * @property IndexImgForm $indexImgForm
- * @package app\modules\v2\operateDept\rest
- */
-
-class IndexImgController extends AdminBaseController
+class LandingpageImgController extends AdminBaseController
 {
     public $dto;
 
-    /** @var IndexImgAggregate */
-    public $indexImgAggregate;
-    /** @var IndexImgDto */
-    public $indexImgDto;
-    /** @var IndexImgDto */
-    public $indexImgForm;
+    /** @var LandingpageImgAggregate */
+    public $landingpageImgAggregate;
+    /** @var LandingpageImgDto */
+    public $landingpageImgDto;
+    /** @var LandingpageImgDto */
+    public $landingpageImgForm;
 
     public function __construct($id, $module,
-                                IndexImgAggregate $indexImgAggregate,
-                                IndexImgForm $indexImgForm,
-                                IndexImgDto $indexImgDto
-                                ,$config = [])
+                                LandingpageImgAggregate $landingpageImgAggregate,
+                                LandingpageImgForm $landingpageImgForm,
+                                LandingpageImgDto $landingpageImgDto
+        ,$config = [])
     {
-        $this->indexImgAggregate = $indexImgAggregate;
-        $this->indexImgForm       = $indexImgForm;
-        $this->indexImgDto      = $indexImgDto;
+        $this->landingpageImgAggregate = $landingpageImgAggregate;
+        $this->landingpageImgForm       = $landingpageImgForm;
+        $this->landingpageImgDto      = $landingpageImgDto;
         parent::__construct($id, $module, $config);
     }
 
@@ -66,19 +58,19 @@ class IndexImgController extends AdminBaseController
     {
         switch ($actionName){
             case 'actionIndex';
-                return $this->indexImgDto->setScenario(IndexImgDto::SEARCH);
+                return $this->landingpageImgDto->setScenario(LandingpageImgDto::SEARCH);
             case 'actionCreate':
-                return $this->indexImgForm;
+                return $this->landingpageImgForm;
             case 'actionUpdate':
-                return $this->indexImgForm;
+                return $this->landingpageImgForm;
             case 'actionDelete':
-                return $this->indexImgDto;
+                return $this->landingpageImgDto;
             case 'actionAudit':
-                return $this->indexImgDto->setScenario(IndexImgDto::AUDIT);
+                return $this->landingpageImgDto->setScenario(LandingpageImgDto::AUDIT);
             case 'actionRead':
-                return $this->indexImgDto->setScenario(IndexImgDto::READ);
+                return $this->landingpageImgDto->setScenario(LandingpageImgDto::READ);
             case 'actionDetail':
-                return $this->indexImgDto;
+                return $this->landingpageImgDto;
             default:
                 throw new Exception('unKnow actionName ');
         }
@@ -86,20 +78,20 @@ class IndexImgController extends AdminBaseController
 
     public function actionIndex(): array
     {
-        $data = $this->indexImgAggregate->listIndexImg($this->indexImgDto);
+        $data = $this->landingpageImgAggregate->listLandingpageImg($this->landingpageImgDto);
         return ['成功返回数据', 200, $data];
     }
 
     public function actionCreate(): array
     {
         try {
-            $result = $this->indexImgAggregate->createIndexImg($this->indexImgForm);
+            $result = $this->landingpageImgAggregate->createLandingpageImg($this->landingpageImgForm);
             $data = [];
             if ($result) {
                 $data['id'] = Yii::$app->db->getLastInsertID();
-                $data['lists'] = $this->indexImgAggregate->detailIndexImg((int)$data['id']);
+                $data['lists'] = $this->landingpageImgAggregate->detailLandingpageImg((int)$data['id']);
                 $data['lists']['picture_address'] = Yii::$app->request->getHostInfo() . $data['lists']['picture_address'];
-                $data['lists']['picture_name'] = $this->indexImgForm->imageFile->baseName.'.'.$this->indexImgForm->imageFile->extension;
+                $data['lists']['picture_name'] = $this->landingpageImgForm->imageFile->baseName.'.'.$this->landingpageImgForm->imageFile->extension;
             }
             return ['新增成功', 200, $data];
         } catch (Exception $exception) {
@@ -110,8 +102,8 @@ class IndexImgController extends AdminBaseController
     public function actionUpdate(): array
     {
         try {
-            $this->indexImgAggregate->updateIndexImg($this->indexImgForm);
-            return ['修改成功', 200,['picture_name'=>$this->indexImgForm->imageFile->baseName.'.'.$this->indexImgForm->imageFile->extension]];
+            $this->landingpageImgAggregate->updateLandingpageImg($this->landingpageImgForm);
+            return ['修改成功', 200,['picture_name'=>$this->landingpageImgForm->imageFile->baseName.'.'.$this->landingpageImgForm->imageFile->extension]];
         } catch (Exception $exception) {
             return ['修改失败', 500, $exception->getMessage()];
         }
@@ -119,17 +111,17 @@ class IndexImgController extends AdminBaseController
 
     public function actionDelete(): array
     {
-        $num = $this->indexImgAggregate->deleteIndexImg((int)$this->indexImgDto->id);
+        $num = $this->landingpageImgAggregate->deleteLandingpageImg((int)$this->landingpageImgDto->id);
         return ['删除成功', 200, $num];
     }
 
     public function actionAudit(): array
     {
         try {
-            $result = $this->indexImgAggregate->auditIndexImg($this->indexImgDto);
+            $result = $this->landingpageImgAggregate->auditLandingpageImg($this->landingpageImgDto);
             $data = [];
             if ($result) {
-                $data = $this->indexImgAggregate->detailIndexImg((int)$this->indexImgDto->id);
+                $data = $this->landingpageImgAggregate->detailLandingpageImg((int)$this->landingpageImgDto->id);
             }
             return ['审核成功', 200, ['audit_status' => $data['audit_status'], 'audit_opinion' => $data['audit_opinion'], 'auditor' => $data['auditor'], 'audit_time' => $data['audit_time']]];
         } catch (Exception $exception) {
@@ -140,20 +132,20 @@ class IndexImgController extends AdminBaseController
     public function actionRead(): array
     {
         try {
-            $imgUrl = Yii::$app->request->getHostInfo().$this->indexImgAggregate->readIndexImg((int)$this->indexImgDto->id);
-            return ['查看图片成功', 200, $imgUrl];
+            $imgUrl = Yii::$app->request->getHostInfo().$this->landingpageImgAggregate->readLandingpageImg((int)$this->landingpageImgDto->id);
+            return ['查看成功', 200, $imgUrl];
         } catch (Exception $exception) {
-            return ['查看图片失败', 500, $exception->getMessage()];
+            return ['查看失败', 500, $exception->getMessage()];
         }
     }
 
     public function actionDetail(): array
     {
         try {
-            $result = $this->indexImgAggregate->detailIndexImg((int)$this->indexImgDto->id);
-            return ['查看详情成功', 200, $result];
+            $result = $this->landingpageImgAggregate->detailLandingpageImg((int)$this->landingpageImgDto->id);
+            return ['查看成功', 200, $result];
         } catch (Exception $exception) {
-            return ['查看详情失败', 500, $exception->getMessage()];
+            return ['查看失败', 500, $exception->getMessage()];
         }
     }
 }

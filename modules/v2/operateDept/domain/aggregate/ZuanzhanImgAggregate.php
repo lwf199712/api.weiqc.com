@@ -49,7 +49,7 @@ class ZuanzhanImgAggregate extends BaseObject
         foreach ($list['lists'] as $key => $value) {
             $list['lists'][$key]['picture_address'] = Yii::$app->request->getHostInfo() . $value['picture_address'];
             $pictureUrl = explode('/', $value['picture_address']);
-            $picture = $pictureUrl[3];
+            $picture = $pictureUrl[4];
             $pictureUrl = explode('_', $picture);
             $pictureTwo = explode('.', $picture);
             $list['lists'][$key]['picture_name'] = $pictureUrl[0].'.'.$pictureTwo[1];

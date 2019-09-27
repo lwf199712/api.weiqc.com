@@ -52,7 +52,8 @@ class ZuanzhanImgForm extends Model
             $rootPath = $basePath . '/';
             //判断该目录是否存在
             if (!is_dir($rootPath)) {
-                throw new \RuntimeException(sprintf('Directory "%s" was not created', $rootPath));
+                mkdir($rootPath);
+//                throw new \RuntimeException(sprintf('Directory "%s" was not created', $rootPath));
             }
             $re = $this->imageFile->saveAs($rootPath . $randName);
             if ($re) {
