@@ -3,27 +3,27 @@ declare(strict_types=1);
 
 namespace app\modules\v2\operateDept\domain\entity;
 
-use app\models\dataObject\DesignCenterDo;
-use app\modules\v2\operateDept\domain\dto\DesignCenterDto;
-use app\modules\v2\operateDept\domain\dto\DesignCenterForm;
+use app\models\dataObject\ZhitongcheImgDo;
+use app\modules\v2\operateDept\domain\dto\ZhitongcheImgDto;
+use app\modules\v2\operateDept\domain\dto\ZhitongcheImgForm;
 use Yii;
 use yii\db\Exception;
 
-class DesignCenterEntity extends DesignCenterDo
+class ZhitongcheImgEntity extends ZhitongcheImgDo
 {
 
     /**
      * 创建设计中心实体
-     * @param DesignCenterForm $designCenterForm
+     * @param ZhitongcheImgForm $zhitongcheImgForm
      * @return bool
-     * @author weifeng
+     * @author ctl
      */
-    public function createEntity(DesignCenterForm $designCenterForm): bool
+    public function createEntity(ZhitongcheImgForm $zhitongcheImgForm): bool
     {
         $model = new self;
-        $model->setAttributes($designCenterForm->getAttributes());
-        if ($picture_address = $designCenterForm->upload()) {
-            $model->picture_address = '/uploads/designCenter/' . $picture_address;
+        $model->setAttributes($zhitongcheImgForm->getAttributes());
+        if ($picture_address = $zhitongcheImgForm->upload()) {
+            $model->picture_address = '/uploads/designCenter/zhitongche-img/' . $picture_address;
             $model->upload_time = time();
             $model->audit_status = 0;
         }
@@ -32,21 +32,21 @@ class DesignCenterEntity extends DesignCenterDo
 
     /**
      * 更新设计中心实体
-     * @param DesignCenterForm $designCenterForm
+     * @param ZhitongcheImgForm $zhitongcheImgForm
      * @return bool
      * @throws Exception
-     * @author: weifeng
+     * @author: ctl
      */
 
-    public function updateEntity(DesignCenterForm $designCenterForm): bool
+    public function updateEntity(ZhitongcheImgForm $zhitongcheImgForm): bool
     {
-        $model = self::findOne($designCenterForm->id);
+        $model = self::findOne($zhitongcheImgForm->id);
         if ($model === null) {
             throw new Exception('找不到修改的数据');
         }
-        $model->setAttributes($designCenterForm->getAttributes());
-        if($picture_address = $designCenterForm->upload()){
-            $model->picture_address = '/uploads/designCenter/' . $picture_address;
+        $model->setAttributes($zhitongcheImgForm->getAttributes());
+        if($picture_address = $zhitongcheImgForm->upload()){
+            $model->picture_address = '/uploads/designCenter/zhitongche-img/' . $picture_address;
             $model->upload_time = time();
             $model->audit_status = 0;
         }
@@ -57,7 +57,7 @@ class DesignCenterEntity extends DesignCenterDo
      * 删除设计中心实体
      * @param int $id
      * @return int
-     * @author: weifeng
+     * @author: ctl
      */
     public function deleteEntity(int $id): int
     {
@@ -68,16 +68,15 @@ class DesignCenterEntity extends DesignCenterDo
 
     /**
      *
-     * @param DesignCenterDto $designCenterDto
+     * @param ZhitongcheImgDto $zhitongcheImgDto
      * @return bool
-     * @author: weifeng
+     * @author: ctl
      */
 
-    public function auditEntity(DesignCenterDto $designCenterDto): bool
+    public function auditEntity(ZhitongcheImgDto $zhitongcheImgDto): bool
     {
-        /** @var DesignCenterDo $model */
-        $model = self::findOne($designCenterDto->id);
-        $model->setAttributes($designCenterDto->toArray(),false);
+        $model = self::findOne($zhitongcheImgDto->id);
+        $model->setAttributes($zhitongcheImgDto->toArray(),false);
         $model->audit_time = time();
         return $model->save();
     }
@@ -86,11 +85,10 @@ class DesignCenterEntity extends DesignCenterDo
      * 查看设计中心图片实体
      * @param int $id
      * @return string
-     * @author: weifeng
+     * @author: ctl
      */
     public function readEntity(int $id): string
     {
-        /** @var DesignCenterDo $model */
         $model = self::findOne($id);
         return $model->picture_address;
     }
@@ -99,11 +97,11 @@ class DesignCenterEntity extends DesignCenterDo
      * 设计中心详情实体
      * @param int $id
      * @return array
-     * @author: weifeng
+     * @author: ctl
      */
+
     public function detailEntity(int $id): array
     {
-        /** @var DesignCenterDo $model */
         $model = self::findOne($id);
         return $model->attributes;
     }
