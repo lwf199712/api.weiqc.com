@@ -12,14 +12,14 @@ use app\common\infrastructure\service\ExcelService;
 use app\common\infrastructure\service\impl\DataSetCalculateImpl;
 use app\common\infrastructure\service\impl\ExcelServiceImpl;
 use app\api\toutiaoMarketingApi\oauth\service\Oauth as OauthService;
-use app\api\uacApi\oauth\service\Oauth as UacOauthService;
-use app\api\uacApi\oauth\service\impl\OauthImpl as UacOauthImpl;
+use app\api\uacApi\service\Oauth as UacOauthService;
+use app\api\uacApi\service\impl\OauthImpl as UacOauthImpl;
 use app\common\infrastructure\service\impl\TimeFormatterImpl;
 use app\common\infrastructure\service\TimeFormatterService;
 use app\modules\v2\link\service\impl\StaticUrlDeliveryVolumeImpl;
 use app\modules\v2\link\service\StaticUrlDeliveryVolumeService;
-use app\api\uacApi\oauth\service\User as UacUserService;
-use app\api\uacApi\oauth\service\impl\UserImpl as UacUserImpl;
+use app\api\uacApi\service\User as UacUserService;
+use app\api\uacApi\service\impl\UserImpl as UacUserImpl;
 
 $containerList = [
 

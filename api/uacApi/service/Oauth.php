@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace app\api\uacApi\oauth\service;
+namespace app\api\uacApi\service;
 
 use app\api\uacApi\dto\TokenRequestDto;
 use app\api\uacApi\dto\TokenResponseDto;

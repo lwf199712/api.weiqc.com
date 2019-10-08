@@ -6,9 +6,9 @@ namespace app\controllers;
 
 use app\api\uacApi\dto\TokenRequestDto;
 use app\api\uacApi\dto\TokenResponseDto;
-use app\api\uacApi\oauth\service\Oauth as UacOauthService;
+use app\api\uacApi\service\Oauth as UacOauthService;
 
-use app\api\uacApi\oauth\service\User as UacUserService;
+use app\api\uacApi\service\User as UacUserService;
 use app\common\exception\UacApiException;
 use app\models\User;
 use Exception;
@@ -68,7 +68,7 @@ class LoginController extends Controller
             'data'    => $data,
         ];
 
-        return $response->send();
+        return $response;
     }
 
 

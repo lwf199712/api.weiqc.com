@@ -59,14 +59,14 @@ class User extends ActiveRecord implements IdentityInterface,RateLimitInterface
 
     /**
      * 检查用户有无分配角色
-     * @param string $username
+     * @param int $id
      * @return bool
      */
-    public static function checkRoleExist(string $username) : bool
+    public static function checkRoleExist(int $id) : bool
     {
       return  (new Query())
-            ->from('{{%role_user}}')
-            ->where(['=','user_id',$username])
+            ->from('{{%auth_assignment}}')
+            ->where(['=','user_id',$id])
             ->exists();
     }
 

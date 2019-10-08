@@ -32,7 +32,7 @@ class TokenResponseDto extends Model
     {
         return [
             [['token_type', 'access_token', 'refresh_token'], 'string'],
-            [['expires_in'], 'int'],
+            [['expires_in'], 'integer'],
         ];
     }
 

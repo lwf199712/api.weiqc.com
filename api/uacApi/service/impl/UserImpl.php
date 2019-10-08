@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
 
-namespace app\api\uacApi\oauth\service\impl;
+namespace app\api\uacApi\service\impl;
 
 
 use app\api\uacApi\dto\UserInfoDto;
-use app\api\uacApi\oauth\service\User;
+use app\api\uacApi\service\User;
 use app\common\client\ClientBaseService;
 use app\common\exception\UacApiException;
 use GuzzleHttp\Client;
@@ -35,7 +35,7 @@ class UserImpl extends ClientBaseService implements User
     public function getUserInfo(string $accessToken) : UserInfoDto
     {
         $userInfo = new UserInfoDto;
-        $response         = $this->client->request('GET', Yii::$app->params['api']['uac_api']['api']['access_token'], [
+        $response         = $this->client->request('GET', Yii::$app->params['api']['uac_api']['api']['user'], [
             'headers' => [
                 'Authorization' => 'Bearer '.$accessToken
             ]

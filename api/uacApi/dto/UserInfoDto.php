@@ -43,7 +43,7 @@ class UserInfoDto extends Model
     public function rules(): array
     {
         return [
-            [['id', 'groupId'], 'int'],
+            [['id', 'groupId'], 'integer'],
             [['uuid', 'username', 'groupName', 'avatar', 'status', 'statusCN'], 'string'],
         ];
     }

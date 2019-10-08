@@ -1,12 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace app\api\uacApi\oauth\service\impl;
-
-
+namespace app\api\uacApi\service\impl;
 
 use app\api\uacApi\dto\TokenRequestDto;
 use app\api\uacApi\dto\TokenResponseDto;
-use app\api\uacApi\oauth\service\Oauth;
+use app\api\uacApi\service\Oauth;
 use app\common\client\ClientBaseService;
 use app\common\exception\UacApiException;
 use GuzzleHttp\Client;
@@ -39,7 +37,7 @@ class OauthImpl extends ClientBaseService implements Oauth
         $response         = $this->client->request('POST', Yii::$app->params['api']['uac_api']['api']['access_token'], [
             'json' => $tokenRequestDto->getAttributes(),
         ]);
-        $response         = json_decode($response->getBody()->getContents(), false);
+        $response         = json_decode($response->getBody()->getContents(), true);
         $tokenResponseDto->setAttributes($response);
         if ($tokenResponseDto->validate() === false) {
             throw new UacApiException(UacApiException::oauthMessage());
