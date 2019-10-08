@@ -49,7 +49,7 @@ class OauthImpl extends ClientBaseService implements Oauth
     public function applyToken(TokenRequestDto $tokenRequestDto): TokenResponseDto
     {
         $tokenResponseDto = new TokenResponseDto();
-        $response         = $this->client->request('POST', Yii::$app->params['api']['toutiao_marketing_api']['access_token'], [
+        $response         = $this->client->request('POST', Yii::$app->params['api']['toutiao_marketing_api']['api']['access_token'], [
             'json' => $tokenRequestDto->getAttributes(),
         ]);
         $response         = json_decode($response->getBody()->getContents(), false);
@@ -73,7 +73,7 @@ class OauthImpl extends ClientBaseService implements Oauth
     public function refreshToken(TokenRequestDto $tokenRequestDto): TokenResponseDto
     {
         $tokenResponseDto = new TokenResponseDto();
-        $response         = $this->client->request('POST', Yii::$app->params['api']['toutiao_marketing_api']['refresh_token'], [
+        $response         = $this->client->request('POST', Yii::$app->params['api']['toutiao_marketing_api']['api']['refresh_token'], [
             'json' => $tokenRequestDto->getAttributes(),
         ]);
         $response         = json_decode($response->getBody()->getContents(), false);
