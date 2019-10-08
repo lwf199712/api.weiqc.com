@@ -131,6 +131,9 @@ abstract class AdminBaseController extends ActiveController
         if (parent::beforeAction($action) !== true) {
             return false;
         }
+        if ($this->checkAccess( Yii::$app->controller->action->id) === false){
+            return false;
+        }
         $this->request  = Yii::$app->request;
         $this->response = Yii::$app->response;
 
