@@ -142,7 +142,7 @@ abstract class AdminBaseController extends ActiveController
             return parent::beforeAction($action);
         }
 
-        if (in_array($this->request->getMethod(), ['GET', 'HEAD'])) {
+        if (in_array($this->request->getMethod(), ['GET', 'HEAD','DELETE'])) {
             $this->dto->setAttributes($this->request->get());
         } else {
             $this->dto->setAttributes($this->request->post());
