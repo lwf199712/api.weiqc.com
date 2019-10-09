@@ -7,6 +7,7 @@ use app\common\repository\BaseRepository;
 use app\models\dataObject\DesignCenterDo;
 use app\modules\v2\operateDept\domain\dto\DesignCenterDto;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveRecord;
 
 class DesignCenterDoManager extends BaseRepository
 {
@@ -30,8 +31,18 @@ class DesignCenterDoManager extends BaseRepository
             'sort' => [
                 'attributes' => ['id'],
                 'defaultOrder' => ['id' => SORT_DESC],
-            ],
+            ]
         ]);
+    }
+
+    /**
+     * @param int $id
+     * @return ActiveRecord
+     * @author zhuozhen
+     */
+    public function viewData(int $id) : ActiveRecord
+    {
+        return $this->model::findOne(['id' => $id]);
     }
 
 

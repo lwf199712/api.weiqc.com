@@ -7,6 +7,7 @@ use app\common\repository\BaseRepository;
 use app\models\dataObject\ZuanzhanImgDo;
 use app\modules\v2\operateDept\domain\dto\ZuanzhanImgDto;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveRecord;
 
 class ZuanzhanImgDoManager extends BaseRepository
 {
@@ -34,5 +35,13 @@ class ZuanzhanImgDoManager extends BaseRepository
         ]);
     }
 
-
+    /**
+     * @param int $id
+     * @return ActiveRecord
+     * @author zhuozhen
+     */
+    public function viewData(int $id) : ActiveRecord
+    {
+        return $this->model::findOne(['id' => $id]);
+    }
 }

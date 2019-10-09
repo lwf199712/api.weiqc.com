@@ -7,11 +7,13 @@ use app\common\repository\BaseRepository;
 use app\models\dataObject\LandingpageImgDo;
 use app\modules\v2\operateDept\domain\dto\LandingpageImgDto;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveRecord;
 
 class LandingpageImgDoManager extends BaseRepository
 {
     /** @var string 资源类名 */
     public static $modelClass = LandingpageImgDo::class;
+
 
     public function listDataProvider(LandingpageImgDto $landingpageImgDto): ActiveDataProvider
     {
@@ -34,5 +36,13 @@ class LandingpageImgDoManager extends BaseRepository
         ]);
     }
 
-
+    /**
+     * @param int $id
+     * @return ActiveRecord
+     * @author zhuozhen
+     */
+    public function viewData(int $id) : ActiveRecord
+    {
+        return $this->model::findOne(['id' => $id]);
+    }
 }

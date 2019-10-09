@@ -7,6 +7,7 @@ use app\common\repository\BaseRepository;
 use app\models\dataObject\IndexImgDo;
 use app\modules\v2\operateDept\domain\dto\IndexImgDto;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveRecord;
 
 class IndexImgDoManager extends BaseRepository
 {
@@ -34,6 +35,14 @@ class IndexImgDoManager extends BaseRepository
             ],
         ]);
     }
-
+    /**
+     * @param int $id
+     * @return ActiveRecord
+     * @author zhuozhen
+     */
+    public function viewData(int $id) : ActiveRecord
+    {
+        return $this->model::findOne(['id' => $id]);
+    }
 
 }

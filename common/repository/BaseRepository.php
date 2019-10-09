@@ -3,10 +3,15 @@ declare(strict_types=1);
 
 namespace app\common\repository;
 
+use app\modules\v2\marketDept\domain\dto\TikTokResourceBaseCooperateDto;
+use RuntimeException;
 use yii\base\BaseObject;
+use yii\base\ExitException;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
+use yii\db\Exception;
 
 /**
  * Class BaseRepository
@@ -41,4 +46,5 @@ abstract class BaseRepository extends BaseObject
         $this->query = $this->model::find();
         parent::__construct($config);
     }
+
 }
