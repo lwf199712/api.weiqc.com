@@ -48,6 +48,7 @@ class LoginController extends Controller
 
         try {
             $tokenResponseDto = $this->getToken(Yii::$app->request->getBodyParams());
+
             $userInfo         = $this->uacUserService->getUserInfo($tokenResponseDto->access_token);
             $user             = User::findByUsername($userInfo->username);
             if ($user === null) {
