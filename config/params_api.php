@@ -35,7 +35,7 @@ return [
      * UAC－api地址
      */
     'uac_api'               => [
-        'base_url'      => YII_DEBUG === true ? '120.27.137.99:18206' : '101.37.32.133:18206',
+        'base_url'      => YII_DEBUG === true ? '120.27.137.99:18206' : 'http://provider-uac.oa.fandow.com/',
         'client_id'     => '91052cff6f461272a7c298079a235e84',
         'client_secret' => '1b64f0e6c9ae1e80c8282b5e6d3d8a92',
         'api'           => [
