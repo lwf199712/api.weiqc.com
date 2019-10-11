@@ -27,15 +27,10 @@ class DesignCenterImageImpl extends BaseObject implements DesignCenterImageServi
         $config = [])
     {
         $this->designCenterDoManager = $designCenterDoManager;
+
         parent::__construct($config);
     }
 
-    public function __call($name, $params)
-    {
-        $this->model = current($params);
-        $params = array_slice($params,1);
-        $this->$name($this->model,...$params);
-    }
 
 
     /**
@@ -57,7 +52,7 @@ class DesignCenterImageImpl extends BaseObject implements DesignCenterImageServi
      */
     public function listImage()
     {
-        return $this->$repository->listDataProvider();
+        return $this->repository->listDataProvider();
     }
 
     /**

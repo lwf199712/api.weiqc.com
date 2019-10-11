@@ -3,20 +3,17 @@ declare(strict_types=1);
 
 namespace app\common\repository;
 
-use app\modules\v2\marketDept\domain\dto\TikTokResourceBaseCooperateDto;
-use RuntimeException;
 use yii\base\BaseObject;
-use yii\base\ExitException;
-use yii\data\ActiveDataProvider;
+use yii\base\Model;
 use yii\db\ActiveQuery;
-use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
-use yii\db\Exception;
 
 /**
  * Class BaseRepository
  * @property ActiveRecord $model
  * @property ActiveQuery $query
+ * @method  listDataProvider(Model $model)
+ * @method viewData(int $id)
  * @package app\common\repository11
  */
 abstract class BaseRepository extends BaseObject
