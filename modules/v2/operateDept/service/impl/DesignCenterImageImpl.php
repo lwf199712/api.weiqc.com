@@ -28,16 +28,16 @@ class DesignCenterImageImpl extends BaseObject implements DesignCenterImageServi
 
 
     public function __construct(
-        DesignCenterImageDoManager  $designCenterImageDoManager,
-        DesignCenterImageForm       $designCenterImageForm,
-        DesignCenterImageQuery      $designCenterImageQuery,
-        DesignCenterImageEntity     $designCenterImageEntity,
+        DesignCenterImageDoManager          $designCenterImageDoManager,
+        DesignCenterImageForm               $designCenterImageForm,
+        DesignCenterImageQuery              $designCenterImageQuery,
+        DesignCenterImageEntity             $designCenterImageEntity,
         $config = [])
     {
         $this->designCenterImageDoManager = $designCenterImageDoManager;
         $this->designCenterImageForm      = $designCenterImageForm;
         $this->designCenterImageQuery     = $designCenterImageQuery;
-        $this->model                      = $designCenterImageEntity;
+        $this->model = $designCenterImageEntity;
         parent::__construct($config);
     }
 
@@ -49,7 +49,7 @@ class DesignCenterImageImpl extends BaseObject implements DesignCenterImageServi
      * @throws Exception
      * @author zhuozhen
      */
-    public function uploadImage(DesignCenterImageForm $designCenterImageForm, string $dirName):string
+    public function uploadImage(DesignCenterImageForm $designCenterImageForm, string $dirName): string
     {
         return $designCenterImageForm->upload($dirName);
     }
@@ -69,7 +69,7 @@ class DesignCenterImageImpl extends BaseObject implements DesignCenterImageServi
             $picture = end($pictureUrl);
             $pictureUrl = explode('_', $picture);
             $pictureTwo = explode('.', $picture);
-            $list['lists'][$key]['picture_name'] = array_shift($pictureUrl).'.'.end($pictureTwo);
+            $list['lists'][$key]['picture_name'] = array_shift($pictureUrl) . '.' . end($pictureTwo);
         }
         $list['totalCount'] = $this->designCenterImageDoManager->listDataProvider($designCenterImageQuery)->getTotalCount();
         return $list;
@@ -82,7 +82,7 @@ class DesignCenterImageImpl extends BaseObject implements DesignCenterImageServi
      * @throws Exception
      * @author zhuozhen
      */
-    public function createImage(DesignCenterImageForm $designCenterImageForm) : bool
+    public function createImage(DesignCenterImageForm $designCenterImageForm): bool
     {
         $result = $this->model->createEntity($designCenterImageForm);
         if ($result === false) {
@@ -98,7 +98,7 @@ class DesignCenterImageImpl extends BaseObject implements DesignCenterImageServi
      * @throws Exception
      * @author zhuozhen
      */
-    public function updateImage(DesignCenterImageForm $designCenterImageForm) :bool
+    public function updateImage(DesignCenterImageForm $designCenterImageForm): bool
     {
         $result = $this->model->updateEntity($designCenterImageForm);
         if ($result === false) {
@@ -116,7 +116,7 @@ class DesignCenterImageImpl extends BaseObject implements DesignCenterImageServi
     public function deleteImage(DesignCenterImageForm $designCenterImageForm): int
     {
         $result = $this->model->deleteEntity($designCenterImageForm);
-        if ($result){
+        if ($result) {
             //如果有删除记录，根据路径删除图片文件
             $dePath = $this->viewImage((int)$designCenterImageForm->id);
             unlink(Yii::$app->basePath . '/web' . $dePath['picture_address']);
@@ -133,7 +133,7 @@ class DesignCenterImageImpl extends BaseObject implements DesignCenterImageServi
      * @return bool
      * @author zhuozhen
      */
-    public function auditImage(DesignCenterImageForm $designCenterImageForm) : bool
+    public function auditImage(DesignCenterImageForm $designCenterImageForm): bool
     {
         $result = $this->model->auditEntity($designCenterImageForm);
         if ($result === false) {
@@ -150,12 +150,11 @@ class DesignCenterImageImpl extends BaseObject implements DesignCenterImageServi
      */
     public function viewImage(int $id): array
     {
-        if (!empty($id)){
-            /** @var DesignCenterImageDo $model */
-            $model = $this->designCenterImageDoManager->viewData($id);
-            return $model->attributes;
+        $model = $this->designCenterImageDoManager->viewData($id);
+        if ($model === null) {
+            throw new RuntimeException('查看设计中心图片失败');
         }
-        throw new RuntimeException('查看失败');
+        return $model->attributes;
     }
 
 
