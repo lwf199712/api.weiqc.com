@@ -12,7 +12,7 @@ use yii\base\Model;
  * @property int $id
  * @property string $uuid
  * @property string $username
- * @property string $realname
+ * @property string $realName
  * @property int $groupId
  * @property string $groupName
  * @property string $avatar
@@ -30,7 +30,7 @@ class UserInfoDto extends Model
     /** @var string */
     public $username;
     /** @var string */
-    public $realname;
+    public $realName;
     /** @var int */
     public $groupId;
     /** @var string */
@@ -47,7 +47,7 @@ class UserInfoDto extends Model
     {
         return [
             [['id', 'groupId'], 'integer'],
-            [['uuid', 'username','realname', 'groupName', 'avatar', 'status', 'statusCN'], 'string'],
+            [['uuid', 'username','realName', 'groupName', 'avatar', 'status', 'statusCN'], 'string'],
         ];
     }
 
@@ -57,7 +57,7 @@ class UserInfoDto extends Model
             'id'        => '用户ID',
             'uuid'      => '用户UUID',
             'username'  => '用户名',
-            'realname'  => '姓名',
+            'realName'  => '姓名',
             'groupId'   => '所属群组id(部门id)',
             'groupName' => '所属群组名称(部门名称)',
             'avatar'    => '头像链接地址',

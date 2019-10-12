@@ -55,7 +55,7 @@ class User extends ActiveRecord implements IdentityInterface,RateLimitInterface
     {
         $model = new self();
         $model->username = $userInfo->username;
-        $model->realname = $userInfo->realname;
+        $model->realname = $userInfo->realName;
         return $model->save();
     }
 
