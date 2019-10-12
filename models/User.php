@@ -22,6 +22,7 @@ use yii\web\Request;
  *
  * @property int $id
  * @property string $username
+ * @property string $realname
  * @property string $auth_key
  * @property string $password_hash
  * @property string $password_reset_token
@@ -54,6 +55,7 @@ class User extends ActiveRecord implements IdentityInterface,RateLimitInterface
     {
         $model = new self();
         $model->username = $userInfo->username;
+        $model->realname = $userInfo->realname;
         return $model->save();
     }
 
