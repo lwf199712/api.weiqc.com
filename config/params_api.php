@@ -1,7 +1,5 @@
 <?php
 
-$toutiaoApi = require __DIR__ . '/params_api_toutiao.php';
-
 
 return [
     /**
@@ -21,16 +19,37 @@ return [
         ],
     ],
 
+
+    /**
+     * 头条api地址
+     */
     'toutiao_marketing_api' => [
         'base_url' => 'http://ad.toutiao.com/',
-        'api'      => $toutiaoApi,
+        'api'      => [
+            'access_token'  => 'open_api/oauth2/access_token',
+            'refresh_token' => 'open_api/oauth2/refresh_token',
+        ],
+    ],
+
+    /**
+     * UAC－api地址
+     */
+    'uac_api'     => [
+        'base_url' => '120.27.137.99:18206',
+        'client_id' => '91052cff6f461272a7c298079a235e84',
+        'client_secret' => '1b64f0e6c9ae1e80c8282b5e6d3d8a92',
+        'api'      => [
+            'access_token'  => 'authentication/password-grant',
+            'refresh_token' => '/authentication/refresh-token',
+            'user'          => 'auth/userinfo',
+        ],
     ],
 
 
     /**
      * 云片api地址
      */
-    'yunpian_api'           => [
+    'yunpian_api' => [
         'base_url'    => 'https://yunpian.com/v2/',
         'apikey'      => 'd0ae361514318bc4fc811186ed05afe7',
         'sms_actions' => [
