@@ -34,11 +34,11 @@ return [
     /**
      * UAC－api地址
      */
-    'uac_api'     => [
-        'base_url' => '120.27.137.99:18206',
-        'client_id' => '91052cff6f461272a7c298079a235e84',
+    'uac_api'               => [
+        'base_url'      => 'http://provider-uac.oa.fandow.com/',
+        'client_id'     => '91052cff6f461272a7c298079a235e84',
         'client_secret' => '1b64f0e6c9ae1e80c8282b5e6d3d8a92',
-        'api'      => [
+        'api'           => [
             'access_token'  => 'authentication/password-grant',
             'refresh_token' => '/authentication/refresh-token',
             'user'          => 'auth/userinfo',
@@ -49,7 +49,7 @@ return [
     /**
      * 云片api地址
      */
-    'yunpian_api' => [
+    'yunpian_api'           => [
         'base_url'    => 'https://yunpian.com/v2/',
         'apikey'      => 'd0ae361514318bc4fc811186ed05afe7',
         'sms_actions' => [
