@@ -49,7 +49,7 @@ interface DesignCenterImageService
     public function auditImage(DesignCenterImageForm $designCenterImageForm);
 
     /**
-     * 查看图片详情
+     * 查看详情
      * @param $id
      * @return mixed
      * @author: weifeng

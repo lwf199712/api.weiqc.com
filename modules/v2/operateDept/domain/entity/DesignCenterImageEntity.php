@@ -22,8 +22,8 @@ class DesignCenterImageEntity extends DesignCenterImageDo
         $model = new self;
         $model->setAttributes($designCenterImageForm->getAttributes());
         $model->picture_address = '/uploads/designCenter/' . $model->picture_address;
-        $model->upload_time = time();
-        $model->audit_status = 0;
+        $model->upload_time     = time();
+        $model->audit_status    = 0;
         return $model->save();
     }
 
@@ -43,8 +43,8 @@ class DesignCenterImageEntity extends DesignCenterImageDo
         }
         $model->setAttributes($designCenterImageForm->getAttributes());
         $model->picture_address = '/uploads/designCenter/' . $model->picture_address;
-        $model->upload_time = time();
-        $model->audit_status = 0;
+        $model->upload_time     = time();
+        $model->audit_status    = 0;
         return $model->save();
     }
 

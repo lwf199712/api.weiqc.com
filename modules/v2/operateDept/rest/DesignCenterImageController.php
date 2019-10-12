@@ -135,11 +135,10 @@ class DesignCenterImageController extends AdminBaseController
     }
 
     /**
-     * 删除图片
+     * 设计中心-删除
      * @return array
      * @author: weifeng
      */
-
     public function actionDelete(): array
     {
         $num = $this->designCenterImageService->deleteImage($this->designCenterImageForm);
@@ -147,7 +146,7 @@ class DesignCenterImageController extends AdminBaseController
     }
 
     /**
-     * 审核图片
+     * 设计中心-审核
      * @return array
      * @author: weifeng
      */
@@ -166,7 +165,7 @@ class DesignCenterImageController extends AdminBaseController
     }
 
     /**
-     * 查看图片
+     * 设计中心-查看
      * @return array
      * @author: weifeng
      */
@@ -182,7 +181,7 @@ class DesignCenterImageController extends AdminBaseController
     }
 
     /**
-     * 查看详情
+     * 设计中心-详情
      * @return array
      * @author: weifeng
      */
