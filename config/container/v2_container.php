@@ -16,6 +16,8 @@ use app\common\infrastructure\service\impl\TimeFormatterImpl;
 use app\common\infrastructure\service\TimeFormatterService;
 use app\modules\v2\link\service\impl\StaticUrlDeliveryVolumeImpl;
 use app\modules\v2\link\service\StaticUrlDeliveryVolumeService;
+use app\modules\v2\operateDept\service\DesignCenterImageService;
+use app\modules\v2\operateDept\service\impl\DesignCenterImageImpl;
 
 $containerList = [
 
@@ -24,6 +26,7 @@ $containerList = [
 
     //领域服务
     StaticUrlDeliveryVolumeService::class => StaticUrlDeliveryVolumeImpl::class,
+    DesignCenterImageService::class       => DesignCenterImageImpl::class,
 
     //基础设施层
     ExcelService::class            => ExcelServiceImpl::class,
