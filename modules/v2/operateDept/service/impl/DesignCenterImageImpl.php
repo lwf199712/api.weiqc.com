@@ -2,7 +2,6 @@
 
 namespace app\modules\v2\operateDept\service\impl;
 
-use app\models\dataObject\DesignCenterImageDo;
 use app\modules\v2\operateDept\domain\dto\DesignCenterImageForm;
 use app\modules\v2\operateDept\domain\dto\DesignCenterImageQuery;
 use app\modules\v2\operateDept\domain\entity\DesignCenterImageEntity;
