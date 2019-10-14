@@ -15,13 +15,13 @@
 
 名称 | 类型 | 是否必须 | 示例值 | 描述
 ---|---|---|--- |---
-LoginForm[username]|string|是|开发中心|账号
-LoginForm[password]|string|是|123456|密码
+username|string|是|开发中心|账号
+password|string|是|123456|密码
 - 请求的参数如下：
 ```json
 {
-  "LoginForm[username]" : "开发中心",
-  "LoginForm[password]": "123456"
+  "username" : "开发中心",
+  "password": "123456"
 }
 ```
 

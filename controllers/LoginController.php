@@ -4,42 +4,95 @@
 namespace app\controllers;
 
 
-use app\models\LoginForm;
+use app\api\uacApi\dto\TokenRequestDto;
+use app\api\uacApi\dto\TokenResponseDto;
+use app\api\uacApi\service\Oauth as UacOauthService;
+
+use app\api\uacApi\service\User as UacUserService;
+use app\common\exception\UacApiException;
 use app\models\User;
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use Yii;
 use yii\web\Controller;
+use yii\web\HttpException;
 use yii\web\Response;
 
 class LoginController extends Controller
 {
     public $enableCsrfValidation = false;
 
+    /** @var UacOauthService */
+    public $uacOauthService;
+    /** @var UacUserService */
+    public $uacUserService;
+
+    public function __construct($id, $module,
+                                UacOauthService $uacOauthService,
+                                UacUserService $uacUserService,
+                                $config = [])
+    {
+        $this->uacOauthService = $uacOauthService;
+        $this->uacUserService  = $uacUserService;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * @return Response
+     * @throws GuzzleException
      */
-    public function actionIndex() :Response
+    public function actionIndex(): Response
     {
-        $model = new LoginForm();
-        $response = new Response();
+        $response         = new Response;
         $response->format = Response::FORMAT_JSON;
 
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            /** @var User $user */
-            $user =  $model->getUser();
-            $response->data = [
-                'message' => '登录成功',
-                'code'    => 200,
-                'data'    => $user->access_token,
-            ];
-        }else{
-            $response->data = [
-                'message' => '登录失败',
-                'code'    => 401,
-                'data'    => '',
-            ];
+        try {
+            $tokenResponseDto = $this->getToken(Yii::$app->request->getBodyParams());
+            $userInfo         = $this->uacUserService->getUserInfo($tokenResponseDto->access_token);
+            $user             = User::findByUsername($userInfo->username);
+            if ($user === null) {
+                User::createUser($userInfo);
+                $user = User::findByUsername($userInfo->username);
+            }
+            if (User::checkRoleExist($user->getId()) === false) {
+                throw new HttpException(403, '你的账号暂时还没分配权限，请联系开发中心－陈永彬');
+            }
+            [$message, $code, $data] = ['success', 200, $user->access_token];
+        } catch (Exception $exception) {
+            [$message, $code, $data] = [$exception->getMessage(), $exception->getCode(), []];
         }
-        return  $response;
 
+        $response->data = [
+            'message' => $message,
+            'code'    => $code,
+            'data'    => $data,
+        ];
+
+        return $response;
+    }
+
+
+    /**
+     * 登录并获取uac-token
+     * @param array $loginForm
+     * @return TokenResponseDto
+     * @throws GuzzleException
+     * @throws HttpException
+     * @throws UacApiException
+     */
+    public function getToken(array $loginForm): TokenResponseDto
+    {
+        $tokenRequestDto                = new TokenRequestDto;
+        $tokenRequestDto->username      = $loginForm['username'];
+        $tokenRequestDto->password      = $loginForm['password'];
+        $tokenRequestDto->client_id     = Yii::$app->params['api']['uac_api']['client_id'];
+        $tokenRequestDto->client_secret = Yii::$app->params['api']['uac_api']['client_secret'];
+        $tokenRequestDto->grant_type    = 'password';
+        $tokenResponseDto               = $this->uacOauthService->applyToken($tokenRequestDto);
+        if ($tokenResponseDto->access_token === null) {
+            throw new HttpException('登录失败,token为空');
+        }
+        return $tokenResponseDto;
     }
 
 }

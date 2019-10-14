@@ -15,7 +15,7 @@ class TmallOrderDoManager extends BaseRepository
     public function listDataProvider(TmallOrderDto $tmallOrderDto) : ActiveDataProvider
     {
         $this->query
-            ->select(['create_at','phone','price'])
+            ->select(['id','create_at','phone','price'])
             ->where(['>','create_at',$tmallOrderDto->getSince()]);
 
         return new ActiveDataProvider([
