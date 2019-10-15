@@ -46,5 +46,21 @@ class DesignCenterImageStatisticsImpl extends BaseObject implements DesignCenter
         return $list;
     }
 
+    /**
+     * 设计中心图片统计-审核统计
+     * @param DesignCenterImageStatisticsDto $designCenterImageStatisticsDto
+     * @return array
+     * @author: weifeng
+     */
+    public function auditStatistics(DesignCenterImageStatisticsDto $designCenterImageStatisticsDto): array
+    {
+        $dataArr = $this->designCenterImageStatisticsDoManager->auditStatistics($designCenterImageStatisticsDto)->getModels();
+        $listArr = [];
+        if (!empty($dataArr)){
+            $listArr = array_shift($dataArr);
+            unset($listArr['id']);
+        }
+        return $listArr;
+    }
 
 }

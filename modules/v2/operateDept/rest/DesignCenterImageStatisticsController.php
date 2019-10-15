@@ -36,6 +36,7 @@ class DesignCenterImageStatisticsController extends AdminBaseController
     {
         return [
             'index' => ['GET', 'HEAD', 'OPTIONS'],
+            'actionStatistics' => ['GET', 'HEAD', 'OPTIONS'],
         ];
     }
 
@@ -48,10 +49,14 @@ class DesignCenterImageStatisticsController extends AdminBaseController
      */
     public function dtoMap(string $actionName): Model
     {
-        if ($actionName === 'actionIndex') {
-            return $this->designCenterImageStatisticsDto;
+        switch ($actionName) {
+            case 'actionIndex':
+                return $this->designCenterImageStatisticsDto;
+            case 'actionStatistics':
+                return $this->designCenterImageStatisticsDto;
+            default:
+                throw new HttpException('UnKnow ActionName ');
         }
-        throw new HttpException('UnKnow ActionName ');
     }
 
     /**
@@ -63,6 +68,21 @@ class DesignCenterImageStatisticsController extends AdminBaseController
     {
         try {
             $data = $this->designCenterImageStatisticsService->listImage($this->designCenterImageStatisticsDto);
+            return ['成功返回数据', 200, $data];
+        } catch (Exception $exception) {
+            return ['查询失败', 500, $exception->getMessage()];
+        }
+    }
+
+    /**
+     * 计中心图片统计-审核统计
+     * @return array
+     * @author: weifeng
+     */
+    public function actionStatistics(): array
+    {
+        try {
+            $data = $this->designCenterImageStatisticsService->auditStatistics($this->designCenterImageStatisticsDto);
             return ['成功返回数据', 200, $data];
         } catch (Exception $exception) {
             return ['查询失败', 500, $exception->getMessage()];

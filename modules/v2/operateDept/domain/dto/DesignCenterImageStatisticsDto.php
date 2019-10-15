@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace app\modules\v2\operateDept\domain\dto;
+
 use yii\base\Model;
 
 class DesignCenterImageStatisticsDto extends Model
@@ -12,6 +13,8 @@ class DesignCenterImageStatisticsDto extends Model
     public $endTime;
     /** @var string */
     public $stylist;
+    /** @var string */
+    public $type;
     /** @var int */
     private $page;
     /** @var int */
@@ -20,7 +23,7 @@ class DesignCenterImageStatisticsDto extends Model
     public function rules(): array
     {
         return [
-            [['beginTime', 'endTime', 'perPage','page'], 'integer'],
+            [['beginTime', 'endTime', 'type', 'perPage', 'page'], 'integer'],
             ['stylist', 'string'],
         ];
     }
@@ -28,9 +31,10 @@ class DesignCenterImageStatisticsDto extends Model
     public function attributeLabels(): array
     {
         return [
-            'beginTime'      => '开始时间',
-            'endTime'        => '结束时间',
-            'stylist'        => '设计师',
+            'beginTime' => '开始时间',
+            'endTime'   => '结束时间',
+            'stylist'   => '设计师',
+            'type'      => '类型',
         ];
     }
 

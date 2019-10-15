@@ -21,10 +21,7 @@ class DesignCenterImageStatisticsDoManager extends BaseRepository
             'count(CASE WHEN type="productDetail" THEN 1 END) as productDetail',
             'count(CASE WHEN type="drillShow" THEN 1 END) as drillShow',
             'count(CASE WHEN type="throughCar" THEN 1 END) as throughCar',
-            'count(CASE WHEN type="landingPage" THEN 1 END) as landingPage',
-            'count(CASE WHEN audit_status=0 THEN 1 END) as stayAudit',
-            'count(CASE WHEN audit_status=1 THEN 1 END) as pass',
-            'count(CASE WHEN audit_status=2 THEN 1 END) as notPass'
+            'count(CASE WHEN type="landingPage" THEN 1 END) as landingPage'
         ];
 
         $this->query->select($field)
@@ -46,5 +43,31 @@ class DesignCenterImageStatisticsDoManager extends BaseRepository
         ]);
     }
 
+    /**
+     * 查询审核统计
+     * @param DesignCenterImageStatisticsDto $designCenterImageStatisticsDto
+     * @return ActiveDataProvider
+     * @author: weifeng
+     */
+    public function auditStatistics(DesignCenterImageStatisticsDto $designCenterImageStatisticsDto): ActiveDataProvider
+    {
+        $field = ['id', 'stylist',
+            'count(CASE WHEN audit_status=0 THEN 1 END) as stayAudit',
+            'count(CASE WHEN audit_status=1 THEN 1 END) as pass',
+            'count(CASE WHEN audit_status=2 THEN 1 END) as notPass'
+        ];
+
+        $this->query->select($field)
+            ->andFilterWhere(['>', 'design_finish_time', $designCenterImageStatisticsDto->beginTime])
+            ->andFilterWhere(['<', 'design_finish_time', $designCenterImageStatisticsDto->endTime])
+            ->andFilterWhere(['=', 'stylist',            $designCenterImageStatisticsDto->stylist])
+            ->andFilterWhere(['=', 'type',            $designCenterImageStatisticsDto->type])
+            ->groupBy('stylist');
+
+        return new ActiveDataProvider([
+            'query' => $this->query->asArray(),
+            ]);
+
+    }
 
 }

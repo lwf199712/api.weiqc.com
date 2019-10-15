@@ -127,6 +127,12 @@ class DesignCenterImageController extends AdminBaseController
             $imagePath = $this->designCenterImageService->uploadImage($this->designCenterImageForm, $this->designCenterImageForm->type);
             //获取图片地址
             $this->designCenterImageForm->picture_address = $imagePath;
+            //上传成功删除旧图片
+            if (!empty($imagePath)) {
+                //根据路径删除图片文件
+                $dePath = $this->designCenterImageService->viewImage((int)$this->designCenterImageForm->id);
+                unlink(Yii::$app->basePath . '/web' . $dePath['picture_address']);
+            }
             $this->designCenterImageService->updateImage($this->designCenterImageForm);
             return ['修改成功', 200, ['picture_name' => $this->designCenterImageForm->imageFile->baseName . '.' . $this->designCenterImageForm->imageFile->extension]];
         } catch (Exception $exception) {

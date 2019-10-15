@@ -14,4 +14,12 @@ interface DesignCenterImageStatisticsService
      */
     public function listImage(DesignCenterImageStatisticsDto $designCenterImageStatisticsDto): array;
 
+    /**
+     * 审核统计
+     * @param DesignCenterImageStatisticsDto $designCenterImageStatisticsDto
+     * @return array
+     * @author: weifeng
+     */
+    public function auditStatistics(DesignCenterImageStatisticsDto $designCenterImageStatisticsDto): array;
+
 }
