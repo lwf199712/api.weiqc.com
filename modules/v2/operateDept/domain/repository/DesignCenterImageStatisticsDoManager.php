@@ -61,12 +61,12 @@ class DesignCenterImageStatisticsDoManager extends BaseRepository
             ->andFilterWhere(['>', 'design_finish_time', $designCenterImageStatisticsDto->beginTime])
             ->andFilterWhere(['<', 'design_finish_time', $designCenterImageStatisticsDto->endTime])
             ->andFilterWhere(['=', 'stylist',            $designCenterImageStatisticsDto->stylist])
-            ->andFilterWhere(['=', 'type',            $designCenterImageStatisticsDto->type])
+            ->andFilterWhere(['=', 'type',               $designCenterImageStatisticsDto->type])
             ->groupBy('stylist');
 
         return new ActiveDataProvider([
             'query' => $this->query->asArray(),
-            ]);
+        ]);
 
     }
 

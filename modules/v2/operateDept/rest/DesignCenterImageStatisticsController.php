@@ -75,7 +75,7 @@ class DesignCenterImageStatisticsController extends AdminBaseController
     }
 
     /**
-     * 计中心图片统计-审核统计
+     * 设计中心图片统计-审核统计
      * @return array
      * @author: weifeng
      */

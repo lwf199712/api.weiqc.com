@@ -7,12 +7,13 @@ use yii\db\Migration;
  */
 class m191014_114129_create_table_design_center_image extends Migration
 {
+    public $tableName = '{{%design_center_image}}';
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%design_center_image}}', [
+        $this->createTable($this->tableName, [
             'id'                => $this->primaryKey(),
             'design_finish_time'=> $this->integer(11)->notNull()->defaultValue(0)->comment('设计完成时间'),
             'name'              => $this->string()->notNull()->comment('名称'),
