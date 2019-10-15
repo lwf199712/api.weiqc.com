@@ -25,10 +25,11 @@ class DesignCenterImageDoManager extends BaseRepository
             ->andFilterWhere(['=', 'size',           $designCenterImageQuery->size])
             ->andFilterWhere(['=', 'type',           $designCenterImageQuery->type]);
 
+        $perPage = $designCenterImageQuery->getPerPage();
         return new ActiveDataProvider([
             'query' => $this->query->asArray(),
             'pagination' => [
-                'pageSize' => $designCenterImageQuery->getPerPage() ?? 10,
+                'pageSize' => $perPage ?? 10,
             ],
             'sort' => [
                 'attributes' => ['id'],

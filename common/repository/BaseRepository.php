@@ -12,8 +12,6 @@ use yii\db\ActiveRecord;
  * Class BaseRepository
  * @property ActiveRecord $model
  * @property ActiveQuery $query
- * @method  listDataProvider(Model $model)
- * @method viewData(int $id)
  * @package app\common\repository11
  */
 abstract class BaseRepository extends BaseObject
