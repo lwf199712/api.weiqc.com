@@ -114,10 +114,10 @@ class DesignCenterImageImpl extends BaseObject implements DesignCenterImageServi
      */
     public function deleteImage(DesignCenterImageForm $designCenterImageForm): int
     {
+        //如果有删除记录，根据路径删除图片文件
+        $dePath = $this->viewImage((int)$designCenterImageForm->id);
         $result = $this->model->deleteEntity($designCenterImageForm);
         if ($result) {
-            //如果有删除记录，根据路径删除图片文件
-            $dePath = $this->viewImage((int)$designCenterImageForm->id);
             unlink(Yii::$app->basePath . '/web' . $dePath['picture_address']);
         }
         if ($result === false) {
