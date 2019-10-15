@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace app\modules\v2\operateDept\domain\entity;
 
 use app\models\dataObject\DesignCenterImageDo;
+use app\models\User;
 use app\modules\v2\operateDept\domain\dto\DesignCenterImageForm;
+use Yii;
 use yii\db\Exception;
 
 class DesignCenterImageEntity extends DesignCenterImageDo
@@ -69,11 +71,16 @@ class DesignCenterImageEntity extends DesignCenterImageDo
 
     public function auditEntity(DesignCenterImageForm $designCenterImageForm): bool
     {
+
+        $id = Yii::$app->user->getId();
+        /** @var User $user */
+        $user = User::findOne(['id' => $id]);
         /** @var DesignCenterImageDo $model */
         $model = self::findOne($designCenterImageForm->id);
         $model->audit_status    = $designCenterImageForm->audit_status;
         $model->audit_opinion   = $designCenterImageForm->audit_opinion;
         $model->audit_time      = time();
+        $model->auditor         = $user->realname;
         return $model->save();
     }
 }
