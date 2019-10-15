@@ -2,6 +2,7 @@
 
 namespace app\modules\v2\operateDept\service\impl;
 
+use app\models\dataObject\DesignCenterImageDo;
 use app\modules\v2\operateDept\domain\dto\DesignCenterImageForm;
 use app\modules\v2\operateDept\domain\dto\DesignCenterImageQuery;
 use app\modules\v2\operateDept\domain\entity\DesignCenterImageEntity;
@@ -149,6 +150,7 @@ class DesignCenterImageImpl extends BaseObject implements DesignCenterImageServi
      */
     public function viewImage(int $id): array
     {
+        /** @var DesignCenterImageDo $model */
         $model = $this->designCenterImageDoManager->viewData($id);
         if ($model === null) {
             throw new RuntimeException('查看设计中心图片失败');
