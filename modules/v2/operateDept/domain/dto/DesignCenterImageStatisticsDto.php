@@ -23,8 +23,8 @@ class DesignCenterImageStatisticsDto extends Model
     public function rules(): array
     {
         return [
-            [['beginTime', 'endTime', 'type', 'perPage', 'page'], 'integer'],
-            ['stylist', 'string'],
+            [['beginTime', 'endTime', 'perPage', 'page'], 'integer'],
+            [['stylist', 'type'], 'string'],
         ];
     }
 
