@@ -7,6 +7,10 @@
  */
 
 use app\api\toutiaoMarketingApi\oauth\service\impl\OauthImpl;
+use app\api\uacApi\service\impl\OauthImpl as UacOauthImpl;
+use app\api\uacApi\service\impl\UserImpl as UacUserImpl;
+use app\api\uacApi\service\Oauth as UacOauthService;
+use app\api\uacApi\service\User as UacUserService;
 use app\common\infrastructure\service\DataSetCalculateService;
 use app\common\infrastructure\service\ExcelService;
 use app\common\infrastructure\service\impl\DataSetCalculateImpl;
@@ -25,6 +29,8 @@ $containerList = [
 
     //api接口
     OauthService::class            => OauthImpl::class,
+    UacOauthService::class         => UacOauthImpl::class,
+    UacUserService::class          => UacUserImpl::class,
 
     //领域服务
     StaticUrlDeliveryVolumeService::class       => StaticUrlDeliveryVolumeImpl::class,
