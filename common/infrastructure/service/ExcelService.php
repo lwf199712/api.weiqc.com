@@ -11,8 +11,16 @@ interface ExcelService
      * @param string $filename
      * @author zhuozhen
      */
-    public function export(array $data,string $filename): void;
+    public function export(array $data, string $filename): void;
 
+    /**
+     * @param array  $data
+     * @param string $filename
+     * @return string
+     * @author dengkai
+     * @date   2019/10/10
+     */
+    public function exportExcelFile(array $data, string $filename): string;
 
     /**
      * @param string $filename   文件名
