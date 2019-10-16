@@ -1,5 +1,4 @@
 <?php
-/** @noinspection InterfacesAsConstructorDependenciesInspection */
 declare(strict_types=1);
 
 namespace app\modules\v2\operateDept\rest;
@@ -35,8 +34,8 @@ class DesignCenterImageStatisticsController extends AdminBaseController
     public function verbs(): array
     {
         return [
-            'index' => ['GET', 'HEAD', 'OPTIONS'],
-            'actionStatistics' => ['GET', 'HEAD', 'OPTIONS'],
+            'index'      => ['GET', 'HEAD', 'OPTIONS'],
+            'statistics' => ['GET', 'HEAD', 'OPTIONS']
         ];
     }
 
