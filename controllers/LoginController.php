@@ -53,9 +53,12 @@ class LoginController extends Controller
             if ($user === null) {
                 User::createUser($userInfo);
                 $user = User::findByUsername($userInfo->username);
+            }elseif (empty($user->realname)){
+                $user->realname = $userInfo->realName;
+                $user->save();
             }
             if (User::checkRoleExist($user->getId()) === false) {
-                throw new HttpException(403, '你的账号暂时还没分配权限，请联系开发中心－陈永彬');
+                throw new HttpException(403, '你的账号暂时还没分配权限，请联系部门主管');
             }
             [$message, $code, $data] = ['success', 200, $user->access_token];
         } catch (Exception $exception) {
