@@ -23,12 +23,12 @@ use yii\helpers\UnsetArrayValue;
  * @property int    $update_time     更新时间
  * @property int    $is_delete       删除：0-未删除/1-已删除
  */
-class DeliveryVolumeDo extends \yii\db\ActiveRecord
+class DeliveryVolumeDo extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%statis_url_putvolume}}';
     }
@@ -36,7 +36,7 @@ class DeliveryVolumeDo extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['put_volume', 'conversion_cost'], 'number'],
@@ -48,7 +48,7 @@ class DeliveryVolumeDo extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id'              => 'ID',
@@ -65,13 +65,13 @@ class DeliveryVolumeDo extends \yii\db\ActiveRecord
     }
 
 
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'time'   => [
                 'class'      => TimestampBehavior::class,
                 'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => ['create_time', 'update_time'],
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['create_time'],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['update_time'],
                 ],
             ],
