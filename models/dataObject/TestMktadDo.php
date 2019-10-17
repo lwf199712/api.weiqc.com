@@ -8,6 +8,7 @@ use yii\behaviors\AttributeBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\Connection;
 
 /**
  * This is the model class for table "bm_test_mktad".
@@ -41,6 +42,11 @@ class TestMktadDo extends ActiveRecord
     public static function tableName(): string
     {
         return '{{%test_mktad}}';
+    }
+
+    public static function getDb(): Connection
+    {
+        return Yii::$app->dbToDc;
     }
 
     /**

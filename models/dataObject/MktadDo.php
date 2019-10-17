@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace app\models\dataObject;
 
 use app\models\User;
@@ -8,6 +10,7 @@ use yii\behaviors\AttributeBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\Connection;
 
 /**
  * This is the model class for table "bm_mktad".
@@ -31,6 +34,11 @@ class MktadDo extends ActiveRecord
     public static function tableName(): string
     {
         return '{{%mktad}}';
+    }
+
+    public static function getDb(): Connection
+    {
+        return Yii::$app->dbToDc;
     }
 
     /**
@@ -95,7 +103,7 @@ class MktadDo extends ActiveRecord
      */
     public function getMktadDetail(): ActiveQuery
     {
-        return $this->hasMany(MktadDetailDo::class, ['mkt_id' => 'id']);
+        return $this->hasMany(MktadDetailDo::class, ['mkt_id' => 'id'])->alias('md');
     }
 
     /**

@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace app\models\dataObject;
 
-use yii\db\ActiveQuery;
+use Yii;
 use yii\db\ActiveRecord;
+use yii\db\Connection;
 
 /**
  * This is the model class for table "bm_mktad_detail".
@@ -32,6 +33,11 @@ class MktadDetailDo extends ActiveRecord
     public static function tableName(): string
     {
         return '{{%mktad_detail}}';
+    }
+
+    public static function getDb(): Connection
+    {
+        return Yii::$app->dbToDc;
     }
 
     /**
