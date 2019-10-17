@@ -10,3 +10,9 @@ php yii migrate --migrationPath=@yii/rbac/migrations
 角色：职位
 
 权限：接口或接口集合
+
+
+### Unit Testing
+
+php vendor/bin/codecept run unit 
+

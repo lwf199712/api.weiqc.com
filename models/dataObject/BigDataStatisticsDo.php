@@ -2,8 +2,10 @@
 
 namespace app\models\dataObject;
 
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Connection;
 
 /**
  * This is the model class for table "bm_big_data_statistics".
@@ -32,6 +34,11 @@ class BigDataStatisticsDo extends ActiveRecord
     public static function tableName(): string
     {
         return '{{%big_data_statistics}}';
+    }
+
+    public static function getDb(): Connection
+    {
+        return Yii::$app->dbToDc;
     }
 
     /**

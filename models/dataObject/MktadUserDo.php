@@ -7,6 +7,7 @@ use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Connection;
 
 /**
  * This is the model class for table "bm_mktad_user".
@@ -27,6 +28,11 @@ class MktadUserDo extends ActiveRecord
     public static function tableName(): string
     {
         return '{{%mktad_user}}';
+    }
+
+    public static function getDb(): Connection
+    {
+        return Yii::$app->dbToDc;
     }
 
     /**
