@@ -20,6 +20,7 @@ class m191008_093013_create_product_library_table extends Migration
             'founder' => $this->string()->notNull()->comment('创建人'),
             'create_at' => $this->integer()->defaultValue(0)->comment('创建时间'),
         ]);
+        $this->addCommentOnTable($this->tableName, '产品库表');
         $this->createIndex('uniq_product_name', $this->tableName, 'product_name', true);
     }
 

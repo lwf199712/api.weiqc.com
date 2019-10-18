@@ -28,6 +28,7 @@ class m191008_085841_create_window_project_table extends Migration
             'responsible_person' => $this->string()->notNull()->comment('负责人'),
             'create_at' => $this->integer()->defaultValue(0)->comment('创建时间'),
         ]);
+        $this->addCommentOnTable($this->tableName, '橱窗项目表');
         $this->createIndex('idx_product_name', $this->tableName, 'product_name');
         $this->createIndex('uniq_product_name_period_account_and_id', $this->tableName,['product_name', 'period', 'account_and_id'], true);
     }
