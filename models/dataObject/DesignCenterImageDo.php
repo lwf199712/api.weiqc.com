@@ -2,8 +2,6 @@
 
 namespace app\models\dataObject;
 
-use app\models\User;
-use yii\behaviors\AttributeBehavior;
 use yii\db\ActiveRecord;
 
 /**
