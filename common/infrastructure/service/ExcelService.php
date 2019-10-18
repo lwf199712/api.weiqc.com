@@ -7,11 +7,12 @@ namespace app\common\infrastructure\service;
 interface ExcelService
 {
     /**
-     * @param array  $data 导出数据
+     * @param array $data 导出数据
      * @param string $filename
+     * @param int $mergeNum
      * @author zhuozhen
      */
-    public function export(array $data,string $filename): void;
+    public function export(array $data,string $filename, int $mergeNum = 0): void;
 
 
     /**
