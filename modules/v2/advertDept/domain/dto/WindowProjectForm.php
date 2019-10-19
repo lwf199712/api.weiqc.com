@@ -88,7 +88,11 @@ class WindowProjectForm extends Model
         if ($this->validate()){
             $this->setAttributes(['data_time' => strtotime($this->getAttributes(['data_time'])['data_time'])]);
             $windowProjectVo = new WindowProjectVo();
-            foreach (json_decode($this->getAttributes(['voArr'])['voArr'], true) as $value){
+            $voArr = json_decode($this->getAttributes(['voArr'])['voArr'], true);
+            if (!$voArr){
+                throw new IntegrityException('交易数据不能为空');
+            }
+            foreach ($voArr as $value){
                 $windowProjectVo->setAttributes($value);
                 if ($windowProjectVo->validate() === false) {
                     throw new IntegrityException('输入数据验证错误', $this->getErrors());
