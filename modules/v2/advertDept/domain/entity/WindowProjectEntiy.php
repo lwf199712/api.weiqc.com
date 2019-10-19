@@ -42,7 +42,7 @@ class WindowProjectEntiy extends WindowProjectDo
                 if (strpos($e->getMessage(), 'Duplicate entry')){
                     throw new Exception('已存在相同的产品：' . $windowProjectForm->product_name .
                         '、时间段：' . $value['period'] . '~' . ($value['period']+1) . '、账号的数据：' .
-                        $windowProjectForm->account_and_id . '，请检查好后再重新录入');
+                        $windowProjectForm->account_and_id . '、日期：'. $windowProjectForm->data_time . '，请检查好后再重新录入');
                 }
                 throw new Exception($e->getMessage());
             }
@@ -94,7 +94,7 @@ class WindowProjectEntiy extends WindowProjectDo
             if (strpos($e->getMessage(), 'Duplicate entry')){
                 throw new Exception('已存在相同的产品：' . $windowProjectForm->product_name .
                     '、时间段：' . $windowProjectForm->period . '~' . ($windowProjectForm->period+1) . '、账号的数据：' .
-                    $windowProjectForm->account_and_id . '，请检查好后再重新录入');
+                    $windowProjectForm->account_and_id . '、日期：'. $windowProjectForm->data_time . '，请检查好后再重新录入');
             }
             throw new Exception($e->getMessage());
         }
