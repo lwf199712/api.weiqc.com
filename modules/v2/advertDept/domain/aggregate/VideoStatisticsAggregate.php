@@ -56,10 +56,15 @@ class VideoStatisticsAggregate extends BaseObject
         $queryTime = $this->getQueryDate($videoStatisticsDto);
         $fieldOne = 'm.id,m.s_id,md.v_id,v.video_name';
         $query = $this->mktadEntity->selectVideoStatisticsPutData($videoStatisticsDto, $fieldOne, $queryTime, 'md.v_id');
-        $providerObj = $this->mktadEntity->getActiveDataProvider($query->asArray(), $videoStatisticsDto, ['md.id' => SORT_DESC]);
-        //获取分页总记录数
-        $count = $providerObj->getTotalCount();
-        $res = $providerObj->getModels();
+        if ($isExport) {
+            $res = $query->asArray()->all();
+        } else {
+            $providerObj = $this->mktadEntity->getActiveDataProvider($query->asArray(), $videoStatisticsDto, ['md.id' => SORT_DESC]);
+            //获取分页总记录数
+            $count = $providerObj->getTotalCount();
+            $res = $providerObj->getModels();
+        }
+
         //查询所有服务号
         $service = $this->mktadServiceEntity->selectAllService();
         $serviceList = array_column($service, 'service', 'id');
@@ -74,12 +79,7 @@ class VideoStatisticsAggregate extends BaseObject
 
         $putDataField = 'm.id,m.u_id,m.s_id,u.username,md.number,md.consume,md.r_id,md.v_id,md.is_test,md.dc_conversion_rate,md.leakage_rate';
         $putDataQuery = $this->mktadEntity->selectPutData($videoStatisticsDto, $putDataField, $videoIdArr, $queryTime);
-
-        if ($isExport) {
-            $putDataList = $putDataQuery->orderBy(['md.id' => SORT_DESC])->asArray()->all();
-        } else {
-            $putDataList = $this->mktadEntity->getActiveDataProvider($putDataQuery->asArray(), $videoStatisticsDto, ['md.id' => SORT_DESC])->getModels();
-        }
+        $putDataList = $putDataQuery->orderBy(['md.id' => SORT_DESC])->asArray()->all();
 
         //获取返点名称及返点值
         $rebateIdArr = array_unique(array_column($putDataList, 'r_id'));
@@ -133,11 +133,17 @@ class VideoStatisticsAggregate extends BaseObject
     {
         //通过测试号进行分组，以准确获取分页数据
         $queryTime = $this->getQueryDate($videoStatisticsDto);
-        $query = $this->mktadEntity->selectPutData($videoStatisticsDto, 'm.id,m.u_id,m.s_id,md.number,u.username', [$videoStatisticsDto->videoId], $queryTime, 'md.number');
-        $providerObj = $this->mktadEntity->getActiveDataProvider($query->asArray(), $videoStatisticsDto, ['md.id' => SORT_DESC]);
-        //获取分页总记录数
-        $count = $providerObj->getTotalCount();
-        //        $res = $providerObj->getModels();
+        $query = $this->mktadEntity->selectPutData($videoStatisticsDto, 'm.id,m.u_id,m.s_id,md.number,u.username', [$videoStatisticsDto->videoId], $queryTime, 'md.number')->asArray();
+
+        if ($isExport) {
+            $res = $query->all();
+        } else {
+            $providerObj = $this->mktadEntity->getActiveDataProvider($query, $videoStatisticsDto, ['md.id' => SORT_DESC]);
+            //获取分页总记录数
+            $count = $providerObj->getTotalCount();
+            $res = $providerObj->getModels();
+        }
+
         //查询所有服务号
         $service = $this->mktadServiceEntity->selectAllService();
         $serviceList = array_column($service, 'service', 'id');
@@ -147,16 +153,11 @@ class VideoStatisticsAggregate extends BaseObject
         }
 
         //获取当前页 大投/测试编号、跟进人、渠道投放量详情 三列的数据
-        //        $numberArr = array_column($res, 'number');
+        $numberArr = array_column($res, 'number');
         $putDataField = 'm.id,m.u_id,m.s_id,md.number,u.username,md.consume,md.r_id,md.is_test';
         $putDataQuery = $this->mktadEntity->selectPutData($videoStatisticsDto, $putDataField, [$videoStatisticsDto->videoId], $queryTime);
-        //        $putDataQuery->andWhere(['md.number' => $numberArr])->asArray();
+        $putDataList = $putDataQuery->andWhere(['md.number' => $numberArr])->orderBy(['md.id' => SORT_DESC])->asArray()->all();
 
-        if ($isExport) {
-            $putDataList = $putDataQuery->orderBy(['md.id' => SORT_DESC])->asArray()->all();
-        } else {
-            $putDataList = $this->mktadEntity->getActiveDataProvider($putDataQuery->asArray(), $videoStatisticsDto, ['md.id' => SORT_DESC])->getModels();
-        }
 
         //获取返点名称及返点值
         $rebateIdArr = array_unique(array_column($putDataList, 'r_id'));
@@ -559,7 +560,7 @@ class VideoStatisticsAggregate extends BaseObject
 
         $tableHeader = ['大投/测试编号', '跟进人', '渠道投放量详情', '测试进粉数', '测试实际成本', '粉单', '转化率', '17岁以下占比', '沉默率', '取关率', 'ROI', '变现',];
 
-        ExcelFacade::export(array_merge([$tableHeader], $data), '视频测试详情首页数据',['C']);
+        ExcelFacade::export(array_merge([$tableHeader], $data), '视频测试详情首页数据', ['C']);
 
         return ['path' => []];
     }
