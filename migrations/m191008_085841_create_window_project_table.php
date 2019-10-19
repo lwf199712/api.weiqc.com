@@ -30,7 +30,7 @@ class m191008_085841_create_window_project_table extends Migration
         ]);
         $this->addCommentOnTable($this->tableName, '橱窗项目表');
         $this->createIndex('idx_product_name', $this->tableName, 'product_name');
-        $this->createIndex('uniq_product_name_account_and_id_data_time_period', $this->tableName,['product_name', 'account_and_id', 'data_time', 'period'], true);
+        $this->createIndex('uniq_product_account_date_period', $this->tableName,['product_name', 'account_and_id', 'data_time', 'period'], true);
     }
 
     /**
