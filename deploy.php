@@ -14,6 +14,7 @@ set('repository', 'git@gitlab.fandow.com:fandow/api.weiqc.com.git');
 add('shared_files', [
     'config/db.php',
     'config/dbOA.php', // OA数据库配置文件
+    'config/db_dc.php',
 ]);
 
 
