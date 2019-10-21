@@ -8,6 +8,7 @@ use app\models\dataObject\BigDataStatisticsDo;
 use app\models\dataObject\TestMktadDetailDo;
 use app\models\dataObject\TestMktadDo;
 use app\modules\v2\advertDept\domain\dto\VideoStatisticsDto;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\Query;
@@ -48,7 +49,7 @@ class TestMktadEntity extends TestMktadDo
         }
 
 //        $lists = $query->asArray()->all();
-        $lists = $query->all();
+        $lists = $query->all(Yii::$app->dbToDc);
         return $lists;
     }
 }
