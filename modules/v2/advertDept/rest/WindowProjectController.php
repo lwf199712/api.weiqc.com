@@ -47,7 +47,7 @@ class WindowProjectController extends AdminBaseController
             'read'   => ['GET', 'HEAD', 'OPTIONS'],
             'update' => ['POST', 'OPTIONS'],
             'delete' => ['DELETE', 'OPTIONS'],
-            'export'  => ['POST', 'OPTIONS'],
+            'export'  => ['GET', 'OPTIONS'],
         ];
     }
 
