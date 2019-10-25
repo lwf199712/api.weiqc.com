@@ -23,7 +23,7 @@ class LoginController extends Controller
         $response = new Response();
         $response->format = Response::FORMAT_JSON;
 
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        if ($model->login()) {
             /** @var User $user */
             $user =  $model->getUser();
             $response->data = [
