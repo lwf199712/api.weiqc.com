@@ -23,7 +23,10 @@ use app\models\User;
 use yii\caching\FileCache;
 
 $params = require __DIR__ . '/params.php';
-$db     = require __DIR__ . '/db.php';
+$db = require __DIR__ . '/db.php';
+//线上dc数据库配置文件
+$dbToDc = require __DIR__ . '/db_dc.php';
+
 //v1容器注册
 require_once __DIR__ . '/container/v1_container.php';
 //v2容器注册
@@ -77,10 +80,10 @@ $config = [
                     (Yii::$app->controller instanceof RestBaseController || Yii::$app->controller instanceof AdminBaseController) &&
                     $response->data !== null && $event->sender->format === 'json'
                 ) {
-                    $responseData   = $response->data;
-                    $message        = array_shift($responseData);
-                    $code           = array_shift($responseData);
-                    $data           = array_shift($responseData);
+                    $responseData = $response->data;
+                    $message = array_shift($responseData);
+                    $code = array_shift($responseData);
+                    $data = array_shift($responseData);
                     $response->data = [
                         'message' => (string)$message,
                         'code'    => (int)$code,
@@ -165,6 +168,7 @@ $config = [
             // 'cache' => 'cache',
         ],
         'db'           => $db,
+        'dbToDc'       => $dbToDc
     ],
 
     'as access' => [
@@ -185,14 +189,14 @@ $config = [
 
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
-    $config['bootstrap'][]      = 'debug';
+    $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => DebugModule::class,
         // uncomment the following to add your IP if you are not connecting from localhost.
         //'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 
-    $config['bootstrap'][]    = 'gii';
+    $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => GiiModule::class,
         // uncomment the following to add your IP if you are not connecting from localhost.

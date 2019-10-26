@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\api\uacApi\dto\UserInfoDto;
 use mdm\admin\components\UserStatus;
 use Yii;
 use yii\base\Action;
@@ -9,7 +10,9 @@ use yii\base\Exception;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Query;
 use yii\filters\RateLimitInterface;
+use yii\rbac\Role;
 use yii\web\IdentityInterface;
 use yii\web\Request;
 
@@ -19,6 +22,7 @@ use yii\web\Request;
  *
  * @property int $id
  * @property string $username
+ * @property string $realname
  * @property string $auth_key
  * @property string $password_hash
  * @property string $password_reset_token
@@ -40,6 +44,32 @@ class User extends ActiveRecord implements IdentityInterface,RateLimitInterface
     public static function tableName() : string
     {
         return '{{%user}}';
+    }
+
+    /**
+     * 创建用户
+     * @param UserInfoDto $userInfo
+     * @return bool
+     */
+    public static function createUser(UserInfoDto $userInfo) : bool
+    {
+        $model = new self();
+        $model->username = $userInfo->username;
+        $model->realname = $userInfo->realName;
+        return $model->save();
+    }
+
+    /**
+     * 检查用户有无分配角色
+     * @param int $id
+     * @return bool
+     */
+    public static function checkRoleExist(int $id) : bool
+    {
+      return  (new Query())
+            ->from('{{%auth_assignment}}')
+            ->where(['=','user_id',$id])
+            ->exists();
     }
 
     /**

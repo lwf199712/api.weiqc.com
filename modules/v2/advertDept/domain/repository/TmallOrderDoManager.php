@@ -12,13 +12,21 @@ class TmallOrderDoManager extends BaseRepository
     /** @var string 资源类名 */
     public static $modelClass = TmallOrderDo::class;
 
-    public function listDataProvider(TmallOrderDto $tmallOrderDto) : ActiveDataProvider
+    public function listDataProvider(TmallOrderDto $tmallOrderDto) : array
     {
-        $this->query
-            ->select(['create_at','phone','price'])
-            ->where(['>','create_at',$tmallOrderDto->getSince()]);
+        $data =$this->query
+            ->select(['id','create_at','phone','price'])
+            ->where(['>','create_at',$tmallOrderDto->getSince()])
+            ->asArray()
+            ->all();
 
-        return new ActiveDataProvider([
+        if (empty($data)){
+            return [];
+        }
+
+        return $data;
+
+        /*return new ActiveDataProvider([
             'query'      => $this->query->asArray(),
             'pagination' => [
                 'pageSize' => $params['perPage'] ?? 1000,
@@ -27,6 +35,6 @@ class TmallOrderDoManager extends BaseRepository
                 'attributes'   => ['create_at'],
                 'defaultOrder' => ['create_at' => SORT_DESC],
             ],
-        ]);
+        ]);*/
     }
 }

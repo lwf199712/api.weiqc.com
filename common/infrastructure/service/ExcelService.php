@@ -9,11 +9,21 @@ interface ExcelService
     /**
      * @param array $data 导出数据
      * @param string $filename
+     * @param array $lineFeed
      * @param int $mergeNum
      * @author zhuozhen
      */
-    public function export(array $data,string $filename, int $mergeNum = 0): void;
+    public function export(array $data,string $filename, array $lineFeed = [], int $mergeNum = 0): void;
 
+    /**
+     * @param array $data
+     * @param string $filename
+     * @param int $mergeNum
+     * @return string
+     * @author dengkai
+     * @date   2019/10/10
+     */
+    public function exportExcelFile(array $data, string $filename, int $mergeNum = 0): string;
 
     /**
      * @param string $filename   文件名

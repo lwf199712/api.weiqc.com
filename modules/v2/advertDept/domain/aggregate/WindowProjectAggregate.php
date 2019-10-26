@@ -145,11 +145,12 @@ class WindowProjectAggregate extends BaseObject
     /**
      * 查询导出数据
      * @param WindowProjectDto $windowProjectDto
+     * @return string
      * @throws Exception
      * author: pengguochao
      * Date Time 2019/10/17 18:12
      */
-    public function exportWindowProject(WindowProjectDto $windowProjectDto): void
+    public function exportWindowProject(WindowProjectDto $windowProjectDto): string
     {
         $windowProjectDto->setAttributes(['data_time' => strtotime($windowProjectDto->getAttributes(['data_time'])['data_time'])]);
         $dateTime = date('md', $windowProjectDto->getAttributes(['data_time'])['data_time']);
@@ -191,6 +192,6 @@ class WindowProjectAggregate extends BaseObject
             'trueTransaction' => '真实成交（总成交-抽佣）', 'consume' => '总消耗', 'realTimeROI' => '实时ROI（实时真实成交/消耗）',
             'totalROI' => '总ROI（真实成交/消耗）', 'transaction_data' => $dateTime . '生意参谋成交数据'
         ];*/
-        ExcelFacade::export(array_merge([$tableHeader], [$tableHeaderTwo], $data), '-MVE2', 1);
+        return ExcelFacade::exportExcelFile(array_merge([$tableHeader], [$tableHeaderTwo], $data), date('Y-m-d', time()), 1);
     }
 }

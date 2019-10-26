@@ -34,5 +34,7 @@ tests/_support/_generated
 /.vagrant
 
 config/db.php
+config/db_dc.php
 
+web/temp/*
 web/uploads/*

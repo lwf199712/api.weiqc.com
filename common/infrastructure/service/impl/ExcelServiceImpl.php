@@ -9,12 +9,12 @@ use app\common\exception\SpreadSheetException;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Yii;
 use yii\base\Component;
 
 /**
@@ -32,18 +32,19 @@ class ExcelServiceImpl extends Component implements ExcelService
 
 
     /**
-     * @param array $data 导出数据
+     * @param array  $data 导出数据
      * @param string $filename
      * @param int $mergeNum
+     * @param array  $lineFeed
      * @throws SpreadSheetException
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
      * @author zhuozhen & pengguochao
      */
-    public function export(array $data, string $filename, int $mergeNum = 0): void
+    public function export(array $data, string $filename, array $lineFeed = [], int $mergeNum = 0): void
     {
-        $this->spreadsheet = $this->getXlsxTemplate($data, $mergeNum);
-        $writer            = new Xlsx($this->spreadsheet);
+        $this->spreadsheet = $this->getXlsxTemplate($data, $lineFeed, $mergeNum);
+        $writer = new Xlsx($this->spreadsheet);
         header('Pragma: public');
         header('Expires: 0');
         header('Cache-Control:must-revalidate, post-check=0, pre-check=0');
@@ -55,13 +56,35 @@ class ExcelServiceImpl extends Component implements ExcelService
         header('Content-Disposition:attachment;filename=' . "$filename.xlsx");
         header('Content-Transfer-Encoding:binary');
         $writer->save('php://output');
+        exit();
+    }
+
+    /**
+     * @param array $data
+     * @param string $filename
+     * @param int $mergeNum
+     * @return string
+     * @throws SpreadSheetException
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     * @author dengkai
+     * @date   2019/10/10
+     */
+    public function exportExcelFile(array $data, string $filename, int $mergeNum = 0): string
+    {
+        $this->spreadsheet = $this->getXlsxTemplate($data, [], $mergeNum);
+        $writer = new Xlsx($this->spreadsheet);
+        $path = Yii::$app->basePath . "/web/temp/$filename.xlsx";
+        $writer->save($path);
+        $path = Yii::$app->request->hostInfo . $path;
+        return $path;
     }
 
     /**
      * @param string $filename
-     * @param int $sheet
-     * @param int $columnCnt
-     * @param bool $needHeader
+     * @param int    $sheet
+     * @param int    $columnCnt
+     * @param bool   $needHeader
      * @return array
      * @throws Exception
      * @throws \PhpOffice\PhpSpreadsheet\Exception
@@ -70,7 +93,7 @@ class ExcelServiceImpl extends Component implements ExcelService
     public function import(string $filename, int $sheet = 0, int $columnCnt = 0, bool $needHeader = false): array
     {
         $this->spreadsheet = IOFactory::load($filename);
-        $currSheet         = $this->spreadsheet->getSheet($sheet);
+        $currSheet = $this->spreadsheet->getSheet($sheet);
 
         if (0 === $columnCnt) {
             /* 取得最大的列号 */
@@ -81,10 +104,10 @@ class ExcelServiceImpl extends Component implements ExcelService
 
         /* 获取总行数 */
         $rowCnt = $currSheet->getHighestRow();
-        $data   = [];
+        $data = [];
 
         /* 读取内容 */
-        $asyncResult        = static function (self $self) use ($columnCnt, $rowCnt, $currSheet) {
+        $asyncResult = static function (self $self) use ($columnCnt, $rowCnt, $currSheet) {
             for ($_row = 1; $_row <= $rowCnt; $_row++) {
                 yield $self->readCell($columnCnt, $_row, $currSheet);
             }
@@ -105,50 +128,61 @@ class ExcelServiceImpl extends Component implements ExcelService
 
 
     /**
-     * @param $source
-     * @param int $mergeNum
+     * @param array $source
+     * @param array $lineFeed  要自动换行的列
+     * @param int $mergeNum     前几行单行合并
      * @return Spreadsheet
      * @throws SpreadSheetException
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @author zhuozhen
      */
-    private function getXlsxTemplate($source, $mergeNum = 0): Spreadsheet
+    private function getXlsxTemplate(array $source, array $lineFeed = [], $mergeNum = 0): Spreadsheet
     {
         if (!is_array($source) || !is_array(current($source))) {
             throw new SpreadSheetException('导出模板失败!!模板数据类型错误!', self::EXCEPTION_CODE);
         }
         //生成文档
         $spreadsheet = new Spreadsheet();
-        $sheet       = $spreadsheet->getActiveSheet();
+        $sheet = $spreadsheet->getActiveSheet();
         //置字体大小为10
         $spreadsheet->getDefaultStyle()->getFont()->setName('Calibri');
         $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+
         $sheet->fromArray($source, NULL);
 
         //样式=边框线+对准
         $sheet->getStyle('A1:' . $this->intToChr(count(current($source)) - 1) . count($source))->applyFromArray(
             [
-                'borders' => [
+                'borders'   => [
                     'allBorders' => [
                         'borderStyle' => Border::BORDER_THIN,
-                        'color' => ['argb' => '00000000'],
+                        'color'       => ['argb' => '00000000'],
                     ],
                 ],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'vertical'   => Alignment::VERTICAL_CENTER,
                 ],
             ]
         );
+
         //设置宽度
-        for ($column = 1; $column <= (count(current($source)) - 1); $column++) {
-            $spreadsheet->getActiveSheet()->getColumnDimension($this->intToChr($column))->setAutoSize(true);
+        for ($column = 0; $column <= (count(current($source)) - 1); $column++) {
+            $sheet->getColumnDimension($this->intToChr($column))->setAutoSize(true);
         }
         //合并
         for ($row = 1; $row <= $mergeNum; $row++) {
             $columnName = $this->intToChr(count($source[$mergeNum])-1);
             $mergeRow = 'A' . $mergeNum . ':' . $columnName . $mergeNum;
-            $spreadsheet->getActiveSheet()->mergeCells($mergeRow);
+            $sheet->mergeCells($mergeRow);
+        }
+        if (!empty($lineFeed)) {
+            //激活单元格自动换行属性
+            for ($row = 2; $row <= (count($source) + 1); $row++) {
+                foreach ($lineFeed as $col) {
+                    $sheet->getStyle("$col$row")->getAlignment()->setWrapText(true);
+                }
+            }
         }
         return $spreadsheet;
     }
@@ -172,30 +206,30 @@ class ExcelServiceImpl extends Component implements ExcelService
 
     /**
      * 异步协程读取单元格(列数少时效果不明显)
-     * @param int $columnCnt
-     * @param int $_row
+     * @param int       $columnCnt
+     * @param int       $_row
      * @param Worksheet $currSheet
      * @return array
      * @author zhuozhen
      */
     private function readCell(int $columnCnt, int $_row, Worksheet $currSheet): array
     {
-        $data        = [];
+        $data = [];
         $asyncResult = static function () use ($columnCnt, $_row, $currSheet) {
             for ($_column = 1; $_column <= $columnCnt; $_column++) {
                 $cellName = Coordinate::stringFromColumnIndex($_column);
                 yield $cellName;
                 $cellId = $cellName . $_row;
-                $cell   = $currSheet->getCell($cellId);
+                $cell = $currSheet->getCell($cellId);
                 if ($cell === null) {
                     throw new SpreadSheetException("单元格$cellId 异常");
                 }
                 yield  trim($cell->getFormattedValue());
             }
         };
-        $resultSet   = $asyncResult();
-        $i           = 1;
-        $tempKey     = null;
+        $resultSet = $asyncResult();
+        $i = 1;
+        $tempKey = null;
         foreach ($resultSet as $item) {
             if ($i & 2 !== 0) {
                 $tempKey = $item;
@@ -210,31 +244,31 @@ class ExcelServiceImpl extends Component implements ExcelService
 
     /**
      * 异步协程读取单元格(列数少时效果不明显)
-     * @param int $columnCnt
-     * @param int $_row
+     * @param int       $columnCnt
+     * @param int       $_row
      * @param Worksheet $currSheet
      * @return array
      * @author zhuozhen
      */
     private function readCellByGo(int $columnCnt, int $_row, Worksheet $currSheet): array
     {
-        $data    = [];
+        $data = [];
         $keyChan = new chan($columnCnt);
         $valueChan = new chan($columnCnt);
 
         for ($_column = 1; $_column <= $columnCnt; $_column++) {
-            go(function () use ($keyChan,$valueChan,$_column,$_row,$currSheet) {
+            go(function () use ($keyChan, $valueChan, $_column, $_row, $currSheet) {
                 $cellName = Coordinate::stringFromColumnIndex($_column);
                 $keyChan->push($cellName);
                 $cellId = $cellName . $_row;
-                $cell   = $currSheet->getCell($cellId);
+                $cell = $currSheet->getCell($cellId);
                 if ($cell === null) {
                     throw new SpreadSheetException("单元格$cellId 异常");
                 }
                 $valueChan->push(trim($cell->getFormattedValue()));
             });
         }
-        while($columnCnt--){
+        while ($columnCnt--) {
             $tempKey = $keyChan->pop();
             $data[$_row][$tempKey] = $valueChan->pop();
         }

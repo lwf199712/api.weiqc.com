@@ -42,9 +42,11 @@ class TmallOrderAggregate extends BaseObject
      */
     public function listTmallOrder(TmallOrderDto $tmallOrderDto): array
     {
-        $data =  $this->tmallOrderDoManager->listDataProvider($tmallOrderDto)->models;
+        $data =  $this->tmallOrderDoManager->listDataProvider($tmallOrderDto);
         foreach ($data as &$datum){
-            $datum['phone'] = substr(hash('sha256',$datum['phone']),0,-4);
+            $datum['sub_phone_sha256'] = substr(hash('sha256',$datum['phone']),0,-4);
+            $datum['timestamp'] = $datum['create_at'];
+            unset($datum['phone'],$datum['create_at']);
         }
         return $data;
     }

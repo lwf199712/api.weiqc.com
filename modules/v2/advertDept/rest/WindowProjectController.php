@@ -163,8 +163,8 @@ class WindowProjectController extends AdminBaseController
     public function actionExport(): ?array
     {
         try {
-            $this->windowProjectAggregate->exportWindowProject($this->windowProjectDto);
-            return ['导出橱窗项目成功', 200, []];
+            $url = $this->windowProjectAggregate->exportWindowProject($this->windowProjectDto);
+            return ['导出橱窗项目成功', 200, ['url' => $url]];
         } catch (Exception $e) {
             return [$e->getMessage(), 500, []];
         }
