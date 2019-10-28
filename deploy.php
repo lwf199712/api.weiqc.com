@@ -106,8 +106,8 @@ task('deploy:vendors', static function () {
     $releasePath = get('release_path');
 
     //比较两个版本之间的 vendor 包是否有改变
-    $signCurrent = run('md5sum {{current_path}}' . '/composer.lock');
-    $signRelease = run('md5sum {{release_path}}' . '/composer.lock');
+ //   $signCurrent = run('md5sum {{current_path}}' . '/composer.lock');
+  //  $signRelease = run('md5sum {{release_path}}' . '/composer.lock');
 
     if (
         $currentPath !== $releasePath  //非首次发布
