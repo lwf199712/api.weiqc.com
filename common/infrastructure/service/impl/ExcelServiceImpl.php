@@ -76,7 +76,7 @@ class ExcelServiceImpl extends Component implements ExcelService
         $writer = new Xlsx($this->spreadsheet);
         $path = Yii::$app->basePath . "/web/temp/$filename.xlsx";
         $writer->save($path);
-        $path = Yii::$app->request->hostInfo . $path;
+        $path = Yii::$app->request->hostInfo . "/temp/$filename.xlsx";
         return $path;
     }
 
