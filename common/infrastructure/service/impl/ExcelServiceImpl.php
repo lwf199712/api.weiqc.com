@@ -34,15 +34,16 @@ class ExcelServiceImpl extends Component implements ExcelService
     /**
      * @param array  $data 导出数据
      * @param string $filename
+     * @param int $mergeNum
      * @param array  $lineFeed
      * @throws SpreadSheetException
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
-     * @author zhuozhen
+     * @author zhuozhen & pengguochao
      */
-    public function export(array $data, string $filename, array $lineFeed = []): void
+    public function export(array $data, string $filename, array $lineFeed = [], int $mergeNum = 0): void
     {
-        $this->spreadsheet = $this->getXlsxTemplate($data, $lineFeed);
+        $this->spreadsheet = $this->getXlsxTemplate($data, $lineFeed, $mergeNum);
         $writer = new Xlsx($this->spreadsheet);
         header('Pragma: public');
         header('Expires: 0');
@@ -59,8 +60,9 @@ class ExcelServiceImpl extends Component implements ExcelService
     }
 
     /**
-     * @param array  $data
+     * @param array $data
      * @param string $filename
+     * @param int $mergeNum
      * @return string
      * @throws SpreadSheetException
      * @throws \PhpOffice\PhpSpreadsheet\Exception
@@ -68,12 +70,13 @@ class ExcelServiceImpl extends Component implements ExcelService
      * @author dengkai
      * @date   2019/10/10
      */
-    public function exportExcelFile(array $data, string $filename): string
+    public function exportExcelFile(array $data, string $filename, int $mergeNum = 0): string
     {
-        $this->spreadsheet = $this->getXlsxTemplate($data);
+        $this->spreadsheet = $this->getXlsxTemplate($data, [], $mergeNum);
         $writer = new Xlsx($this->spreadsheet);
         $path = Yii::$app->basePath . "/web/temp/$filename.xlsx";
         $writer->save($path);
+        $path = Yii::$app->request->hostInfo . "/temp/$filename.xlsx";
         return $path;
     }
 
@@ -127,12 +130,13 @@ class ExcelServiceImpl extends Component implements ExcelService
     /**
      * @param array $source
      * @param array $lineFeed  要自动换行的列
+     * @param int $mergeNum     前几行单行合并
      * @return Spreadsheet
      * @throws SpreadSheetException
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @author zhuozhen
      */
-    private function getXlsxTemplate(array $source, array $lineFeed = []): Spreadsheet
+    private function getXlsxTemplate(array $source, array $lineFeed = [], $mergeNum = 0): Spreadsheet
     {
         if (!is_array($source) || !is_array(current($source))) {
             throw new SpreadSheetException('导出模板失败!!模板数据类型错误!', self::EXCEPTION_CODE);
@@ -166,7 +170,12 @@ class ExcelServiceImpl extends Component implements ExcelService
         for ($column = 0; $column <= (count(current($source)) - 1); $column++) {
             $sheet->getColumnDimension($this->intToChr($column))->setAutoSize(true);
         }
-
+        //合并
+        for ($row = 1; $row <= $mergeNum; $row++) {
+            $columnName = $this->intToChr(count($source[$mergeNum])-1);
+            $mergeRow = 'A' . $mergeNum . ':' . $columnName . $mergeNum;
+            $sheet->mergeCells($mergeRow);
+        }
         if (!empty($lineFeed)) {
             //激活单元格自动换行属性
             for ($row = 2; $row <= (count($source) + 1); $row++) {
@@ -175,7 +184,6 @@ class ExcelServiceImpl extends Component implements ExcelService
                 }
             }
         }
-
         return $spreadsheet;
     }
 

@@ -46,6 +46,7 @@ class LoginController extends Controller
         $response         = new Response;
         $response->format = Response::FORMAT_JSON;
 
+
         if (Yii::$app->request->getBodyParam('username') === '开发中心' && Yii::$app->request->getBodyParam('password') === 'fd123456'){
             $user = User::findByUsername('开发中心');
             $response->data = [
