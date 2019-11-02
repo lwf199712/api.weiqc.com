@@ -21,7 +21,8 @@ class DesignCenterImageStatisticsDoManager extends BaseRepository
             'count(CASE WHEN type="productDetail" THEN 1 END) as productDetail',
             'count(CASE WHEN type="drillShow" THEN 1 END) as drillShow',
             'count(CASE WHEN type="throughCar" THEN 1 END) as throughCar',
-            'count(CASE WHEN type="landingPage" THEN 1 END) as landingPage'
+            'count(CASE WHEN type="landingPage" THEN 1 END) as landingPage',
+            'count(CASE WHEN type="tweet" THEN 1 END) as tweet'
         ];
 
         $this->query->select($field)

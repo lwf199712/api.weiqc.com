@@ -20,6 +20,8 @@ use yii\db\ActiveRecord;
  * @property int $audit_time 审核时间
  * @property string $size 图片规格
  * @property string $type 类型（homePage/首页图片，mainImage/主图，productDetail/产品详情，drillShow/钻展，throughCar/直通车，landingPage/落地页）
+ * @property string $url 图片链接
+ * @property string $category 图片属性
  */
 class DesignCenterImageDo extends ActiveRecord
 {
@@ -38,7 +40,7 @@ class DesignCenterImageDo extends ActiveRecord
     {
         return [
             [['design_finish_time', 'upload_time', 'audit_status', 'audit_time'], 'integer'],
-            [['name', 'stylist', 'audit_opinion', 'auditor', 'size', 'type'], 'string'],
+            [['name', 'stylist', 'audit_opinion', 'auditor', 'size', 'type','url','category'], 'string'],
             [['picture_address'], 'string', 'max' => 1024],
         ];
     }
@@ -61,6 +63,8 @@ class DesignCenterImageDo extends ActiveRecord
             'audit_time' => 'Audit Time',
             'size' => 'Size',
             'type' => 'Type',
+            'url'  =>  'url',
+            'category' => 'category',
         ];
     }
 
