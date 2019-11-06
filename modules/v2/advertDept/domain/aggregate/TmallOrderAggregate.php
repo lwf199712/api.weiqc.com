@@ -44,7 +44,7 @@ class TmallOrderAggregate extends BaseObject
     {
         $data =  $this->tmallOrderDoManager->listDataProvider($tmallOrderDto);
         foreach ($data as &$datum){
-            $datum['sub_phone_sha256'] = substr(hash('sha256',$datum['phone']),0,-4);
+            $datum['sub_phone_sha256'] = substr(hash('sha256',trim(str_replace("'", '', $datum['phone']))),0,-4);
             $datum['timestamp'] = $datum['create_at'];
             unset($datum['phone'],$datum['create_at']);
         }
