@@ -289,7 +289,7 @@ class ExcelServiceImpl extends Component implements ExcelService
      */
     private function removeEmptyRow(array $data): array
     {
-        foreach ($data as $_row) {
+        foreach ($data as $index=>$_row) {
             $isNull = true;
             foreach ($_row as $cell) {
                 if (!empty($cell)) {
@@ -297,7 +297,7 @@ class ExcelServiceImpl extends Component implements ExcelService
                 }
             }
             if ($isNull) {
-                unset($data[$_row]);
+                unset($data[$index]);
             }
         }
         return $data;
