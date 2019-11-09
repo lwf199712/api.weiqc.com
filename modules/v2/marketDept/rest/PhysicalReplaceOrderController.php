@@ -83,6 +83,7 @@ class PhysicalReplaceOrderController extends AdminBaseController
                 return $this->physicalReplaceOrderForm;
                 break;
             case 'actionAudit':
+            case 'actionDelete':
                 return $this->physicalReplaceOrderDto;
                 break;
             default:
