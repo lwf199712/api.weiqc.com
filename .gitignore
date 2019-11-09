@@ -37,4 +37,4 @@ config/db.php
 config/db_dc.php
 
 web/temp/*
-web/uploads/*
+web/assets/uploads/*
