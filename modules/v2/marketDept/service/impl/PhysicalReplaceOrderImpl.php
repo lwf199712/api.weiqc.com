@@ -437,10 +437,13 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
      */
     private function getBrandArr(){
         $brandArr = $this->model::find()->select('brand')->distinct()->asArray()->all();
+        $brand = [];
         foreach ($brandArr as $k =>$b){
-            $brand[$k] = $b['brand'];
+            if (!empty($b['brand'])){
+                $brand[$k] = $b['brand'];
+            }
         }
-        return $brandArr;
+        return $brand;
     }
 
 }

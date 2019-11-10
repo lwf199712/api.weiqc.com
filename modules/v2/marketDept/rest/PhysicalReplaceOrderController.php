@@ -54,7 +54,7 @@ class PhysicalReplaceOrderController extends AdminBaseController
             'update'        => ['PUT', 'PATCH', 'OPTIONS'],
             'delete'        => ['DELETE', 'OPTIONS'],
             'import'        => ['POST', 'OPTIONS'],
-            'audit'         => ['GET', 'HEAD', 'OPTIONS'],
+            'audit'         => ['PUT', 'PATCH', 'OPTIONS'],
             'updateImport'  => ['POST', 'OPTIONS'],
             'updateStatus'  => ['POST', 'OPTIONS'],
         ];
