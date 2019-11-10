@@ -52,9 +52,8 @@ class PhysicalReplaceOrderForm extends Model
     {
         return [
             [['nick_name', 'we_chat_id', 'dispatch_time'], 'required'],
-            ['id', 'integer'],
-            [['nick_name', 'we_chat_id', 'dispatch_time', 'fans_amount', 'advert_location', 'put_times', 'follower', 'put_link', 'replace_product',
-                'replace_quantity', 'brand', 'average_reading', 'account_type', 'advert_read_num', 'new_fan_attention'], 'string'],
+            [['id', 'fans_amount', 'put_times', 'replace_quantity', 'average_reading', 'advert_read_num', 'new_fan_attention'], 'integer'],
+            [['nick_name', 'we_chat_id', 'dispatch_time', 'advert_location', 'follower', 'put_link', 'replace_product', 'brand', 'account_type'], 'string'],
             [['female_powder_proportion', 'volume_transaction'], 'double'],
         ];
     }
