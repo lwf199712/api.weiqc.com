@@ -32,15 +32,15 @@ class PhysicalReplaceOrderEntity extends PhysicalReplaceOrderDo
 
     /**
      * 删除实物置换订单实体
-     * @param PhysicalReplaceOrderForm $physicalReplaceOrderForm
+     * @param PhysicalReplaceOrderDto $physicalReplaceOrderDto
      * @return int
      * @author weifeng
      */
 
-    public function deleteEntity(PhysicalReplaceOrderForm $physicalReplaceOrderForm)
+    public function deleteEntity(PhysicalReplaceOrderDto $physicalReplaceOrderDto)
     {
         /** @var PhysicalReplaceOrderForm $model */
-        return self::deleteAll(['id' => $physicalReplaceOrderForm->id]);
+        return self::deleteAll(['id' => $physicalReplaceOrderDto->id]);
     }
 
     /**

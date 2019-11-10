@@ -133,14 +133,14 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
 
     /**
      * 删除订单
-     * @param PhysicalReplaceOrderForm $physicalReplaceOrderForm
+     * @param PhysicalReplaceOrderDto $physicalReplaceOrderDto
      * @return int|mixed
      * @throws Exception
      * @author weifeng
      */
-    public function delete(PhysicalReplaceOrderForm $physicalReplaceOrderForm)
+    public function delete(PhysicalReplaceOrderDto $physicalReplaceOrderDto)
     {
-        $res = $this->physicalReplaceOrderEntity->deleteEntity($physicalReplaceOrderForm);
+        $res = $this->physicalReplaceOrderEntity->deleteEntity($physicalReplaceOrderDto);
         if (!$res) {
             throw new Exception('删除失败！请重试！！！');
         }

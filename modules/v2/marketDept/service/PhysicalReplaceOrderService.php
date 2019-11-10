@@ -59,13 +59,13 @@ interface PhysicalReplaceOrderService
 
     /**
      * 实物置换订单删除
-     * @param PhysicalReplaceOrderForm $physicalReplaceOrderForm
+     * @param PhysicalReplaceOrderDto $physicalReplaceOrderDto
      * @return mixed
      * @author weifeng
      * @date 2019/10/31
      */
 
-    public function delete(PhysicalReplaceOrderForm $physicalReplaceOrderForm);
+    public function delete(PhysicalReplaceOrderDto $physicalReplaceOrderDto);
 
     /**
      * 实物置换订单审核

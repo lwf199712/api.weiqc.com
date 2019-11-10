@@ -165,7 +165,7 @@ class PhysicalReplaceOrderController extends AdminBaseController
 
     public function actionDelete()
     {
-        $num = $this->physicalReplaceOrderService->delete($this->physicalReplaceOrderForm);
+        $num = $this->physicalReplaceOrderService->delete($this->physicalReplaceOrderDto);
         return ['删除成功', 200, $num];
     }
 
