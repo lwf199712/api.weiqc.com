@@ -40,7 +40,7 @@ class PhysicalSendStatusController extends AdminBaseController
         return [
             'index'     => ['GET', 'HEAD', 'OPTIONS'],
             'export'    => ['GET', 'HEAD', 'OPTIONS'],
-            'update'    => ['POST', 'OPTIONS'],
+            'update'    => ['PUT', 'PATCH', 'OPTIONS'],
             'delete'    => ['DELETE', 'OPTIONS'],
         ];
     }
