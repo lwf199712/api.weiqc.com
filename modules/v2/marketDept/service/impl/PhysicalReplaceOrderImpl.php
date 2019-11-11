@@ -109,7 +109,6 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
             'female_powder_proportion'=>'女粉占比', 'put_link'=>'投放链接', 'replace_product'=>'置换产品', 'replace_quantity'=>'置换件数', 'brand'=>'品牌', 'average_reading'=>'平均阅读量', 'account_type'=>'账号类型', 'first_trial'=>'初审',
             'final_judgment'=>'终审', 'prize_send_status'=>'奖品寄出状态', 'advert_read_num'=>'广告阅读数量', 'volume_transaction'=>'成交额', 'new_fan_attention'=>'新粉丝关注数'];
 
-
         return ['exportName' => ExcelFacade::exportExcelFile(array_merge([$tableName],[$tableHeader], $listData), 'PhysicalReplaceOrder'.date('YmdHis', time()), 1)];
     }
 

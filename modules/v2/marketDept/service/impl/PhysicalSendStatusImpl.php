@@ -60,14 +60,14 @@ class PhysicalSendStatusImpl extends BaseObject implements PhysicalSendStatusSer
      */
     public function exportReplaceOrder(PhysicalSendStatusQuery $physicalSendStatusQuery)
     {
-        $tableHeader = ['收件人', '联系电话', '收货地址', '快递单号'];
+        $tableHeader = ['recipients'=>'收件人', 'phone'=>'联系电话', 'delivery_site'=>'收货地址', 'tracking_number'=>'快递单号'];
         $data = $this->listData($physicalSendStatusQuery)['lists'];
         foreach ($data as &$value) {
             unset($value['id'], $value['rp_id']);
         }
-        ExcelFacade::export(array_merge([$tableHeader], $data), '实物置换发货信息数据', ['C']);
-        //如果导出成功，上面一步不会报错，直接return
-        return ['status' => 1];
+        $tableName = ['实物置换发货信息数据'];
+
+        return ['exportName' => ExcelFacade::exportExcelFile(array_merge([$tableName],[$tableHeader], $data), 'PhysicalReplaceOrder'.date('YmdHis', time()), 1)];
     }
 
     /**

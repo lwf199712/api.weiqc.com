@@ -93,7 +93,7 @@ class PhysicalSendStatusController extends AdminBaseController
     {
         try {
             $data = $this->physicalSendStatusService->exportReplaceOrder($this->physicalSendStatusQuery);
-            return ['导出数据成功', 200, $data];
+            return ['导出数据成功', 200, $data['exportName']];
         } catch (Exception $exception) {
             return ['导出数据失败', 500, $exception->getMessage()];
         }
