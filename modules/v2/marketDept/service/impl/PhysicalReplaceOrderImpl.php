@@ -51,7 +51,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         $this->physicalSendStatusDo          = $physicalSendStatusDo;
         $this->physicalReplaceOrderEntity    = $physicalReplaceOrderEntity;
         $this->physicalReplaceOrderDto       = $physicalReplaceOrderDto;
-        $this->physicalReplaceOrderForm       = $physicalReplaceOrderForm;
+        $this->physicalReplaceOrderForm      = $physicalReplaceOrderForm;
         parent::__construct($config);
     }
 
@@ -66,7 +66,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         $list['lists']      = $this->physicalReplaceOrderDoManager->listDataProvider($physicalReplaceOrderQuery)->getModels();
         //统计数量
         $list['statistic']  = $this->statisticsData($list['lists']);
-        $list['brandArr']      = $this->getBrandArr();
+        $list['brandArr']   = $this->getBrandArr();
         $list['totalCount'] = $this->physicalReplaceOrderDoManager->listDataProvider($physicalReplaceOrderQuery)->getTotalCount();
         return $list;
     }
@@ -104,12 +104,13 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         $listData = $this->listData($physicalReplaceOrderQuery);
         //处理首页数据
         $listData = $this->dealExportListData($listData['lists']);
-        $tableHeader = ['昵称', '微信号', '粉丝量', '广告位置', '投放次数', '发文时间', '跟进人',
-            '女粉占比', '投放链接', '置换产品', '置换件数', '品牌', '平均阅读量', '账号类型', '初审',
-            '终审', '奖品寄出状态', '广告阅读数量', '成交额', '新粉丝关注数'];
-        ExcelFacade::export(array_merge([$tableHeader], $listData), '实物置换订单数据', ['C']);
-        //如果导出成功，上面一步不会报错，直接return
-        return ['status' => 1];
+        $tableName = ['实物置换订单数据'];
+        $tableHeader = ['nick_name'=>'昵称', 'we_chat_id'=>'微信号', 'fans_amount'=>'粉丝量', 'advert_location'=>'广告位置', 'put_times'=>'投放次数', 'dispatch_time'=>'发文时间', 'follower'=>'跟进人',
+            'female_powder_proportion'=>'女粉占比', 'put_link'=>'投放链接', 'replace_product'=>'置换产品', 'replace_quantity'=>'置换件数', 'brand'=>'品牌', 'average_reading'=>'平均阅读量', 'account_type'=>'账号类型', 'first_trial'=>'初审',
+            'final_judgment'=>'终审', 'prize_send_status'=>'奖品寄出状态', 'advert_read_num'=>'广告阅读数量', 'volume_transaction'=>'成交额', 'new_fan_attention'=>'新粉丝关注数'];
+
+
+        return ['exportName' => ExcelFacade::exportExcelFile(array_merge([$tableName],[$tableHeader], $listData), 'PhysicalReplaceOrder'.date('YmdHis', time()), 1)];
     }
 
     /**
@@ -199,7 +200,6 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
             }
             throw new Exception('终审失败，初审未审核！');
         }
-
         return false;
     }
 
@@ -243,13 +243,14 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         }
         $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName);
         $data = $this->dealStatusData($data);
-        if (!$this->model::updateAll(['prize_send_status'=>1],['id'=>array_unique(end($data))])){
-            throw new Exception('寄出状态更新失败');
+        if (!empty(array_unique(end($data)))){
+            $this->model::updateAll(['prize_send_status' => 1], ['in', 'id', array_unique(end($data))]);
+            return Yii::$app->db
+                ->createCommand()
+                ->batchInsert($this->physicalSendStatusDo::tableName(), array_diff($this->physicalSendStatusDo->attributes(), ['id']), array_shift($data))
+                ->execute();
         }
-        return Yii::$app->db
-            ->createCommand()
-            ->batchInsert($this->physicalSendStatusDo::tableName(), array_diff($this->physicalSendStatusDo->attributes(), ['id']), array_shift($data))
-            ->execute();
+        return false;
     }
 
 
@@ -266,13 +267,18 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
             throw new Exception('导入数据为空');
         }
         $num = [];
+        $dispatch = [];
         foreach ($data as $k => $v) {
             if (empty($v['A']) || empty($v['B']) || empty($v['F'])) {
                 $num[] = $k;
             }
-            if (!empty($v['F'])){
+            if (!empty($v['F'])) {
                 $data[$k]['F'] = strtotime($v['F']);
+                $dispatch[] = $data[$k]['B'] . $data[$k]['F'];
             }
+        }
+        if (count($dispatch) !== count(array_unique($dispatch))) {
+            throw new Exception('微信号、发文时间有重复数据，请检查表格是否正确！！！');
         }
         if (!empty($num)) {
             throw new Exception('第' . implode(',', $num) . '条记录的微信号、昵称、发文时间不能为空');
@@ -316,6 +322,9 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
     {
         if (!empty($listData)) {
             foreach ($listData as $key => $data) {
+                if (!empty($data['dispatch_time'])) {
+                    $listData[$key]['dispatch_time'] = date('Y-m-d H:i:s', intval($data['dispatch_time']));
+                }
                 switch ($data['first_trial']) {
                     case '0' :
                         $listData[$key]['first_trial'] = ' 待审核';
@@ -344,8 +353,8 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
                     $listData[$key]['prize_send_status'] = '已发货';
                 }
                 //筛选不需要导出的字段
-                unset($listData[$key]['id'], $listData[$key]['audit_opinion'], $listData[$key]['creator'],
-                    $listData[$key]['updater'], $listData[$key]['create_time'], $listData[$key]['update_time']);
+                unset($listData[$key]['id'], $listData[$key]['audit_opinion'], $listData[$key]['first_audit_opinion'],
+                    $listData[$key]['final_audit_opinion'], $listData[$key]['first_auditor'], $listData[$key]['final_auditor']);
             }
             return $listData;
         }

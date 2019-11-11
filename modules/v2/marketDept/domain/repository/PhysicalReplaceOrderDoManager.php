@@ -33,6 +33,7 @@ class PhysicalReplaceOrderDoManager extends BaseRepository
             $this->query->andWhere(['NOT', ['put_link' => '']]);
         }
 
+
         $perPage = $physicalReplaceOrderQuery->getPerPage();
         return new ActiveDataProvider([
             'query' => $this->query->asArray(),
@@ -40,7 +41,18 @@ class PhysicalReplaceOrderDoManager extends BaseRepository
                 'pageSize' => $perPage ?? 10,
             ],
             'sort' => [
-                'attributes' => ['id'],
+                'attributes' => [
+                    'id' => [
+                        'asc' => ['id' => SORT_ASC],
+                        'desc' => ['id' => SORT_DESC],
+                        'default' => SORT_ASC,
+                    ],
+                    'dispatch_time' => [
+                        'asc' => ['dispatch_time' => SORT_ASC, 'id' => SORT_ASC],
+                        'desc' => ['dispatch_time' => SORT_DESC, 'id' => SORT_DESC],
+                        'default' => SORT_ASC,
+                    ],
+                ],
                 'defaultOrder' => ['id' => SORT_DESC],
             ]
         ]);

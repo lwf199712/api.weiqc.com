@@ -136,7 +136,7 @@ class PhysicalReplaceOrderController extends AdminBaseController
     {
         try {
             $data = $this->physicalReplaceOrderService->exportReplaceOrder($this->physicalReplaceOrderQuery);
-            return ['导出数据成功', 200, $data];
+            return ['导出数据成功', 200, $data['exportName']];
         } catch (Exception $exception) {
             return ['导出数据失败', 500, $exception->getMessage()];
         }

@@ -26,6 +26,14 @@ class PhysicalReplaceOrderEntity extends PhysicalReplaceOrderDo
             throw new Exception('找不到修改的数据');
         }
         $model->setAttributes($physicalReplaceOrderForm->getAttributes());
+        //如果初审为已通过和未通过，终审为待审核和未通过，重新编辑后初终审为待审核
+        if ($model->first_trial !== 0 && $model->final_judgment !== 1) {
+            $model->first_trial = 0;
+            $model->final_judgment = 0;
+        }
+        if ($model->first_trial === 1 && $model->final_judgment === 1){
+            throw new Exception('初审和终审已通过，不可编辑！！！');
+        }
         $model->dispatch_time = strtotime($physicalReplaceOrderForm->dispatch_time);
         return $model->save();
     }
