@@ -67,7 +67,7 @@ class PhysicalSendStatusImpl extends BaseObject implements PhysicalSendStatusSer
         }
         $tableName = ['实物置换发货信息数据'];
 
-        return ['exportName' => ExcelFacade::exportExcelFile(array_merge([$tableName],[$tableHeader], $data), 'PhysicalReplaceOrder'.date('YmdHis', time()), 1)];
+        return ['exportName' => ExcelFacade::exportExcelFile(array_merge([$tableName],[$tableHeader], $data), 'SendStatusMessage'.date('YmdHis', time()), 1)];
     }
 
     /**
