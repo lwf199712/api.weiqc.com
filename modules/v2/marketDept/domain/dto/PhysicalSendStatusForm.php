@@ -25,8 +25,8 @@ class PhysicalSendStatusForm extends Model
     public function rules(): array
     {
         return [
-            [['id', 'tracking_number'], 'integer'],
-            [['recipients', 'phone', 'delivery_site'], 'string'],
+            [['id', 'tracking_number', 'phone'], 'integer'],
+            [['recipients', 'delivery_site'], 'string'],
         ];
     }
 
