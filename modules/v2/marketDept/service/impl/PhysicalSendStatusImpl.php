@@ -81,6 +81,9 @@ class PhysicalSendStatusImpl extends BaseObject implements PhysicalSendStatusSer
     public function update(PhysicalSendStatusForm $physicalSendStatusForm): bool
     {
         //更新实体
+        if (empty($physicalSendStatusForm->tracking_number)){
+            throw new Exception('快递单号不能为空');
+        }
         $res = $this->physicalSendStatusEntity->updateEntity($physicalSendStatusForm);
         if (!$res) {
             throw new Exception('编辑失败！请重试！！！');

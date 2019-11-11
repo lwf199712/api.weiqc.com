@@ -30,6 +30,7 @@ class PhysicalSendStatusDo extends ActiveRecord
     public function rules(): array
     {
         return [
+            ['tracking_number', 'required'],
             [['recipients', 'phone', 'delivery_site', 'tracking_number'], 'string', 'max' => 255],
             [['id', 'rp_id'], 'integer'],
         ];
