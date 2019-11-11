@@ -42,14 +42,9 @@ class PhysicalReplaceOrderDoManager extends BaseRepository
             ],
             'sort' => [
                 'attributes' => [
-                    'id' => [
-                        'asc' => ['id' => SORT_ASC],
-                        'desc' => ['id' => SORT_DESC],
-                        'default' => SORT_ASC,
-                    ],
                     'dispatch_time' => [
-                        'asc' => ['dispatch_time' => SORT_ASC, 'id' => SORT_ASC],
-                        'desc' => ['dispatch_time' => SORT_DESC, 'id' => SORT_DESC],
+                        'asc'   => ['dispatch_time' => SORT_ASC],
+                        'desc'  => ['dispatch_time' => SORT_DESC],
                         'default' => SORT_ASC,
                     ],
                 ],
