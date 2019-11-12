@@ -41,18 +41,7 @@ class PhysicalReplaceOrderDoManager extends BaseRepository
                 'pageSize' => $perPage ?? 10,
             ],
             'sort' => [
-                'attributes' => [
-                    'id' => [
-                        'asc' => ['id' => SORT_ASC],
-                        'desc' => ['id' => SORT_DESC],
-                        'default' => SORT_ASC,
-                    ],
-                    'dispatch_time' => [
-                        'asc' => ['dispatch_time' => SORT_ASC],
-                        'desc' => ['dispatch_time' => SORT_DESC],
-                        'default' => SORT_ASC,
-                    ],
-                ],
+                'attributes' => ['id','dispatch_time'],
                 'defaultOrder' => ['id' => SORT_DESC],
             ]
         ]);
