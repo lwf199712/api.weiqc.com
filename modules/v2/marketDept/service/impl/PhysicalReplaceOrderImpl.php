@@ -97,7 +97,6 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
      * @return mixed|void
      * @author weifeng
      */
-
     public function exportReplaceOrder(PhysicalReplaceOrderQuery $physicalReplaceOrderQuery)
     {
         //不翻页，传perPage为0,page为0,其他条件需要传
@@ -271,16 +270,25 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
             if (empty($v['A']) || empty($v['B']) || empty($v['F'])) {
                 $num[] = $k;
             }
-            if (!empty($v['F'])) {
+            if (!empty($v['F'])) {//不可重复操作
                 $data[$k]['F'] = strtotime($v['F']);
                 $dispatch[] = $data[$k]['B'] . $data[$k]['F'];
+                if (!empty($dispatch)) {
+                    $res = $this->model::find()
+                        ->where(['we_chat_id' => $data[$k]['B'], 'dispatch_time' => $data[$k]['F']])
+                        ->asArray()
+                        ->one();
+                    if ($res) {
+                        throw new Exception('第' . ($k + 1) . '行微信号、发文时间有重复数据，请检查表格是否正确！！！');
+                    }
+                }
             }
         }
         if (count($dispatch) !== count(array_unique($dispatch))) {
             throw new Exception('微信号、发文时间有重复数据，请检查表格是否正确！！！');
         }
         if (!empty($num)) {
-            throw new Exception('第' . implode(',', $num) . '条记录的微信号、昵称、发文时间不能为空');
+            throw new Exception('第' . implode(',', $num) . '行记录的微信号、昵称、发文时间不能为空');
         }
         return $data;
     }
