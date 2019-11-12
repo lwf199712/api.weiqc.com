@@ -91,7 +91,7 @@ class PhysicalReplaceOrderDoManager extends BaseRepository
                 $row = array_values($row);
                 $id = $primaryArrays[$flag];
                 $value = $row[$flagColumn];
-                $sql .= sprintf(' WHEN %s THEN %s', $id, $value);
+                $sql .= sprintf(' WHEN %s THEN "%s"', $id, $value);
                 $flag++;
             }
             $sql .= ' END,';
