@@ -241,14 +241,15 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         }
         $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName);
         $data = $this->dealStatusData($data);
-        if (!empty(array_unique(end($data)))){
+        if (!empty(array_unique(end($data))) && !empty(array_unique(end($data))[0])){
             $this->model::updateAll(['prize_send_status' => 1], ['in', 'id', array_unique(end($data))]);
             return Yii::$app->db
                 ->createCommand()
                 ->batchInsert($this->physicalSendStatusDo::tableName(), array_diff($this->physicalSendStatusDo->attributes(), ['id']), array_shift($data))
                 ->execute();
+        }else{
+            throw new Exception('微信号、发文时间不匹配该记录，请重试！！！');
         }
-        return false;
     }
 
 
