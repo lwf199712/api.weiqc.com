@@ -72,6 +72,7 @@ class PhysicalReplaceOrderDoManager extends BaseRepository
     public function getBatchUpdateSql(string $table,array $columns,array $rows, array $primaryArrays,string $primaryColumn)
     {
         $sql = sprintf('UPDATE %s SET ', $table);
+        $ids = implode(',', $primaryArrays);
         $flagColumn = 0;
         foreach ($columns as $column) {
             $flag = 0;
@@ -86,6 +87,7 @@ class PhysicalReplaceOrderDoManager extends BaseRepository
             $sql .= ' END,';
             $flagColumn++;
         }
-        return rtrim($sql, ',');
+        $sql = rtrim($sql, ',')." WHERE id IN ($ids)";
+        return $sql;
     }
 }
