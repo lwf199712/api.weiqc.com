@@ -90,6 +90,7 @@ class DesignCenterHomeVideoController extends AdminBaseController
     {
         try{
             $data = $this->designCenterHomeVideoDoManager->listDataProvider($this->designCenterHomeVideoQuery)->getModels();
+            $data['totalCount'] = $this->designCenterHomeVideoDoManager->listDataProvider($this->designCenterHomeVideoQuery)->getTotalCount();
             return ['成功返回数据',200,$data];
         }catch (Exception $exception){
             return ['查询数据失败',500,'msg'=>$exception->getMessage()];
