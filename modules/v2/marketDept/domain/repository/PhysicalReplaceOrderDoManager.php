@@ -17,8 +17,8 @@ class PhysicalReplaceOrderDoManager extends BaseRepository
     public function listDataProvider(PhysicalReplaceOrderQuery $physicalReplaceOrderQuery): ActiveDataProvider
     {
         $this->query
-            ->andFilterWhere(['>', 'dispatch_time',     $physicalReplaceOrderQuery->beginTime])
-            ->andFilterWhere(['<', 'dispatch_time',     $physicalReplaceOrderQuery->endTime])
+            ->andFilterWhere(['>=', 'dispatch_time',     $physicalReplaceOrderQuery->beginTime])
+            ->andFilterWhere(['<=', 'dispatch_time',     $physicalReplaceOrderQuery->endTime])
             ->andFilterWhere(['=', 'first_trial',       $physicalReplaceOrderQuery->first_trial])
             ->andFilterWhere(['=', 'final_judgment',    $physicalReplaceOrderQuery->final_judgment])
             ->andFilterWhere(['=', 'prize_send_status', $physicalReplaceOrderQuery->prize_send_status])

@@ -216,7 +216,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
             throw new Exception('excel上传文件不能为空');
         }
         $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName);
-        $data = $this->dealImportData($data);
+        $data = $this->dealImportData($data,0);
         //不需要的字段
         $unsetData = ['id', 'first_trial', 'final_judgment', 'prize_send_status', 'audit_opinion', 'first_audit_opinion', 'final_audit_opinion', 'first_auditor', 'final_auditor'];
         $ids = $this->extractExportId($data);
@@ -255,11 +255,12 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
 
     /**
      * 处理导入数据
-     * @param $data
+     * @param array $data
+     * @param int $flag
      * @return array
      * @throws Exception
      */
-    private function dealImportData($data):array
+    private function dealImportData(array $data,$flag = 1):array
     {
         //检查微信号 昵称 发文时间是否为空
         if (empty($data)) {
@@ -274,7 +275,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
             if (!empty($v['F'])) {//不可重复操作
                 $data[$k]['F'] = strtotime($v['F']);
                 $dispatch[] = $data[$k]['B'] . $data[$k]['F'];
-                if (!empty($dispatch)) {
+                if (!empty($dispatch) && $flag === 1) {
                     $res = $this->model::find()
                         ->where(['we_chat_id' => $data[$k]['B'], 'dispatch_time' => $data[$k]['F']])
                         ->asArray()
@@ -285,6 +286,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
                 }
             }
         }
+        //检查重复记录
         if (count($dispatch) !== count(array_unique($dispatch))) {
             throw new Exception('微信号、发文时间有重复数据，请检查表格是否正确！！！');
         }
@@ -381,9 +383,9 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         if (empty($data)) {
             throw new Exception('导入数据为空！！！');
         }
-        $num = [];
+        $num            = [];
         $trackingNumber = [];
-        $rpId = [];
+        $rpId           = [];
         foreach ($data as $k => $v) {
             if (empty($v['A']) || empty($v['B']) || empty($v['F'])) {
                 $num[] = $k;
@@ -403,10 +405,13 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         }
         foreach ($data as $key => $d) {
             $id = $this->model::find()
-                ->select('id')
+                ->select('id,final_judgment')
                 ->where(['we_chat_id' => $d['A'], 'dispatch_time' => $d['B']])
                 ->asArray()
                 ->one();
+            if (empty($id['final_judgment'])){
+                throw new Exception('终审未通过，更新寄出状态失败');
+            }
             $rpId[] = $data[$key]['rp_id'] = $id['id'];
             unset($data[$key]['A'], $data[$key]['B']);
         }
@@ -450,7 +455,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
     }
 
     /**
-     *  获取品牌数组，前端需要品牌遍历
+     * 获取品牌数组，前端需要品牌遍历
      */
     private function getBrandArr(){
         $brandArr = $this->model::find()->select('brand')->distinct()->asArray()->all();
