@@ -425,6 +425,9 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
                 ->where(['we_chat_id' => $d['A'], 'dispatch_time' => $d['B']])
                 ->asArray()
                 ->one();
+            if (empty($id)){
+                throw new Exception('没有匹配到订单，更新寄出状态失败');
+            }
             if (empty($id['final_judgment'])){
                 throw new Exception('终审未通过，更新寄出状态失败');
             }
