@@ -65,7 +65,13 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
     {
         $list['lists']      = $this->physicalReplaceOrderDoManager->listDataProvider($physicalReplaceOrderQuery)->getModels();
         //统计数量
-        $list['statistic']  = $this->statisticsData($list['lists']);
+        if (!empty($list['lists'])){
+            //设置分页统计
+            $physicalReplaceOrderQuery->setPage(0);
+            $physicalReplaceOrderQuery->setPerPage(0);
+            $list['lists']      = $this->physicalReplaceOrderDoManager->listDataProvider($physicalReplaceOrderQuery)->getModels();
+            $list['statistic']  = $this->statisticsData($list['lists']);
+        }
         $list['brandArr']   = $this->getBrandArr();
         $list['totalCount'] = $this->physicalReplaceOrderDoManager->listDataProvider($physicalReplaceOrderQuery)->getTotalCount();
         return $list;
@@ -221,7 +227,10 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         $unsetData = ['id', 'first_trial', 'final_judgment', 'prize_send_status', 'audit_opinion', 'first_audit_opinion', 'final_audit_opinion', 'first_auditor', 'final_auditor'];
         $ids = $this->extractExportId($data);
         //根据id更新
-        $sql = $this->physicalReplaceOrderDoManager->getBatchUpdateSql($this->model::tableName(), array_values(array_diff($this->model->attributes(), $unsetData)), array_values($data), $ids, 'id');
+        $columnValue = array_values(array_diff($this->model->attributes(), $unsetData));
+        $columnValue[] = 'first_trial';
+        $columnValue[] = 'final_judgment';
+        $sql = $this->physicalReplaceOrderDoManager->getBatchUpdateSql($this->model::tableName(), $columnValue, array_values($data), $ids, 'id');
         $res = Yii::$app->db->createCommand($sql)->execute();
         return $res;
     }
@@ -275,13 +284,20 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
             if (!empty($v['F'])) {//不可重复操作
                 $data[$k]['F'] = strtotime($v['F']);
                 $dispatch[] = $data[$k]['B'] . $data[$k]['F'];
-                if (!empty($dispatch) && $flag === 1) {
+                if (!empty($dispatch)) {
                     $res = $this->model::find()
                         ->where(['we_chat_id' => $data[$k]['B'], 'dispatch_time' => $data[$k]['F']])
                         ->asArray()
                         ->one();
-                    if ($res) {
+                    if ($flag == 1 && $res) {
                         throw new Exception('第' . ($k + 1) . '行微信号、发文时间有重复数据，请检查表格是否正确！！！');
+                    }
+                    if ($flag == 0) {
+                        if ($res['first_trial'] == 1 && $res['final_judgment'] == 1){
+                            throw new Exception('第' . ($k + 1) . '行记录的初审、终审已通过，请检查表格是否正确！！！');
+                        }else{
+                            $data[$k]['first_trial'] = $data[$k]['final_judgment'] = 0;
+                        }
                     }
                 }
             }

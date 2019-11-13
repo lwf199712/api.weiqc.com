@@ -22,17 +22,16 @@ class PhysicalReplaceOrderDoManager extends BaseRepository
             ->andFilterWhere(['=', 'first_trial',       $physicalReplaceOrderQuery->first_trial])
             ->andFilterWhere(['=', 'final_judgment',    $physicalReplaceOrderQuery->final_judgment])
             ->andFilterWhere(['=', 'prize_send_status', $physicalReplaceOrderQuery->prize_send_status])
-            ->andFilterWhere(['=', 'we_chat_id',        $physicalReplaceOrderQuery->we_chat_id])
-            ->andFilterWhere(['=', 'nick_name',         $physicalReplaceOrderQuery->nick_name])
-            ->andFilterWhere(['=', 'follower',          $physicalReplaceOrderQuery->follower])
-            ->andFilterWhere(['=', 'replace_product',   $physicalReplaceOrderQuery->replace_product]);
+            ->andFilterWhere(['like', 'we_chat_id',        $physicalReplaceOrderQuery->we_chat_id])
+            ->andFilterWhere(['like', 'nick_name',         $physicalReplaceOrderQuery->nick_name])
+            ->andFilterWhere(['like', 'follower',          $physicalReplaceOrderQuery->follower])
+            ->andFilterWhere(['like', 'replace_product',   $physicalReplaceOrderQuery->replace_product]);
         //post_status为0是未发文，1是已发文
         if ($physicalReplaceOrderQuery->post_status == '0') {
             $this->query->andWhere(['=', 'put_link', '']);
         } else if ($physicalReplaceOrderQuery->post_status == '1') {
             $this->query->andWhere(['NOT', ['put_link' => '']]);
         }
-
 
         $perPage = $physicalReplaceOrderQuery->getPerPage();
         return new ActiveDataProvider([
