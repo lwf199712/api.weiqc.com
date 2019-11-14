@@ -113,7 +113,7 @@ class DesignCenterHomeVideoEntity extends DesignCenterVideoDo
      * @param string $old_url
      * @return bool
      */
-    public function updateEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm,string $old_url):bool
+    public function updateEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm,string $old_url = ''):bool
     {
         $model = new self();
         // 判断有没有上传新的视频

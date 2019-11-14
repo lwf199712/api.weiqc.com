@@ -127,7 +127,7 @@ class DesignCenterHomeVideoForm extends Model
     public function uploadVideo(string $dirName = 'video')
     {
         $this->videoFile = UploadedFile::getInstanceByName('videoFile');
-        if (!$this->videoFile){
+        if ($this->videoFile === null){
             return false;
         }
         if ($this->validate()) {

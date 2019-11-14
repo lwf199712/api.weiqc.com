@@ -152,13 +152,17 @@ class DesignCenterHomeVideoController extends AdminBaseController
     {
         $data = [];
         try{
-            // 上传视频 并返回视频的地址
-            $url = Yii::$app->request->getHostInfo().$this->designCenterHomeVideoForm->uploadVideo();
-            // 获取旧的视频地址
-            $old_url = $this->designCenterHomeVideoDoManager->detailData((int)$this->designCenterHomeVideoForm->id)->attributes['video'];
-            // 删除旧视频
-            $this->designCenterHomeVideoForm->video = $url;
-            $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm,$old_url);
+            if ($this->designCenterHomeVideoForm->videoFile){
+                // 上传视频 并返回视频的地址
+                $url = Yii::$app->request->getHostInfo().$this->designCenterHomeVideoForm->uploadVideo();
+                // 获取旧的视频地址
+                $old_url = $this->designCenterHomeVideoDoManager->detailData((int)$this->designCenterHomeVideoForm->id)->attributes['video'];
+                // 删除旧视频
+                $this->designCenterHomeVideoForm->video = $url;
+                $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm,$old_url);
+            }else{
+                $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm);
+            }
             $data['list'] = $this->designCenterHomeVideoDoManager->detailData((int)$this->designCenterHomeVideoForm->id)->attributes;
             if ($res){
                 return ['更新成功',200,$data];
