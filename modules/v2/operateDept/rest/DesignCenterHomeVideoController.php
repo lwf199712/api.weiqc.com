@@ -107,12 +107,12 @@ class DesignCenterHomeVideoController extends AdminBaseController
     {
         try{
             // 上传视频 并返回视频的地址
-            $url = $this->designCenterHomeVideoForm->upload();
+            $url = $this->designCenterHomeVideoForm->uploadVideo();
             if ($url === false){
                 return  ['插入失败',500,'msg'=>'视频不能为空'];
             }
             $data = [];
-            $this->designCenterHomeVideoForm->video = $url[0];
+            $this->designCenterHomeVideoForm->video = Yii::$app->request->getHostInfo().$url;
             $res = $this->designCenterHomeVideoEntity->createEntity($this->designCenterHomeVideoForm);
             if ($res){
                 $id = Yii::$app->db->getLastInsertID();
@@ -152,16 +152,13 @@ class DesignCenterHomeVideoController extends AdminBaseController
     {
         $data = [];
         try{
-            // 需要先验证用户有没有更新视频
-            if ($this->designCenterHomeVideoForm->upload() === false){
-                $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm);
-            }else{
-                // 获取新上传的图片地址
-                $new_address = $this->designCenterHomeVideoForm->upload();
-                $this->designCenterHomeVideoForm->video = $new_address[0];
-                // 更新的实体
-                $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm);
-            }
+            // 上传视频 并返回视频的地址
+            $url = Yii::$app->request->getHostInfo().$this->designCenterHomeVideoForm->uploadVideo();
+            // 获取旧的视频地址
+            $old_url = $this->designCenterHomeVideoDoManager->detailData((int)$this->designCenterHomeVideoForm->id)->attributes['video'];
+            // 删除旧视频
+            $this->designCenterHomeVideoForm->video = $url;
+            $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm,$old_url);
             $data['list'] = $this->designCenterHomeVideoDoManager->detailData((int)$this->designCenterHomeVideoForm->id)->attributes;
             if ($res){
                 return ['更新成功',200,$data];

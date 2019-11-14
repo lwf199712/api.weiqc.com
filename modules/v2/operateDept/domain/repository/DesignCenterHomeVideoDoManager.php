@@ -51,8 +51,6 @@ class DesignCenterHomeVideoDoManager extends BaseRepository
      */
     public function detailData(int $id) :ActiveRecord
     {
-        $data =  $this->model::findOne(['id'=>$id]);
-        $data->video = base64_encode(file_get_contents($data->video));
-        return $data;
+        return $this->model::findOne(['id'=>$id]);
     }
 }

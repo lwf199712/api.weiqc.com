@@ -90,6 +90,8 @@ class DesignCenterCategoryManagementController extends AdminBaseController
     {
         try{
             $data = $this->designCenterCategoryManagementDoManager->listDataProvider($this->designCenterCategoryManagementQuery)->getModels();
+            $data['totalCount'] = $this->designCenterCategoryManagementDoManager->listDataProvider($this->designCenterCategoryManagementQuery)->getTotalCount();
+            var_dump($data);die();
             return ['成功返回数据', 200, $data];
         }catch (Exception $exception){
             return ['查询失败', 500, $exception->getMessage()];

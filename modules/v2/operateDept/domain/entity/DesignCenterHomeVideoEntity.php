@@ -43,9 +43,9 @@ class DesignCenterHomeVideoEntity extends DesignCenterVideoDo
             throw new \RuntimeException('删除ID不能为空');
         }
 
-        // 删除oss上的文件
+        // 删除本地上的文件
         $address = self::findOne(['id' => $designCenterHomeVideoForm->id])->video;
-        $res = $designCenterHomeVideoForm->delete($address);
+        $res = $designCenterHomeVideoForm->deletelocal($address);
         if ($res){
             return self::deleteAll(['id' => $designCenterHomeVideoForm->id]);
         }
@@ -110,17 +110,17 @@ class DesignCenterHomeVideoEntity extends DesignCenterVideoDo
      * Date: 2019/11/1
      * Author: ctl
      * @param DesignCenterHomeVideoForm $designCenterHomeVideoForm
+     * @param string $old_url
      * @return bool
-     * @throws \OSS\Core\OssException
      */
-    public function updateEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm):bool
+    public function updateEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm,string $old_url):bool
     {
         $model = new self();
         // 判断有没有上传新的视频
         if ($designCenterHomeVideoForm->video){
             // 先删除旧视频
             $address = self::findOne(['id' => $designCenterHomeVideoForm->id])->video;
-            $designCenterHomeVideoForm->delete($address);
+            $designCenterHomeVideoForm->deletelocal($old_url);
         }
         $model = $model::findOne(['id'=>$designCenterHomeVideoForm->id]);
         $arr  = $designCenterHomeVideoForm->getAttributes();
