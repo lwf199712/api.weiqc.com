@@ -111,8 +111,8 @@ class DesignCenterHomeVideoForm extends Model
      */
     public function deletelocal($address):bool
     {
-        $filePath = explode("85/",$address)[1];
-        $address = Yii::$app->basePath.'/web/'.$filePath;
+        $filePath = explode("/uploads/",$address)[1];
+        $address = Yii::$app->basePath.'/web/uploads/'.$filePath;
         return unlink($address);
     }
 
