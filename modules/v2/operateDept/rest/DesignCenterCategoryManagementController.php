@@ -89,7 +89,8 @@ class DesignCenterCategoryManagementController extends AdminBaseController
     public function actionIndex() :array
     {
         try{
-            $data = $this->designCenterCategoryManagementDoManager->listDataProvider($this->designCenterCategoryManagementQuery)->getModels();
+            $list = $this->designCenterCategoryManagementDoManager->listDataProvider($this->designCenterCategoryManagementQuery)->getModels();
+            $data['list'] = $list;
             $data['totalCount'] = $this->designCenterCategoryManagementDoManager->listDataProvider($this->designCenterCategoryManagementQuery)->getTotalCount();
             return ['成功返回数据', 200, $data];
         }catch (Exception $exception){
