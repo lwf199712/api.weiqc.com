@@ -39,7 +39,7 @@ class DesignCenterImageStatisticsImpl extends BaseObject implements DesignCenter
     {
         $list['lists'] = $this->designCenterImageStatisticsDoManager->listDataProvider($designCenterImageStatisticsDto)->getModels();
         foreach ($list['lists'] as $key => $value) {
-            $list['lists'][$key]['drawCount'] = $value['homePage'] + $value['mainImage'] + $value['productDetail'] + $value['drillShow'] + $value['throughCar'] + $value['landingPage']+$value['tweet'];
+            $list['lists'][$key]['drawCount'] = $value['homePage'] + $value['mainImage'] + $value['productDetail'] + $value['drillShow'] + $value['throughCar'] + $value['landingPage']+$value['tweet']+$value['describe790']+$value['storeActivity']+$value['slideShow']+$value['videoMainImage']+$value['truingScene'];
             unset($list['lists'][$key]['id']);
         }
         $list['totalCount'] = $this->designCenterImageStatisticsDoManager->listDataProvider($designCenterImageStatisticsDto)->getTotalCount();
