@@ -7,6 +7,7 @@ use app\common\rest\AdminBaseController;
 use app\modules\v2\operateDept\domain\dto\DesignCenterImageStatisticsDto;
 use app\modules\v2\operateDept\service\DesignCenterImageStatisticsService;
 use Exception;
+use http\Exception\RuntimeException;
 use yii\base\Model;
 use yii\web\HttpException;
 
@@ -35,7 +36,8 @@ class DesignCenterImageStatisticsController extends AdminBaseController
     {
         return [
             'index'      => ['GET', 'HEAD', 'OPTIONS'],
-            'statistics' => ['GET', 'HEAD', 'OPTIONS']
+            'statistics' => ['GET', 'HEAD', 'OPTIONS'],
+            'personal' => ['GET', 'HEAD', 'OPTIONS'],
         ];
     }
 
@@ -52,6 +54,8 @@ class DesignCenterImageStatisticsController extends AdminBaseController
             case 'actionIndex':
                 return $this->designCenterImageStatisticsDto;
             case 'actionStatistics':
+                return $this->designCenterImageStatisticsDto;
+            case 'actionPersonal':
                 return $this->designCenterImageStatisticsDto;
             default:
                 throw new HttpException('UnKnow ActionName ');
@@ -88,5 +92,22 @@ class DesignCenterImageStatisticsController extends AdminBaseController
         }
     }
 
-
+    /**
+     * 设计中心图片统计-个人图片统计
+     * Date: 2019/11/18
+     * Author: ctl
+     */
+    public function actionPersonal():array
+    {
+        try{
+            if (!$this->designCenterImageStatisticsDto->stylist)
+            {
+                throw new RuntimeException('设计师名称不能为空');
+            }
+            $data = $this->designCenterImageStatisticsService->personalStatistics($this->designCenterImageStatisticsDto);
+            return ['成功返回数据', 200, $data];
+        }catch (Exception $exception){
+            return ['查询失败', 500, $exception->getMessage()];
+        }
+    }
 }

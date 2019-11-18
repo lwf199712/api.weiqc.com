@@ -91,6 +91,7 @@ class DesignCenterHomeVideoController extends AdminBaseController
         try{
             $data = $this->designCenterHomeVideoDoManager->listDataProvider($this->designCenterHomeVideoQuery)->getModels();
             $data['totalCount'] = $this->designCenterHomeVideoDoManager->listDataProvider($this->designCenterHomeVideoQuery)->getTotalCount();
+            var_dump($data);die();
             return ['成功返回数据',200,$data];
         }catch (Exception $exception){
             return ['查询数据失败',500,'msg'=>$exception->getMessage()];
@@ -109,7 +110,11 @@ class DesignCenterHomeVideoController extends AdminBaseController
             // 上传视频 并返回视频的地址
             $url = $this->designCenterHomeVideoForm->uploadVideo();
             if ($url === false){
-                return  ['插入失败',500,'msg'=>'视频不能为空'];
+                return  ['插入失败,视频不能为空',500];
+            }
+            if (!$this->designCenterHomeVideoForm->category)
+            {
+                return  ['插入失败,属性不能为空',500];
             }
             $data = [];
             $this->designCenterHomeVideoForm->video = Yii::$app->request->getHostInfo().$url;

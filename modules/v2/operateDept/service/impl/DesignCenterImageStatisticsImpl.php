@@ -5,6 +5,7 @@ namespace app\modules\v2\operateDept\service\impl;
 use app\modules\v2\operateDept\domain\dto\DesignCenterImageStatisticsDto;
 use app\modules\v2\operateDept\domain\repository\DesignCenterImageStatisticsDoManager;
 use app\modules\v2\operateDept\service\DesignCenterImageStatisticsService;
+use Exception;
 use yii\base\BaseObject;
 use yii\db\ActiveRecord;
 
@@ -63,4 +64,18 @@ class DesignCenterImageStatisticsImpl extends BaseObject implements DesignCenter
         return $listArr;
     }
 
+    /**
+     * 设计中心设计师个人图片统计
+     * Date: 2019/11/17
+     * Author: ctl
+     * @param DesignCenterImageStatisticsDto $designCenterImageStatisticsDto
+     * @return array
+     * @throws Exception
+     */
+    public function personalStatistics(DesignCenterImageStatisticsDto $designCenterImageStatisticsDto): array
+    {
+        $dataArr = $this->designCenterImageStatisticsDoManager->personalStatistics($designCenterImageStatisticsDto)->getModels();
+        return $dataArr;
+        // TODO: Implement personalStatistics() method.
+    }
 }

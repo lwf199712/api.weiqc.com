@@ -22,4 +22,13 @@ interface DesignCenterImageStatisticsService
      */
     public function auditStatistics(DesignCenterImageStatisticsDto $designCenterImageStatisticsDto): array;
 
+    /**
+     * 个人审核统计
+     * Date: 2019/11/17
+     * Author: ctl
+     * @param DesignCenterImageStatisticsDto $designCenterImageStatisticsDto
+     * @return array
+     */
+    public function personalStatistics(DesignCenterImageStatisticsDto $designCenterImageStatisticsDto):array;
+
 }

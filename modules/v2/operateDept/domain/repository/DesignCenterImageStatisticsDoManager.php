@@ -76,4 +76,27 @@ class DesignCenterImageStatisticsDoManager extends BaseRepository
 
     }
 
+    /**
+     * 查询个人图片审核情况
+     * Date: 2019/11/18
+     * Author: ctl
+     * @param DesignCenterImageStatisticsDto $designCenterImageStatisticsDto
+     * @return ActiveDataProvider
+     */
+    public function personalStatistics(DesignCenterImageStatisticsDto $designCenterImageStatisticsDto): ActiveDataProvider
+    {
+        $field = ['id', 'stylist',
+            'count(CASE WHEN audit_status=0 THEN 1 END) as stayAudit',
+            'count(CASE WHEN audit_status=1 THEN 1 END) as pass',
+            'count(CASE WHEN audit_status=2 THEN 1 END) as notPass'
+        ];
+
+        $this->query->select($field)
+            ->andFilterWhere(['=', 'stylist', $designCenterImageStatisticsDto->stylist]);
+
+        return new ActiveDataProvider([
+            'query' => $this->query->asArray(),
+        ]);
+    }
+
 }
