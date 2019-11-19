@@ -45,7 +45,7 @@ class PhysicalReplaceOrderEntity extends PhysicalReplaceOrderDo
      * @author weifeng
      */
 
-    public function deleteEntity(PhysicalReplaceOrderDto $physicalReplaceOrderDto)
+    public function deleteEntity(PhysicalReplaceOrderDto $physicalReplaceOrderDto): int
     {
         /** @var PhysicalReplaceOrderForm $model */
         return self::deleteAll(['id' => $physicalReplaceOrderDto->id]);
@@ -55,6 +55,7 @@ class PhysicalReplaceOrderEntity extends PhysicalReplaceOrderDo
      * 审核实物置换订单实体
      * @param PhysicalReplaceOrderDto $physicalReplaceOrderDto
      * @return bool
+     * @throws Exception
      * @author weifeng
      */
     public function auditEntity(PhysicalReplaceOrderDto $physicalReplaceOrderDto): bool
@@ -64,6 +65,9 @@ class PhysicalReplaceOrderEntity extends PhysicalReplaceOrderDo
         $user = User::findOne(['id' => $id]);
 
         $model = self::findOne($physicalReplaceOrderDto->id);
+        if ($model===null){
+            throw new Exception('找不到审核的数据');
+        }
         if ($physicalReplaceOrderDto->first_trial){
             $model->first_trial         = $physicalReplaceOrderDto->first_trial;        //初审状态
             $model->first_audit_opinion = $physicalReplaceOrderDto->first_audit_opinion;//初审审核意见

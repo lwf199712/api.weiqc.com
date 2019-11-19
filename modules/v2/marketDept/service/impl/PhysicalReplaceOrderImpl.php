@@ -13,6 +13,7 @@ use app\modules\v2\marketDept\domain\dto\PhysicalReplaceOrderQuery;
 use app\modules\v2\marketDept\domain\repository\PhysicalReplaceOrderDoManager;
 use app\modules\v2\marketDept\domain\entity\PhysicalReplaceOrderEntity;
 use Exception;
+use RuntimeException;
 use Yii;
 use yii\base\BaseObject;
 use yii\db\ActiveRecord;
@@ -88,7 +89,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
     {
         $physicalReplaceOrderImport->excelFile = UploadedFile::getInstanceByName('excelFile');
         if ($physicalReplaceOrderImport->excelFile == null) {
-            throw new Exception('excel上传文件不能为空');
+            throw new RuntimeException('excel上传文件不能为空');
         }
         $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName);
         $data = $this->dealImportData($data);
@@ -231,8 +232,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         $columnValue[] = 'first_trial';
         $columnValue[] = 'final_judgment';
         $sql = $this->physicalReplaceOrderDoManager->getBatchUpdateSql($this->model::tableName(), $columnValue, array_values($data), $ids, 'id');
-        $res = Yii::$app->db->createCommand($sql)->execute();
-        return $res;
+        return Yii::$app->db->createCommand($sql)->execute();
     }
 
     /**
@@ -256,9 +256,8 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
                 ->createCommand()
                 ->batchInsert($this->physicalSendStatusDo::tableName(), array_diff($this->physicalSendStatusDo->attributes(), ['id']), array_shift($data))
                 ->execute();
-        }else{
-            throw new Exception('微信号、发文时间不匹配该记录，请重试！！！');
         }
+        throw new Exception('微信号、发文时间不匹配该记录，请重试！！！');
     }
 
 
@@ -448,19 +447,19 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         $replaceQuantity = $advertReadNum = $volumeTransaction = $newFanAttention = $weChatId = 0;
         foreach ($data as &$v) {
             if (!empty($v['replace_quantity'])) {
-                $replaceQuantity = $replaceQuantity + (int)$v['replace_quantity'];
+                $replaceQuantity += (int)$v['replace_quantity'];
             }
             if (!empty($v['advert_read_num'])) {
-                $advertReadNum = $advertReadNum + (int)$v['advert_read_num'];
+                $advertReadNum += (int)$v['advert_read_num'];
             }
             if (!empty($v['volume_transaction'])) {
-                $volumeTransaction = $volumeTransaction + (int)$v['volume_transaction'];
+                $volumeTransaction += (int)$v['volume_transaction'];
             }
             if (!empty($v['new_fan_attention'])) {
-                $newFanAttention = $newFanAttention + (int)$v['new_fan_attention'];
+                $newFanAttention += (int)$v['new_fan_attention'];
             }
             if (!empty($v['we_chat_id'])) {
-                $weChatId = $weChatId + 1;
+                ++$weChatId;
             }
         }
         return
