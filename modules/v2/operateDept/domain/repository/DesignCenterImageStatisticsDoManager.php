@@ -32,7 +32,7 @@ class DesignCenterImageStatisticsDoManager extends BaseRepository
         $this->query->select($field)
             ->andFilterWhere(['>', 'design_finish_time', $designCenterImageStatisticsDto->beginTime])
             ->andFilterWhere(['<', 'design_finish_time', $designCenterImageStatisticsDto->endTime])
-            ->andFilterWhere(['=', 'stylist',            $designCenterImageStatisticsDto->stylist])
+            ->andFilterWhere(['like', 'stylist',            $designCenterImageStatisticsDto->stylist])
             ->groupBy('stylist');
 
         $perPage = $designCenterImageStatisticsDto->getPerPage();

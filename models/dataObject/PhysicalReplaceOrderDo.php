@@ -51,9 +51,9 @@ class PhysicalReplaceOrderDo extends ActiveRecord
         return [
             [['nick_name', 'we_chat_id'], 'required', 'message' => '{attribute}不能为空'],
             [['nick_name', 'we_chat_id', 'advert_location', 'follower',
-                'replace_product', 'brand', 'account_type', 'first_audit_opinion', 'final_audit_opinion', 'first_auditor', 'final_auditor'], 'string', 'max' => 255],
+                'replace_product', 'brand', 'account_type', 'first_audit_opinion', 'final_audit_opinion', 'first_auditor', 'final_auditor', 'fans_amount'], 'string'],
 
-            [['id', 'dispatch_time', 'first_trial', 'final_judgment', 'prize_send_status', 'fans_amount', 'put_times', 'replace_quantity', 'average_reading', 'advert_read_num', 'new_fan_attention'], 'integer'],
+            [['id', 'dispatch_time', 'first_trial', 'final_judgment', 'prize_send_status', 'put_times', 'replace_quantity', 'average_reading', 'advert_read_num', 'new_fan_attention'], 'integer'],
             ['put_link', 'string', 'max' => 1024],
             [['female_powder_proportion', 'volume_transaction'], 'double'],
         ];
