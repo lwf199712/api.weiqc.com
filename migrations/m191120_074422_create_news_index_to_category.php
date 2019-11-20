@@ -13,7 +13,7 @@ class m191120_074422_create_news_index_to_category extends Migration
      */
     public function safeUp()
     {
-        $this->createIndex('uniq_category_category', $this->tableName,['category'], true);
+        $this->createIndex('uniq_category_type', $this->tableName,['category','type'], true);
     }
 
     /**
