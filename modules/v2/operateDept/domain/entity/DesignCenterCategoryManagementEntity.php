@@ -37,7 +37,6 @@ class DesignCenterCategoryManagementEntity extends CategoryManagementDo
         if ($model == null){
             throw new \Exception('找不到要修改的属性');
         }
-//        var_dump($designCenterCategoryManagementForm->getAttributes());die();
         $model->setAttributes($designCenterCategoryManagementForm->getAttributes());
         return $model->save();
     }
@@ -55,5 +54,20 @@ class DesignCenterCategoryManagementEntity extends CategoryManagementDo
             throw new \Exception('删除ID不能为空');
         }
         return self::deleteAll(['id' => $designCenterCategoryManagementForm->id]);
+    }
+
+    /**
+     * 查看设计中心详情实体
+     * 查看设计中心属性的详情
+     * Date: 2019/11/20
+     * Author: ctl
+     * @throws \Exception
+     */
+    public function detailEntity(DesignCenterCategoryManagementForm $designCenterCategoryManagementForm)
+    {
+        if ($designCenterCategoryManagementForm->id == null){
+            throw new \Exception('查看ID不能为空');
+        }
+        return self::findOne(['id'=>$designCenterCategoryManagementForm->id]);
     }
 }

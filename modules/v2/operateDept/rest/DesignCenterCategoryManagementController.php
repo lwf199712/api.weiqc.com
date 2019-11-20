@@ -53,6 +53,7 @@ class DesignCenterCategoryManagementController extends AdminBaseController
             'update'    => ['POST', 'OPTIONS'],
             'delete'    => ['DELETE', 'OPTIONS'],
             'upload'    => ['POST', 'OPTIONS'],
+            'detail'    => ['GET', 'OPTIONS'],
         ];
     }
 
@@ -75,6 +76,8 @@ class DesignCenterCategoryManagementController extends AdminBaseController
             case 'actionDelete':
                 return $this->designCenterCategoryManagementForm;
             case 'actionUpload':
+                return $this->designCenterCategoryManagementForm;
+            case 'actionDetail':
                 return $this->designCenterCategoryManagementForm;
             default:
                 throw new HttpException('UnKnow ActionName ');
@@ -158,6 +161,26 @@ class DesignCenterCategoryManagementController extends AdminBaseController
     }
 
     /**
+     * 查看指定ID的类别详情
+     * Date: 2019/11/20
+     * Author: ctl
+     */
+    public function actionDetail()
+    {
+        try{
+            $data = $this->designCenterCategoryManagementEntity->detailEntity($this->designCenterCategoryManagementForm);
+            if (!$data){
+                return ['查看失败',500,'数据为空'];
+            }else{
+                return ['查看成功',200,$data];
+            }
+        }catch (Exception $exception){
+            return ['查看失败',500,$exception->getMessage()];
+        }
+    }
+
+    /**
+     * 测试专用
      * test aliyun oss upload
      * Date: 2019/10/30
      * Author: ctl
