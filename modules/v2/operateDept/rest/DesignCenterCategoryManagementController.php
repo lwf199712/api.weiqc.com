@@ -117,6 +117,9 @@ class DesignCenterCategoryManagementController extends AdminBaseController
             }
             return ['新增成功',200,$data];
         }catch (Exception $exception){
+            if (strpos($exception->getMessage(), 'Duplicate entry')){
+                return ['新增失败', 500, '属性名已存在'];
+            }
             return ['新增失败', 500, $exception->getMessage()];
         }
     }
