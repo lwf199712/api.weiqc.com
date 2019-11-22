@@ -68,10 +68,9 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         //统计数量
         if (!empty($list['lists'])){
             //设置分页统计
-            $physicalReplaceOrderQuery->setPage(0);
             $physicalReplaceOrderQuery->setPerPage(0);
-            $list['lists']      = $this->physicalReplaceOrderDoManager->listDataProvider($physicalReplaceOrderQuery)->getModels();
-            $list['statistic']  = $this->statisticsData($list['lists']);
+            $listData          = $this->physicalReplaceOrderDoManager->listDataProvider($physicalReplaceOrderQuery)->getModels();
+            $list['statistic'] = $this->statisticsData($listData);
         }
         $list['brandArr']   = $this->getBrandArr();
         $list['totalCount'] = $this->physicalReplaceOrderDoManager->listDataProvider($physicalReplaceOrderQuery)->getTotalCount();
@@ -85,7 +84,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
      * @throws Exception
      * @author weifeng
      */
-    public function importReplaceOrder(PhysicalReplaceOrderImport $physicalReplaceOrderImport)
+    public function importReplaceOrder(PhysicalReplaceOrderImport $physicalReplaceOrderImport): int
     {
         $physicalReplaceOrderImport->excelFile = UploadedFile::getInstanceByName('excelFile');
         if ($physicalReplaceOrderImport->excelFile == null) {
