@@ -20,6 +20,10 @@ use app\common\infrastructure\service\impl\TimeFormatterImpl;
 use app\common\infrastructure\service\TimeFormatterService;
 use app\modules\v2\link\service\impl\StaticUrlDeliveryVolumeImpl;
 use app\modules\v2\link\service\StaticUrlDeliveryVolumeService;
+use app\modules\v2\marketDept\service\impl\PhysicalReplaceOrderImpl;
+use app\modules\v2\marketDept\service\impl\PhysicalSendStatusImpl;
+use app\modules\v2\marketDept\service\PhysicalReplaceOrderService;
+use app\modules\v2\marketDept\service\PhysicalSendStatusService;
 use app\modules\v2\operateDept\service\DesignCenterImageService;
 use app\modules\v2\operateDept\service\DesignCenterImageStatisticsService;
 use app\modules\v2\operateDept\service\impl\DesignCenterImageImpl;
@@ -36,6 +40,8 @@ $containerList = [
     StaticUrlDeliveryVolumeService::class       => StaticUrlDeliveryVolumeImpl::class,
     DesignCenterImageService::class             => DesignCenterImageImpl::class,
     DesignCenterImageStatisticsService::class   => DesignCenterImageStatisticsImpl::class,
+    PhysicalReplaceOrderService::class          => PhysicalReplaceOrderImpl::class,
+    PhysicalSendStatusService::class            => PhysicalSendStatusImpl::class,
 
     //基础设施层
     ExcelService::class            => ExcelServiceImpl::class,

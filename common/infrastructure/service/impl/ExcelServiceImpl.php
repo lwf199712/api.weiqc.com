@@ -6,6 +6,7 @@ namespace app\common\infrastructure\service\impl;
 
 use app\common\infrastructure\service\ExcelService;
 use app\common\exception\SpreadSheetException;
+use http\Exception\RuntimeException;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
@@ -115,6 +116,10 @@ class ExcelServiceImpl extends Component implements ExcelService
         $resultSetGenerator = $asyncResult($this);
         foreach ($resultSetGenerator as $item) {
             $data[] = current($item);
+        }
+        //处理空表，判断表格数据个数
+        if (count($data) === 1 && !array_shift($data)['A']) {
+            throw new Exception('请检查excel表格是否有数据!!!');
         }
         //去除空行
         $data = $this->removeEmptyRow($data);
@@ -284,7 +289,7 @@ class ExcelServiceImpl extends Component implements ExcelService
      */
     private function removeEmptyRow(array $data): array
     {
-        foreach ($data as $_row) {
+        foreach ($data as $index=>$_row) {
             $isNull = true;
             foreach ($_row as $cell) {
                 if (!empty($cell)) {
@@ -292,7 +297,7 @@ class ExcelServiceImpl extends Component implements ExcelService
                 }
             }
             if ($isNull) {
-                unset($data[$_row]);
+                unset($data[$index]);
             }
         }
         return $data;

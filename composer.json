@@ -32,7 +32,7 @@
     "mdmsoft/yii2-admin": "~2.0",
     "dmstr/yii2-adminlte-asset": "2.*",
     "phpoffice/phpspreadsheet": "^1.2",
-    "aliyuncs/oss-sdk-php": "^2.3"
+    "ext-http": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.1.0",
@@ -52,7 +52,7 @@
       "http"
     ],
     "github-oauth": {
-      "github.com": "1c997f0dbf668c4745b8966df4ae31a8fc23a6e2"
+      "github.com": "979f86f261d07725d26edd954cca2e5341e9eb1d"
     }
   },
   "scripts": {
