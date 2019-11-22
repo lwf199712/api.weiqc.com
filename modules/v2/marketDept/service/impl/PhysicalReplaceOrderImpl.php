@@ -281,7 +281,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
             }
             if (!empty($v['F'])) {//不可重复操作
                 $data[$k]['F'] = strtotime($v['F']);
-                $dispatch[] = $data[$k]['B'] . $data[$k]['F'];
+                $dispatch[] = $data[$k]['B'] .$data[$k]['D'] . $data[$k]['F'];
                 if (!empty($dispatch)) {
                     $res = $this->model::find()
                         ->where(['we_chat_id' => $data[$k]['B'], 'advert_location' => $data[$k]['D'], 'dispatch_time' => $data[$k]['F']])
@@ -301,7 +301,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         }
         //检查重复记录
         if (count($dispatch) !== count(array_unique($dispatch))) {
-            throw new Exception('微信号、发文时间有重复数据，请检查表格是否正确！！！');
+            throw new Exception('微信号、广告位置、发文时间有重复数据，请检查表格是否正确！！！');
         }
         if (!empty($num)) {
             throw new Exception('第' . implode(',', $num) . '行记录的微信号、昵称、广告位置、发文时间不能为空');
