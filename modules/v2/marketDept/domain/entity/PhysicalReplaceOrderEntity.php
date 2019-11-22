@@ -31,9 +31,6 @@ class PhysicalReplaceOrderEntity extends PhysicalReplaceOrderDo
             $model->first_trial = 0;
             $model->final_judgment = 0;
         }
-        if ($model->first_trial === 1 && $model->final_judgment === 1){
-            throw new Exception('初审和终审已通过，不可编辑！！！');
-        }
         $model->dispatch_time = strtotime($physicalReplaceOrderForm->dispatch_time);
         return $model->save();
     }

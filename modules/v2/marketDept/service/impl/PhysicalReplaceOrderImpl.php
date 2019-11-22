@@ -64,7 +64,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
      */
     public function listData(PhysicalReplaceOrderQuery $physicalReplaceOrderQuery): array
     {
-        $list['lists']      = $this->physicalReplaceOrderDoManager->listDataProvider($physicalReplaceOrderQuery)->getModels();
+        $list['lists'] = $this->physicalReplaceOrderDoManager->listDataProvider($physicalReplaceOrderQuery)->getModels();
         //统计数量
         if (!empty($list['lists'])){
             //设置分页统计
@@ -93,7 +93,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName);
         $data = $this->dealImportData($data);
         //不需要的字段
-        $unsetData = ['id', 'first_trial', 'final_judgment', 'prize_send_status', 'audit_opinion','first_audit_opinion','final_audit_opinion','first_auditor','final_auditor'];
+        $unsetData = ['id', 'first_trial', 'final_judgment', 'prize_send_status', 'audit_opinion', 'first_audit_opinion', 'final_audit_opinion', 'first_auditor', 'final_auditor', 'advert_read_num', 'volume_transaction', 'new_fan_attention'];
         return Yii::$app->db->createCommand()->batchInsert('{{%physical_replace_order}}', array_diff($this->model->attributes(), $unsetData), $data)->execute();
     }
 
@@ -284,18 +284,17 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
                 $dispatch[] = $data[$k]['B'] . $data[$k]['F'];
                 if (!empty($dispatch)) {
                     $res = $this->model::find()
-                        ->where(['we_chat_id' => $data[$k]['B'], 'dispatch_time' => $data[$k]['F']])
+                        ->where(['we_chat_id' => $data[$k]['B'], 'advert_location' => $data[$k]['D'], 'dispatch_time' => $data[$k]['F']])
                         ->asArray()
                         ->one();
-                    if ($flag == 1 && $res) {
-                        throw new Exception('第' . ($k + 1) . '行微信号、发文时间有重复数据，请检查表格是否正确！！！');
+                    if ($flag === 1 && $res) {
+                        throw new Exception('第' . ($k + 1) . '行微信号、广告位置、发文时间有重复数据，请检查表格是否正确！！！');
+                    }
+                    if ($flag === 1){
+                        unset($data[$k]['O'], $data[$k]['P'], $data[$k]['Q']);
                     }
                     if ($flag == 0) {
-                        if ($res['first_trial'] == 1 && $res['final_judgment'] == 1){
-                            throw new Exception('第' . ($k + 1) . '行记录的初审、终审已通过，请检查表格是否正确！！！');
-                        }else{
-                            $data[$k]['first_trial'] = $data[$k]['final_judgment'] = 0;
-                        }
+                        $data[$k]['first_trial'] = $data[$k]['final_judgment'] = 0;
                     }
                 }
             }
@@ -305,7 +304,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
             throw new Exception('微信号、发文时间有重复数据，请检查表格是否正确！！！');
         }
         if (!empty($num)) {
-            throw new Exception('第' . implode(',', $num) . '行记录的微信号、昵称、发文时间不能为空');
+            throw new Exception('第' . implode(',', $num) . '行记录的微信号、昵称、广告位置、发文时间不能为空');
         }
         return $data;
     }
@@ -321,11 +320,11 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         $ids = [];
         foreach ($data as $key => $value) {
             $id = $this->model::find()
-                    ->select('id')
-                    ->where(['we_chat_id' => $value['B'], 'dispatch_time' => $value['F']])
-                    ->asArray()
-                    ->one();
-            if (empty($id)){
+                ->select('id')
+                ->where(['we_chat_id' => $value['B'], 'advert_location' => $value['D'], 'dispatch_time' => $value['F']])
+                ->asArray()
+                ->one();
+            if (empty($id)) {
                 throw new Exception('第'.($key + 1) . '行的数据有误，更新失败');
             }
             $ids[] = array_shift($id);
@@ -393,7 +392,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
      */
     private function dealStatusData($data):array
     {
-        //检查微信号  发文时间是否为空
+        //检查微信号  发文时间  广告位置 是否为空
         if (empty($data)) {
             throw new Exception('导入数据为空！！！');
         }
@@ -401,18 +400,18 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         $trackingNumber = [];
         $rpId           = [];
         foreach ($data as $k => $v) {
-            if (empty($v['A']) || empty($v['B']) || empty($v['F'])) {
+            if (empty($v['A']) || empty($v['B']) || empty($v['C']) || empty($v['G'])) {
                 $num[] = $k;
             }
             $data[$k]['B'] = strtotime($v['B']);
-            $trackingNumber[] = $v['F'];
-            $tN = $this->physicalSendStatusDo::find()->where(['tracking_number' => $v['F']])->one();
+            $trackingNumber[] = $v['G'];
+            $tN = $this->physicalSendStatusDo::find()->where(['tracking_number' => $v['G']])->one();
             if ($tN){
                 throw new Exception('第'.($k+1).'行的快递单号已存在，请检查再导入！！！');
             }
         }
         if (!empty($num)) {
-            throw new Exception('第' . implode(',', $num) . '条记录的微信号、发文时间、快递单号不能为空！！！');
+            throw new Exception('第' . implode(',', $num) . '条记录的微信号、发文时间、广告位置、快递单号不能为空！！！');
         }
         if (count($trackingNumber) !== count(array_unique($trackingNumber))){
             throw new Exception('快递单号的内容重复，请检查再导入！！！');
@@ -420,7 +419,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         foreach ($data as $key => $d) {
             $id = $this->model::find()
                 ->select('id,final_judgment')
-                ->where(['we_chat_id' => $d['A'], 'dispatch_time' => $d['B']])
+                ->where(['we_chat_id' => $d['A'], 'dispatch_time' => $d['B'], 'advert_location' => $d['C']])
                 ->asArray()
                 ->one();
             if (empty($id)){
@@ -430,7 +429,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
                 throw new Exception('终审未通过，更新寄出状态失败');
             }
             $rpId[] = $data[$key]['rp_id'] = $id['id'];
-            unset($data[$key]['A'], $data[$key]['B']);
+            unset($data[$key]['A'], $data[$key]['B'], $data[$key]['C']);
         }
         return [$data,$rpId];
     }
