@@ -33,7 +33,7 @@ class PhysicalSendStatusDo extends ActiveRecord
             ['tracking_number', 'required'],
             [['recipients', 'delivery_site', 'tracking_number'], 'string', 'max' => 255],
             [['id', 'rp_id'], 'integer'],
-            ['phone', 'string', 'max' => 11],
+            ['phone', 'string', 'max' => 15],
         ];
     }
 

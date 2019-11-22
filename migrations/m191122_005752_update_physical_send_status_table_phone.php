@@ -12,7 +12,7 @@ class m191122_005752_update_physical_send_status_table_phone extends Migration
      */
     public function safeUp()
     {
-        $this->alterColumn('{{%physical_send_status}}','phone',$this->string()->defaultValue('')->comment('联系电话'));
+        $this->alterColumn('{{%physical_send_status}}','phone',$this->string(15)->defaultValue('')->comment('联系电话'));
     }
 
     /**
