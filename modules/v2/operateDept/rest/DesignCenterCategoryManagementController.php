@@ -140,6 +140,9 @@ class DesignCenterCategoryManagementController extends AdminBaseController
             $data['category'] = $this->designCenterCategoryManagementForm->category;
             return ['修改成功',200,$data];
         }catch (Exception $exception){
+            if (strpos($exception->getMessage(), 'Duplicate entry')){
+                return ['新增失败', 500, '属性名已存在'];
+            }
             return ['修改失败', 500, $exception->getMessage()];
         }
     }
