@@ -15,7 +15,7 @@ class m191028_061536_create_CategoryManagement_table extends Migration
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
-            $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB COMMENT="类别表属性"';
+            $tableOptions = 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE=InnoDB COMMENT="类别表属性"';
         }
         $this->createTable($this->tableName, [
             'id' => $this->primaryKey(),

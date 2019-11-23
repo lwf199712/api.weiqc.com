@@ -170,7 +170,7 @@ class DesignCenterCategoryManagementController extends AdminBaseController
      * Date: 2019/11/20
      * Author: ctl
      */
-    public function actionDetail()
+    public function actionDetail(): ?array
     {
         try{
             $data = $this->designCenterCategoryManagementEntity->detailEntity($this->designCenterCategoryManagementForm);
