@@ -325,7 +325,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
                 ->asArray()
                 ->one();
             if (empty($id)) {
-                throw new Exception('第'.($key + 1) . '行的数据有误，更新失败');
+                throw new Exception('第'.($key + 1) . '行的数据不匹配，更新失败');
             }
             $ids[] = array_shift($id);
         }
