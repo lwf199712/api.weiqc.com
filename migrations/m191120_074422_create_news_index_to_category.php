@@ -21,9 +21,7 @@ class m191120_074422_create_news_index_to_category extends Migration
      */
     public function safeDown()
     {
-        echo "m191120_074422_create_news_index_to_category cannot be reverted.\n";
-
-        return false;
+        $this->dropIndex('uniq_category_type',$this->tableName);
     }
 
     /*

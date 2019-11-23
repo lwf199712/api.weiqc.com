@@ -29,6 +29,6 @@ interface DesignCenterImageStatisticsService
      * @param DesignCenterImageStatisticsDto $designCenterImageStatisticsDto
      * @return array
      */
-    public function personalStatistics(DesignCenterImageStatisticsDto $designCenterImageStatisticsDto):array;
+    public function personalStatistics(DesignCenterImageStatisticsDto $designCenterImageStatisticsDto): array;
 
 }

@@ -86,7 +86,7 @@ class DesignCenterHomeVideoController extends AdminBaseController
      * Author: ctl
      * @return array
      */
-    public function actionIndex() :array
+    public function actionIndex(): array
     {
         try{
             $data['list'] = $this->designCenterHomeVideoDoManager->listDataProvider($this->designCenterHomeVideoQuery)->getModels();
@@ -103,7 +103,7 @@ class DesignCenterHomeVideoController extends AdminBaseController
      * Author: ctl
      * @return array
      */
-    public function actionCreate() :array
+    public function actionCreate(): array
     {
         try{
             // 上传视频 并返回视频的地址
@@ -181,7 +181,7 @@ class DesignCenterHomeVideoController extends AdminBaseController
      * Date: 2019/10/31
      * Author: ctl
      */
-    public function actionAudit() :array
+    public function actionAudit(): array
     {
         try{
             $res = $this->designCenterHomeVideoEntity->auditEntity($this->designCenterHomeVideoForm);
@@ -202,7 +202,7 @@ class DesignCenterHomeVideoController extends AdminBaseController
      * @return array
      * @throws Exception
      */
-    public function actionRead() :array
+    public function actionRead(): array
     {
         $url = $this->designCenterHomeVideoEntity->urlEntity($this->designCenterHomeVideoForm);
         return ['查看视频成功',200,$data['url']=$url];
@@ -214,7 +214,7 @@ class DesignCenterHomeVideoController extends AdminBaseController
      * Author: ctl
      * @return array
      */
-    public function actionDetail() :array
+    public function actionDetail(): array
     {
         try{
             $data = $this->designCenterHomeVideoDoManager->detailData((int)$this->designCenterHomeVideoForm->id)->attributes;

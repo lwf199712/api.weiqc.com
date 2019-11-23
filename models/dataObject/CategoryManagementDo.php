@@ -2,7 +2,7 @@
 
 namespace app\models\dataObject;
 
-use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "bm_CategoryManagement".
@@ -11,7 +11,7 @@ use Yii;
  * @property string $category 类别内容
  * @property int $type 1 是图片的类别属性，2是视频的类别属性
  */
-class CategoryManagementDo extends \yii\db\ActiveRecord
+class CategoryManagementDo extends ActiveRecord
 {
     /**
      * {@inheritdoc}

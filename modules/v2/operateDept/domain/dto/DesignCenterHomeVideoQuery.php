@@ -3,7 +3,6 @@
 
 namespace app\modules\v2\operateDept\domain\dto;
 
-use Yii;
 use yii\base\Model;
 
 class DesignCenterHomeVideoQuery extends Model

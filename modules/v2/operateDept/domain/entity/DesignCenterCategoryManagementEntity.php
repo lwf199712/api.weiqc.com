@@ -5,8 +5,6 @@ namespace app\modules\v2\operateDept\domain\entity;
 
 use app\models\dataObject\CategoryManagementDo;
 use app\modules\v2\operateDept\domain\dto\DesignCenterCategoryManagementForm;
-use Yii;
-use yii\db\Exception;
 
 class DesignCenterCategoryManagementEntity extends CategoryManagementDo
 {
@@ -31,7 +29,7 @@ class DesignCenterCategoryManagementEntity extends CategoryManagementDo
      * @throws \Exception
      * @author ctl
      */
-    public function updateEntity(DesignCenterCategoryManagementForm $designCenterCategoryManagementForm):bool
+    public function updateEntity(DesignCenterCategoryManagementForm $designCenterCategoryManagementForm): bool
     {
         $model = self::findOne($designCenterCategoryManagementForm->id);
         if ($model == null){
@@ -48,7 +46,7 @@ class DesignCenterCategoryManagementEntity extends CategoryManagementDo
      * @throws \Exception
      * @author ctl
      */
-    public function deleteEntity(DesignCenterCategoryManagementForm $designCenterCategoryManagementForm):int
+    public function deleteEntity(DesignCenterCategoryManagementForm $designCenterCategoryManagementForm): int
     {
         if ($designCenterCategoryManagementForm->id == null){
             throw new \Exception('删除ID不能为空');
@@ -61,6 +59,8 @@ class DesignCenterCategoryManagementEntity extends CategoryManagementDo
      * 查看设计中心属性的详情
      * Date: 2019/11/20
      * Author: ctl
+     * @param DesignCenterCategoryManagementForm $designCenterCategoryManagementForm
+     * @return DesignCenterCategoryManagementEntity|null
      * @throws \Exception
      */
     public function detailEntity(DesignCenterCategoryManagementForm $designCenterCategoryManagementForm)

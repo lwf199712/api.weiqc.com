@@ -4,7 +4,6 @@
 namespace app\modules\v2\operateDept\domain\dto;
 
 use app\components\UploadFile;
-use phpDocumentor\Reflection\Types\Object_;
 use yii\base\Model;
 use Exception;
 use RuntimeException;
@@ -56,34 +55,6 @@ class DesignCenterHomeVideoForm extends Model
             'category'          => '属性',
         ];
     }
-
-    /**
-     * 你有钱就用oss
-     * Date: 2019/10/30
-     * Author: ctl
-     * @return string
-     */
-//    public function upload()
-//    {
-//        // 判断有没有上传视频
-//        if (!UploadedFile::getInstanceByName('videoFile')){
-//            return false;
-//        }
-//        $this->videoFile = UploadedFile::getInstanceByName('videoFile');
-//        $file['video'] = json_decode(json_encode($this->videoFile),true);
-//        $file['video']['tmp_name'] = $file['video']['tempName'];
-//        unset($file['video']['tempName']);
-////        $upload = new UploadFile($file);
-//        try {
-//            $url = $this->uploadVideo('',$file);
-////            $url = $upload->upload('oss', 'gdt/operateDept/video/');
-//            return $url;
-//        } catch (\OSS\Core\OssException $ossException) {
-//            throw new $ossException->getMessage();
-//        } catch (\Exception $e) {
-//            throw new $e->getMessage();
-//        }
-//    }
 
     /**
      * delete oss video

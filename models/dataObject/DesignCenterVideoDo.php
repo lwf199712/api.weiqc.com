@@ -2,7 +2,7 @@
 
 namespace app\models\dataObject;
 
-use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "bm_design_center_home_video".
@@ -19,7 +19,7 @@ use Yii;
  * @property string $category 属性类别
  * @property string $url 图片链接
  */
-class DesignCenterVideoDo extends \yii\db\ActiveRecord
+class DesignCenterVideoDo extends ActiveRecord
 {
     /**
      * {@inheritdoc}

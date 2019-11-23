@@ -97,7 +97,7 @@ class DesignCenterImageStatisticsController extends AdminBaseController
      * Date: 2019/11/18
      * Author: ctl
      */
-    public function actionPersonal():array
+    public function actionPersonal(): array
     {
         try{
             if (!$this->designCenterImageStatisticsDto->stylist)

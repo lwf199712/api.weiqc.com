@@ -7,16 +7,21 @@ use yii\db\Migration;
  */
 class m191028_061536_create_CategoryManagement_table extends Migration
 {
+    private $tableName = '{{%CategoryManagement}}';
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%CategoryManagement}}', [
+        $tableOptions = null;
+        if ($this->db->driverName === 'mysql') {
+            $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB COMMENT="类别表属性"';
+        }
+        $this->createTable($this->tableName, [
             'id' => $this->primaryKey(),
-            'category' => $this->string(120)->notNull()->comment('类别内容'),
-            'type' => $this->tinyInteger()->notNull()->comment('1 是图片的类别属性，2是视频的类别属性'),
-        ]);
+            'category' => $this->string(120)->notNull()->defaultValue('')->comment('类别内容'),
+            'type' => $this->tinyInteger()->notNull()->defaultValue(1)->comment('1 是图片的类别属性，2是视频的类别属性'),
+        ],$tableOptions);
     }
 
     /**
@@ -24,6 +29,6 @@ class m191028_061536_create_CategoryManagement_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%CategoryManagement}}');
+        $this->dropTable($this->tableName);
     }
 }

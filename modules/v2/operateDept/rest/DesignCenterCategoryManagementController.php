@@ -9,7 +9,6 @@ use app\modules\v2\operateDept\domain\dto\DesignCenterCategoryManagementQuery;
 use app\modules\v2\operateDept\domain\entity\DesignCenterCategoryManagementEntity;
 use app\modules\v2\operateDept\domain\repository\DesignCenterCategoryManagementDoManager;
 use Exception;
-use http\Exception\RuntimeException;
 use yii\base\Model;
 use app\components\UploadFile;
 use yii\web\HttpException;

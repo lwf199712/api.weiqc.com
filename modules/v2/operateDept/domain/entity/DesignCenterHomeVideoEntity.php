@@ -19,7 +19,7 @@ class DesignCenterHomeVideoEntity extends DesignCenterVideoDo
      * @param DesignCenterHomeVideoForm $designCenterHomeVideoForm
      * @return bool
      */
-    public function createEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm):bool
+    public function createEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm): bool
     {
         $model = new self();
         $model->setAttributes($designCenterHomeVideoForm->getAttributes());
@@ -37,7 +37,7 @@ class DesignCenterHomeVideoEntity extends DesignCenterVideoDo
      * @return int
      * @throws \Exception
      */
-    public function deleteEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm) :int
+    public function deleteEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm): int
     {
         if ($designCenterHomeVideoForm->id === null){
             throw new \RuntimeException('删除ID不能为空');
@@ -60,7 +60,7 @@ class DesignCenterHomeVideoEntity extends DesignCenterVideoDo
      * @return bool
      * @throws \Exception
      */
-    public function auditEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm) :bool
+    public function auditEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm): bool
     {
         if (!$designCenterHomeVideoForm->id){
             throw new \RuntimeException('审核id不能为空');
@@ -82,7 +82,7 @@ class DesignCenterHomeVideoEntity extends DesignCenterVideoDo
      * @return string
      * @throws \Exception
      */
-    public function urlEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm):string
+    public function urlEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm): string
     {
         if (!$designCenterHomeVideoForm->id){
             throw new \RuntimeException('视频id不能为空');
@@ -98,7 +98,7 @@ class DesignCenterHomeVideoEntity extends DesignCenterVideoDo
      * @return array
      * @throws \Exception
      */
-    public function detailEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm):array
+    public function detailEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm): array
     {
         if (!$designCenterHomeVideoForm->id){
             throw new \RuntimeException('查看id不能为空');
@@ -113,7 +113,7 @@ class DesignCenterHomeVideoEntity extends DesignCenterVideoDo
      * @param string $old_url
      * @return bool
      */
-    public function updateEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm,string $old_url = ''):bool
+    public function updateEntity(DesignCenterHomeVideoForm $designCenterHomeVideoForm,string $old_url = ''): bool
     {
         $model = new self();
         // 判断有没有上传新的视频

@@ -3,9 +3,6 @@
 
 namespace app\modules\v2\operateDept\domain\dto;
 
-use Exception;
-use RuntimeException;
-use Yii;
 use yii\base\Model;
 
 class DesignCenterCategoryManagementForm extends Model

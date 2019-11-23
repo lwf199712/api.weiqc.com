@@ -7,6 +7,7 @@ use yii\db\Migration;
  */
 class m191029_051737_add_columns_in_design_center_image extends Migration
 {
+    private $tableName = '{{%design_center_image}}';
     /**
      * {@inheritdoc}
      */
@@ -21,9 +22,8 @@ class m191029_051737_add_columns_in_design_center_image extends Migration
      */
     public function safeDown()
     {
-        echo "m191029_051737_add_columns_in_design_center_image cannot be reverted.\n";
-
-        return false;
+        $this->dropColumn($this->tableName,'url');
+        $this->dropColumn($this->tableName,'category');
     }
 
     /*
