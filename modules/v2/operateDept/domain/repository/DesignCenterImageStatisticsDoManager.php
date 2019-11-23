@@ -22,6 +22,7 @@ class DesignCenterImageStatisticsDoManager extends BaseRepository
             'count(CASE WHEN type="drillShow" THEN 1 END) as drillShow',
             'count(CASE WHEN type="throughCar" THEN 1 END) as throughCar',
             'count(CASE WHEN type="landingPage" THEN 1 END) as landingPage',
+            'count(CASE WHEN type="tweet" THEN 1 END) as tweet',
             'count(CASE WHEN type="describe790" THEN 1 END) as describe790',
             'count(CASE WHEN type="storeActivity" THEN 1 END) as storeActivity',
             'count(CASE WHEN type="slideShow" THEN 1 END) as slideShow',
@@ -73,6 +74,29 @@ class DesignCenterImageStatisticsDoManager extends BaseRepository
             'query' => $this->query->asArray(),
         ]);
 
+    }
+
+    /**
+     * 查询个人图片审核情况
+     * Date: 2019/11/18
+     * Author: ctl
+     * @param DesignCenterImageStatisticsDto $designCenterImageStatisticsDto
+     * @return ActiveDataProvider
+     */
+    public function personalStatistics(DesignCenterImageStatisticsDto $designCenterImageStatisticsDto): ActiveDataProvider
+    {
+        $field = ['id', 'stylist',
+            'count(CASE WHEN audit_status=0 THEN 1 END) as stayAudit',
+            'count(CASE WHEN audit_status=1 THEN 1 END) as pass',
+            'count(CASE WHEN audit_status=2 THEN 1 END) as notPass'
+        ];
+
+        $this->query->select($field)
+            ->andFilterWhere(['=', 'stylist', $designCenterImageStatisticsDto->stylist]);
+
+        return new ActiveDataProvider([
+            'query' => $this->query->asArray(),
+        ]);
     }
 
 }

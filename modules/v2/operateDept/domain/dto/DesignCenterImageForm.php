@@ -37,13 +37,17 @@ class DesignCenterImageForm extends Model
     public $size;
     /** @var string */
     public $type;
+    /** @var string */
+    public $url;
+    /** @var  */
+    public $category;
 
 
     public function rules(): array
     {
         return [
             [['id', 'design_finish_time', 'audit_time', 'audit_status'], 'integer'],
-            [['name', 'stylist', 'audit_opinion', 'size', 'type'], 'string'],
+            [['name', 'stylist', 'audit_opinion', 'size', 'type','url','category'], 'string'],
         ];
     }
 
@@ -61,6 +65,8 @@ class DesignCenterImageForm extends Model
             'audit_time'        => '审核时间',
             'size'              => '图片规格',
             'type'              => '类型',
+            'url'               => '图片链接',
+            'category'          => '属性',
         ];
     }
 

@@ -5,6 +5,7 @@ namespace app\modules\v2\operateDept\service\impl;
 use app\modules\v2\operateDept\domain\dto\DesignCenterImageStatisticsDto;
 use app\modules\v2\operateDept\domain\repository\DesignCenterImageStatisticsDoManager;
 use app\modules\v2\operateDept\service\DesignCenterImageStatisticsService;
+use Exception;
 use yii\base\BaseObject;
 use yii\db\ActiveRecord;
 
@@ -39,8 +40,7 @@ class DesignCenterImageStatisticsImpl extends BaseObject implements DesignCenter
     {
         $list['lists'] = $this->designCenterImageStatisticsDoManager->listDataProvider($designCenterImageStatisticsDto)->getModels();
         foreach ($list['lists'] as $key => $value) {
-            $list['lists'][$key]['drawCount'] = $value['homePage'] + $value['mainImage'] + $value['productDetail'] + $value['drillShow'] + $value['throughCar'] + $value['landingPage']
-                + $value['describe790'] + $value['storeActivity'] + $value['slideShow'] + $value['videoMainImage'] + $value['truingScene'];
+            $list['lists'][$key]['drawCount'] = $value['homePage'] + $value['mainImage'] + $value['productDetail'] + $value['drillShow'] + $value['throughCar'] + $value['landingPage']+$value['tweet']+$value['describe790']+$value['storeActivity']+$value['slideShow']+$value['videoMainImage']+$value['truingScene'];
             unset($list['lists'][$key]['id']);
         }
         $list['totalCount'] = $this->designCenterImageStatisticsDoManager->listDataProvider($designCenterImageStatisticsDto)->getTotalCount();
@@ -64,4 +64,18 @@ class DesignCenterImageStatisticsImpl extends BaseObject implements DesignCenter
         return $listArr;
     }
 
+    /**
+     * 设计中心设计师个人图片统计
+     * Date: 2019/11/17
+     * Author: ctl
+     * @param DesignCenterImageStatisticsDto $designCenterImageStatisticsDto
+     * @return array
+     * @throws Exception
+     */
+    public function personalStatistics(DesignCenterImageStatisticsDto $designCenterImageStatisticsDto): array
+    {
+        $dataArr = $this->designCenterImageStatisticsDoManager->personalStatistics($designCenterImageStatisticsDto)->getModels();
+        return $dataArr;
+        // TODO: Implement personalStatistics() method.
+    }
 }
