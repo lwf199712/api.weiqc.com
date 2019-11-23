@@ -33,7 +33,7 @@ class PhysicalReplaceOrderEntity extends PhysicalReplaceOrderDo
                 ->where(['we_chat_id' => $physicalReplaceOrderForm->we_chat_id, 'advert_location'
                 => $physicalReplaceOrderForm->advert_location, 'dispatch_time' => strtotime($physicalReplaceOrderForm->dispatch_time)])
                 ->asArray()
-                ->createCommand()->getRawSql();
+                ->one();
             if ($res) {
                 throw new Exception('微信号、广告位置、发文时间数据已重复，更新失败');
             }
