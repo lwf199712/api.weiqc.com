@@ -28,12 +28,12 @@ class PhysicalReplaceOrderEntity extends PhysicalReplaceOrderDo
         //验证微信号、广告位置、发文时间是否重复
         if ($model->we_chat_id !== $physicalReplaceOrderForm->we_chat_id
             || $model->advert_location !== $physicalReplaceOrderForm->advert_location
-            || $model->dispatch_time !== $physicalReplaceOrderForm->dispatch_time) {
+            || date('Y-m-d', $model->dispatch_time) !== $physicalReplaceOrderForm->dispatch_time) {
             $res = $this::find()
                 ->where(['we_chat_id' => $physicalReplaceOrderForm->we_chat_id, 'advert_location'
-                => $physicalReplaceOrderForm->advert_location, 'dispatch_time' => $physicalReplaceOrderForm->dispatch_time])
+                => $physicalReplaceOrderForm->advert_location, 'dispatch_time' => strtotime($physicalReplaceOrderForm->dispatch_time)])
                 ->asArray()
-                ->one();
+                ->createCommand()->getRawSql();
             if ($res) {
                 throw new Exception('微信号、广告位置、发文时间数据已重复，更新失败');
             }
