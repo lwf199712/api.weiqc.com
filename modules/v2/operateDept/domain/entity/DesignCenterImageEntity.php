@@ -26,6 +26,7 @@ class DesignCenterImageEntity extends DesignCenterImageDo
         $model->picture_address = '/uploads/designCenter/' . $model->picture_address;
         $model->upload_time     = time();
         $model->audit_status    = 0;
+        Yii::$app->db->createCommand()->insert();
         return $model->save();
     }
 
