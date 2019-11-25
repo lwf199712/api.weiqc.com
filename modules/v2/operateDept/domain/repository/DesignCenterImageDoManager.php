@@ -19,7 +19,7 @@ class DesignCenterImageDoManager extends BaseRepository
         $this->query
             ->andFilterWhere(['>', 'upload_time',    $designCenterImageQuery->beginTime])
             ->andFilterWhere(['<', 'upload_time',    $designCenterImageQuery->endTime])
-            ->andFilterWhere(['like', 'name',           $designCenterImageQuery->name])
+            ->andFilterWhere(['like', 'name',        $designCenterImageQuery->name])
             ->andFilterWhere(['=', 'stylist',        $designCenterImageQuery->stylist])
             ->andFilterWhere(['=', 'audit_status',   $designCenterImageQuery->audit_status])
             ->andFilterWhere(['=', 'size',           $designCenterImageQuery->size])

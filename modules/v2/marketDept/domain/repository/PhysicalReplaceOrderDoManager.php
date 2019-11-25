@@ -17,15 +17,16 @@ class PhysicalReplaceOrderDoManager extends BaseRepository
     public function listDataProvider(PhysicalReplaceOrderQuery $physicalReplaceOrderQuery): ActiveDataProvider
     {
         $this->query
-            ->andFilterWhere(['>=', 'dispatch_time',     $physicalReplaceOrderQuery->beginTime])
-            ->andFilterWhere(['<=', 'dispatch_time',     $physicalReplaceOrderQuery->endTime])
-            ->andFilterWhere(['=', 'first_trial',       $physicalReplaceOrderQuery->first_trial])
-            ->andFilterWhere(['=', 'final_judgment',    $physicalReplaceOrderQuery->final_judgment])
-            ->andFilterWhere(['=', 'prize_send_status', $physicalReplaceOrderQuery->prize_send_status])
+            ->andFilterWhere(['>=', 'dispatch_time',       $physicalReplaceOrderQuery->beginTime])
+            ->andFilterWhere(['<=', 'dispatch_time',       $physicalReplaceOrderQuery->endTime])
+            ->andFilterWhere(['=', 'first_trial',          $physicalReplaceOrderQuery->first_trial])
+            ->andFilterWhere(['=', 'final_judgment',       $physicalReplaceOrderQuery->final_judgment])
+            ->andFilterWhere(['=', 'prize_send_status',    $physicalReplaceOrderQuery->prize_send_status])
             ->andFilterWhere(['like', 'we_chat_id',        $physicalReplaceOrderQuery->we_chat_id])
             ->andFilterWhere(['like', 'nick_name',         $physicalReplaceOrderQuery->nick_name])
             ->andFilterWhere(['like', 'follower',          $physicalReplaceOrderQuery->follower])
-            ->andFilterWhere(['like', 'replace_product',   $physicalReplaceOrderQuery->replace_product]);
+            ->andFilterWhere(['like', 'replace_product',   $physicalReplaceOrderQuery->replace_product])
+            ->andFilterWhere(['like', 'brand',             $physicalReplaceOrderQuery->brand]);
         //post_status为0是未发文，1是已发文
         if ($physicalReplaceOrderQuery->post_status == '0') {
             $this->query->andWhere(['=', 'put_link', '']);
@@ -53,7 +54,7 @@ class PhysicalReplaceOrderDoManager extends BaseRepository
      * @author weifeng
      */
 
-    public function findOne($id)
+    public function findOne($id): ActiveRecord
     {
         return $this->model::findOne(['id' => $id]);
     }
@@ -68,7 +69,7 @@ class PhysicalReplaceOrderDoManager extends BaseRepository
      * @return string
      * @author weifeng
      */
-    public function getBatchUpdateSql(string $table,array $columns,array $rows, array $primaryArrays,string $primaryColumn)
+    public function getBatchUpdateSql(string $table,array $columns,array $rows, array $primaryArrays,string $primaryColumn): string
     {
         $sql = sprintf('UPDATE %s SET ', $table);
         $ids = implode(',', $primaryArrays);
