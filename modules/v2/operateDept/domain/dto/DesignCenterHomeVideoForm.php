@@ -23,11 +23,9 @@ class DesignCenterHomeVideoForm extends Model
     /** @var string */
     public $video;
     /** @var string */
-    public $audit_opinion;
+    public $audit_opinion = '';
     /** @var string */
     public $audit_status;
-    /** @var int */
-    public $audit_time;
     /** @var string */
     public $url;
     /** @var string*/
@@ -36,7 +34,7 @@ class DesignCenterHomeVideoForm extends Model
     public function rules() :array
     {
         return [
-            [['id', 'design_finish_time', 'audit_time', 'audit_status'], 'integer'],
+            [['id', 'design_finish_time','audit_status'], 'integer'],
             [['name', 'audit_opinion','url','category'], 'string'],
         ];
     }
