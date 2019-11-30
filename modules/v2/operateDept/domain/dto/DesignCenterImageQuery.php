@@ -25,6 +25,8 @@ class DesignCenterImageQuery extends Model
     public $size;
     /** @var string */
     public $type;
+    /** @var string */
+    public $category;
     /** @var int */
     private $page;
     /** @var int */
@@ -34,7 +36,7 @@ class DesignCenterImageQuery extends Model
     {
         return [
             [['beginTime', 'endTime', 'audit_status','perPage','page'], 'integer'],
-            [['name', 'stylist','size','type','picture_address'], 'string'],
+            [['name', 'stylist', 'size','type', 'category', 'picture_address'], 'string'],
         ];
     }
 
@@ -48,6 +50,7 @@ class DesignCenterImageQuery extends Model
             'audit_status'   => '审核状态',
             'size'           => '图片规格',
             'type'           => '类型',
+            'category'       => '图片属性',
             'picture_address'=> '图片地址',
         ];
     }

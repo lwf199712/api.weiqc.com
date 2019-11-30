@@ -29,6 +29,13 @@ class DesignCenterHomeVideoDoManager extends BaseRepository
             ->andFilterWhere(['like', 'name',        $designCenterHomeVideoQuery->name])
             ->andFilterWhere(['=', 'audit_status',   $designCenterHomeVideoQuery->audit_status]);
 
+        if (isset($designCenterHomeVideoQuery->category) && $designCenterHomeVideoQuery->category !== '') {
+            $ids = array_filter(explode(',', $designCenterHomeVideoQuery->category));
+            foreach ($ids as $key => $value) {
+                $this->query->andWhere(['or', ['LIKE', 'category', "%,$value", false], ['LIKE', 'category', "$value,%", false], ['LIKE', 'category', ",$value,"], ['=', 'category', $value]]);
+            }
+        }
+
         $perPage = $designCenterHomeVideoQuery->getPerPage();
         return new ActiveDataProvider([
             'query' => $this->query->asArray(),
