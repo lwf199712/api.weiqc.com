@@ -90,7 +90,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         if ($physicalReplaceOrderImport->excelFile === null) {
             throw new RuntimeException('excel上传文件不能为空');
         }
-        $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName,0,0,true);
+        $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName);
         $data = $this->dealImportData($data);
         //不需要的字段
         $unsetData = ['id', 'put_link', 'first_trial', 'final_judgment', 'prize_send_status', 'audit_opinion', 'first_audit_opinion', 'final_audit_opinion', 'first_auditor', 'final_auditor', 'advert_read_num', 'volume_transaction', 'new_fan_attention'];
