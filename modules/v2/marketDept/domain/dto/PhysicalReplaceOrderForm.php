@@ -29,8 +29,6 @@ class PhysicalReplaceOrderForm extends Model
     /** @var double */
     public $female_powder_proportion;
     /** @var string */
-    public $put_link;
-    /** @var string */
     public $replace_product;
     /** @var string */
     public $replace_quantity;
@@ -40,21 +38,15 @@ class PhysicalReplaceOrderForm extends Model
     public $average_reading;
     /** @var string */
     public $account_type;
-    /** @var string */
-    public $advert_read_num;
-    /** @var double */
-    public $volume_transaction;
-    /** @var string */
-    public $new_fan_attention;
 
 
     public function rules(): array
     {
         return [
             [['nick_name', 'we_chat_id', 'dispatch_time'], 'required'],
-            [['id', 'put_times', 'replace_quantity', 'average_reading', 'advert_read_num', 'new_fan_attention'], 'integer'],
-            [['nick_name', 'we_chat_id', 'dispatch_time', 'advert_location', 'follower', 'put_link', 'replace_product', 'brand', 'account_type', 'fans_amount'], 'string'],
-            [['female_powder_proportion', 'volume_transaction'], 'double'],
+            [['id', 'put_times', 'replace_quantity', 'average_reading'], 'integer'],
+            [['nick_name', 'we_chat_id', 'dispatch_time', 'advert_location', 'follower', 'replace_product', 'brand', 'account_type', 'fans_amount'], 'string'],
+            [['female_powder_proportion'], 'double'],
         ];
     }
 
@@ -71,15 +63,11 @@ class PhysicalReplaceOrderForm extends Model
             'dispatch_time'             => '发文时间',
             'follower'                  => '跟进人',
             'female_powder_proportion'  => '女粉占比',
-            'put_link'                  => '投放链接',
             'replace_product'           => '置换产品',
             'replace_quantity'          => '置换件数',
             'brand'                     => '品牌',
             'average_reading'           => '平均阅读数',
             'account_type'              => '账号类型',
-            'advert_read_num'           => '广告阅读数',
-            'volume_transaction'        => '成交额',
-            'new_fan_attention'         => '新粉关注数',
         ];
     }
 }
