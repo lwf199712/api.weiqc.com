@@ -3,6 +3,7 @@
 namespace app\models\dataObject;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "bm_statis_service".
@@ -12,7 +13,7 @@ use Yii;
  * @property string $account 服务账号
  * @property int $create_time 创建时间
  */
-class StatisServiceDo extends \yii\db\ActiveRecord
+class StaticServiceDo extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -29,7 +30,7 @@ class StatisServiceDo extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'account', 'create_time'], 'required'],
-            [['create_time'], 'integer'],
+            [['create_time', 'id'], 'integer'],
             [['name', 'account'], 'string', 'max' => 64],
         ];
     }

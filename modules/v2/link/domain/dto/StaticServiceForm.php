@@ -5,29 +5,23 @@ namespace app\modules\v2\link\domain\dto;
 
 use yii\base\Model;
 
-
-class StaticServiceDto extends Model
+class StaticServiceForm extends Model
 {
-    public const DELETE = 'delete';
-    public const READ = 'read';
+    public const UPDATE = 'update';
     /** @var string */
     public $account;
     /** @var string */
     public $name;
     /** @var integer */
     public $id;
-    /** @var integer */
-    public $prePage;
-    /** @var integer */
-    public $page;
+
 
     public function rules(): array
     {
         return [
-            ['id','required', 'on' => self::DELETE],
-            [['account', 'name'],'string'],
-            [['prePage','page', 'id'], 'integer'],
-            [['prePage','page'], 'required', 'on' => self::READ],
+            [['name', 'account'], 'required'],
+            [['name', 'account'], 'string', 'max' => 64],
+            ['id', 'required', 'on' => self::UPDATE]
 
         ];
     }
@@ -37,8 +31,7 @@ class StaticServiceDto extends Model
         return [
             'account' => '公众号账号',
             'name'    => '公众号名称',
-            'prePage'        => '页数',
-            'page'           => '第几页',
+
         ];
     }
 
