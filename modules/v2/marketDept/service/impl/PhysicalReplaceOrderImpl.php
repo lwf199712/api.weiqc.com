@@ -90,7 +90,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         if ($physicalReplaceOrderImport->excelFile === null) {
             throw new RuntimeException('excel上传文件不能为空');
         }
-        $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName);
+        $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName,0,0,true);
         $data = $this->dealImportData($data);
         //不需要的字段
         $unsetData = ['id', 'put_link', 'first_trial', 'final_judgment', 'prize_send_status', 'audit_opinion', 'first_audit_opinion', 'final_audit_opinion', 'first_auditor', 'final_auditor', 'advert_read_num', 'volume_transaction', 'new_fan_attention'];
@@ -244,9 +244,22 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         if ($physicalReplaceOrderImport->excelFile === null) {
             throw new RuntimeException('excel上传文件不能为空');
         }
-        $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName);
+        $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName,0,0);
+        //检测表头是否合法
+        $headArr = ['A' => '微信号', 'B' => '发文时间', 'C' => '广告位置',
+                    'D' => '收件人', 'E' => '联系电话', 'F' => '收件地址', 'G' => '快递单号'];
+        $diff = array_diff(array_shift($data), $headArr);
+        if (!empty($diff)) {
+            /** @noinspection LoopWhichDoesNotLoopInspection */
+            foreach ($diff as $i) {
+                throw new RuntimeException('请检查表头‘' . $i . '’是否正确');
+            }
+        }
+        //去除表头
+        unset($data[0]);
+
         $data = $this->dealStatusData($data);
-        if (!empty(array_unique(end($data))) && !empty(array_unique(end($data))[0])){
+        if (!empty(array_unique(end($data))) && !empty(array_unique(end($data))[0])) {
             $this->model::updateAll(['prize_send_status' => 1], ['in', 'id', array_unique(end($data))]);
             return Yii::$app->db
                             ->createCommand()
