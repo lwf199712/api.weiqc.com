@@ -87,13 +87,13 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
     public function importReplaceOrder(PhysicalReplaceOrderImport $physicalReplaceOrderImport): int
     {
         $physicalReplaceOrderImport->excelFile = UploadedFile::getInstanceByName('excelFile');
-        if ($physicalReplaceOrderImport->excelFile == null) {
+        if ($physicalReplaceOrderImport->excelFile === null) {
             throw new RuntimeException('excel上传文件不能为空');
         }
         $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName);
         $data = $this->dealImportData($data);
         //不需要的字段
-        $unsetData = ['id', 'first_trial', 'final_judgment', 'prize_send_status', 'audit_opinion', 'first_audit_opinion', 'final_audit_opinion', 'first_auditor', 'final_auditor', 'advert_read_num', 'volume_transaction', 'new_fan_attention'];
+        $unsetData = ['id', 'put_link', 'first_trial', 'final_judgment', 'prize_send_status', 'audit_opinion', 'first_audit_opinion', 'final_audit_opinion', 'first_auditor', 'final_auditor', 'advert_read_num', 'volume_transaction', 'new_fan_attention'];
         return Yii::$app->db->createCommand()->batchInsert('{{%physical_replace_order}}', array_diff($this->model->attributes(), $unsetData), $data)->execute();
     }
 
@@ -218,18 +218,15 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
     public function updateReplaceOrder(PhysicalReplaceOrderImport $physicalReplaceOrderImport)
     {
         $physicalReplaceOrderImport->excelFile = UploadedFile::getInstanceByName('excelFile');
-        if ($physicalReplaceOrderImport->excelFile == null) {
+        if ($physicalReplaceOrderImport->excelFile === null) {
             throw new Exception('excel上传文件不能为空');
         }
         $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName);
-        $data = $this->dealImportData($data,0);
+        $data = $this->dealUpdateData($data);
         //不需要的字段
-        $unsetData = ['id', 'first_trial', 'final_judgment', 'prize_send_status', 'audit_opinion', 'first_audit_opinion', 'final_audit_opinion', 'first_auditor', 'final_auditor'];
         $ids = $this->extractExportId($data);
         //根据id更新
-        $columnValue = array_values(array_diff($this->model->attributes(), $unsetData));
-        $columnValue[] = 'first_trial';
-        $columnValue[] = 'final_judgment';
+        $columnValue = ['we_chat_id','advert_location','dispatch_time','put_link','advert_read_num','volume_transaction','new_fan_attention'];
         $sql = $this->physicalReplaceOrderDoManager->getBatchUpdateSql($this->model::tableName(), $columnValue, array_values($data), $ids, 'id');
         return Yii::$app->db->createCommand($sql)->execute();
     }
@@ -244,34 +241,42 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
     public function updatePrizeSendStatus(PhysicalReplaceOrderImport $physicalReplaceOrderImport)
     {
         $physicalReplaceOrderImport->excelFile = UploadedFile::getInstanceByName('excelFile');
-        if ($physicalReplaceOrderImport->excelFile == null) {
-            throw new Exception('excel上传文件不能为空');
+        if ($physicalReplaceOrderImport->excelFile === null) {
+            throw new RuntimeException('excel上传文件不能为空');
         }
-        $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName);
+        $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName,0,0,true);
+        //检测表头是否合法
+        $headArr = ['A' => '微信号', 'B' => '发文时间', 'C' => '广告位置',
+                    'D' => '收件人', 'E' => '联系电话', 'F' => '收件地址', 'G' => '快递单号'];
+        $diff = array_diff(array_shift($data), $headArr);
+        if (!empty($diff)) {
+            /** @noinspection LoopWhichDoesNotLoopInspection */
+            foreach ($diff as $i) {
+                throw new RuntimeException('请检查表头‘' . $i . '’是否正确');
+            }
+        }
         $data = $this->dealStatusData($data);
-        if (!empty(array_unique(end($data))) && !empty(array_unique(end($data))[0])){
+        if (!empty(array_unique(end($data))) && !empty(array_unique(end($data))[0])) {
             $this->model::updateAll(['prize_send_status' => 1], ['in', 'id', array_unique(end($data))]);
             return Yii::$app->db
-                ->createCommand()
-                ->batchInsert($this->physicalSendStatusDo::tableName(), array_diff($this->physicalSendStatusDo->attributes(), ['id']), array_shift($data))
-                ->execute();
+                            ->createCommand()
+                            ->batchInsert($this->physicalSendStatusDo::tableName(), array_diff($this->physicalSendStatusDo->attributes(), ['id']), array_shift($data))
+                            ->execute();
         }
-        throw new Exception('微信号、发文时间不匹配该记录，请重试！！！');
+        throw new RuntimeException('微信号、发文时间不匹配该记录，请重试！！！');
     }
 
 
     /**
      * 处理导入数据
      * @param array $data
-     * @param int $flag
      * @return array
-     * @throws Exception
      */
-    private function dealImportData(array $data,$flag = 1):array
+    private function dealImportData(array $data):array
     {
         //检查微信号 昵称 发文时间是否为空
         if (empty($data)) {
-            throw new Exception('导入数据为空');
+            throw new RuntimeException('导入数据为空');
         }
         $num = [];
         $dispatch = [];
@@ -287,24 +292,54 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
                         ->where(['we_chat_id' => $data[$k]['B'], 'advert_location' => $data[$k]['D'], 'dispatch_time' => $data[$k]['F']])
                         ->asArray()
                         ->one();
-                    if ($flag === 1 && $res) {
-                        throw new Exception('第' . ($k + 1) . '行微信号、广告位置、发文时间有重复数据，请检查表格是否正确！！！');
+                    if ($res) {
+                        throw new RuntimeException('第' . ($k + 1) . '行微信号、广告位置、发文时间有重复数据，请检查表格是否正确！！！');
                     }
-                    if ($flag === 1){
-                        unset($data[$k]['O'], $data[$k]['P'], $data[$k]['Q']);
-                    }
-                    if ($flag == 0) {
-                        $data[$k]['first_trial'] = $data[$k]['final_judgment'] = 0;
-                    }
+                    unset($data[$k]['O'], $data[$k]['P'], $data[$k]['Q']);
                 }
             }
         }
         //检查重复记录
         if (count($dispatch) !== count(array_unique($dispatch))) {
-            throw new Exception('微信号、广告位置、发文时间有重复数据，请检查表格是否正确！！！');
+            throw new RuntimeException('微信号、广告位置、发文时间有重复数据，请检查表格是否正确！！！');
         }
         if (!empty($num)) {
-            throw new Exception('第' . implode(',', $num) . '行记录的微信号、昵称、广告位置、发文时间不能为空');
+            throw new RuntimeException('第' . implode(',', $num) . '行记录的微信号、昵称、广告位置、发文时间不能为空');
+        }
+        return $data;
+    }
+
+    /**
+     * 处理更新订单数据
+     * @param $data
+     * @return mixed
+     * @throws Exception
+     * @author weifeng
+     */
+
+    private function dealUpdateData($data)
+    {
+        //检查微信号 昵称 发文时间是否为空
+        if (empty($data)) {
+            throw new RuntimeException('导入数据为空');
+        }
+        $num = [];
+        $dispatch = [];
+        foreach ($data as $k => $v) {
+            if (empty($v['A']) || empty($v['B']) || empty($v['C'])) {
+                $num[] = $k;
+            }
+            if (!empty($v['C'])) {//不可重复操作
+                $data[$k]['C'] = strtotime($v['C']);
+                $dispatch[] = $data[$k]['A'] .$data[$k]['B'] . $data[$k]['C'];
+            }
+        }
+        //检查重复记录
+        if (count($dispatch) !== count(array_unique($dispatch))) {
+            throw new RuntimeException('微信号、广告位置、发文时间有重复数据，请检查表格是否正确！！！');
+        }
+        if (!empty($num)) {
+            throw new RuntimeException('第' . implode(',', $num) . '行记录的微信号、昵称、广告位置、发文时间不能为空');
         }
         return $data;
     }
@@ -321,7 +356,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         foreach ($data as $key => $value) {
             $id = $this->model::find()
                 ->select('id')
-                ->where(['we_chat_id' => $value['B'], 'advert_location' => $value['D'], 'dispatch_time' => $value['F']])
+                ->where(['we_chat_id' => $value['A'], 'advert_location' => $value['B'], 'dispatch_time' => $value['C']])
                 ->asArray()
                 ->one();
             if (empty($id)) {
@@ -394,7 +429,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
     {
         //检查微信号  发文时间  广告位置 是否为空
         if (empty($data)) {
-            throw new Exception('导入数据为空！！！');
+            throw new RuntimeException('导入数据为空！！！');
         }
         $num            = [];
         $trackingNumber = [];
@@ -407,14 +442,14 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
             $trackingNumber[] = $v['G'];
             $tN = $this->physicalSendStatusDo::find()->where(['tracking_number' => $v['G']])->one();
             if ($tN){
-                throw new Exception('第'.($k+1).'行的快递单号已存在，请检查再导入！！！');
+                throw new RuntimeException('第'.($k+1).'行的快递单号已存在，请检查再导入！！！');
             }
         }
         if (!empty($num)) {
-            throw new Exception('第' . implode(',', $num) . '条记录的微信号、发文时间、广告位置、快递单号不能为空！！！');
+            throw new RuntimeException('第' . implode(',', $num) . '条记录的微信号、发文时间、广告位置、快递单号不能为空！！！');
         }
         if (count($trackingNumber) !== count(array_unique($trackingNumber))){
-            throw new Exception('快递单号的内容重复，请检查再导入！！！');
+            throw new RuntimeException('快递单号的内容重复，请检查再导入！！！');
         }
         foreach ($data as $key => $d) {
             $id = $this->model::find()
@@ -423,10 +458,10 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
                 ->asArray()
                 ->one();
             if (empty($id)){
-                throw new Exception('没有匹配到订单，更新寄出状态失败');
+                throw new RuntimeException('没有匹配到订单，更新寄出状态失败');
             }
             if (empty($id['final_judgment'])){
-                throw new Exception('终审未通过，更新寄出状态失败');
+                throw new RuntimeException('终审未通过，更新寄出状态失败');
             }
             $rpId[] = $data[$key]['rp_id'] = $id['id'];
             unset($data[$key]['A'], $data[$key]['B'], $data[$key]['C']);
