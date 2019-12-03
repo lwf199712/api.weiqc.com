@@ -298,7 +298,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
                     if ($res) {
                         throw new RuntimeException('第' . ($k + 1) . '行微信号、广告位置、发文时间有重复数据，请检查表格是否正确！！！');
                     }
-                    unset($data[$k]['I'],$data[$k]['O'], $data[$k]['P'], $data[$k]['Q']);
+                    unset($data[$k]['O'], $data[$k]['P'], $data[$k]['Q']);
                 }
             }
         }
@@ -313,7 +313,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
     }
 
     /**
-     * 处理更新导入数据
+     * 处理更新订单数据
      * @param $data
      * @return mixed
      * @throws Exception
