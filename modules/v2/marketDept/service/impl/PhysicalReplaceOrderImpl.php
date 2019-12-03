@@ -244,7 +244,7 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
         if ($physicalReplaceOrderImport->excelFile === null) {
             throw new RuntimeException('excel上传文件不能为空');
         }
-        $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName,0,0);
+        $data = ExcelFacade::import($physicalReplaceOrderImport->excelFile->tempName,0,0,true);
         //检测表头是否合法
         $headArr = ['A' => '微信号', 'B' => '发文时间', 'C' => '广告位置',
                     'D' => '收件人', 'E' => '联系电话', 'F' => '收件地址', 'G' => '快递单号'];
