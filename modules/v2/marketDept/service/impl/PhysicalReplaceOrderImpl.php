@@ -255,9 +255,6 @@ class PhysicalReplaceOrderImpl extends BaseObject implements PhysicalReplaceOrde
                 throw new RuntimeException('请检查表头‘' . $i . '’是否正确');
             }
         }
-        //去除表头
-        unset($data[0]);
-
         $data = $this->dealStatusData($data);
         if (!empty(array_unique(end($data))) && !empty(array_unique(end($data))[0])) {
             $this->model::updateAll(['prize_send_status' => 1], ['in', 'id', array_unique(end($data))]);
