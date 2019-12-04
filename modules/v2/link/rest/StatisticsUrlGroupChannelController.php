@@ -6,9 +6,9 @@ use app\common\rest\AdminBaseController;
 use app\modules\v2\link\domain\entity\StatisticsUrlGroupChannelEntity;
 use app\modules\v2\link\domain\dto\StatisticsUrlGroupChannelForm;
 use app\modules\v2\link\domain\dto\StatisticsUrlGroupChannelQuery;
+use app\modules\v2\link\domain\aggregate\StatisticsUrlGroupChannelAggregate;
 use app\modules\v2\link\domain\repository\StatisticsUrlGroupChannelDoManager;
 use RuntimeException;
-use Yii;
 use Exception;
 use yii\base\Model;
 
@@ -26,16 +26,21 @@ class StatisticsUrlGroupChannelController extends AdminBaseController
     public $statisticsUrlGroupChannelEntity;
     /** @var StatisticsUrlGroupChannelDoManager */
     public $statisticsUrlGroupChannelDoManager;
+    /** @var StatisticsUrlGroupChannelAggregate */
+    public $statisticsUrlGroupChannelAggregate;
+
 
     public function __construct($id, $module,
                                 StatisticsUrlGroupChannelForm $statisticsUrlGroupChannelForm,
                                 StatisticsUrlGroupChannelQuery $statisticsUrlGroupChannelQuery,
                                 StatisticsUrlGroupChannelEntity $statisticsUrlGroupChannelEntity,
+                                StatisticsUrlGroupChannelAggregate $statisticsUrlGroupChannelAggregate,
                                 StatisticsUrlGroupChannelDoManager $statisticsUrlGroupChannelDoManager
         , $config = [])
     {
         $this->statisticsUrlGroupChannelForm = $statisticsUrlGroupChannelForm;
         $this->statisticsUrlGroupChannelQuery = $statisticsUrlGroupChannelQuery;
+        $this->statisticsUrlGroupChannelAggregate = $statisticsUrlGroupChannelAggregate;
         $this->statisticsUrlGroupChannelEntity = $statisticsUrlGroupChannelEntity;
         $this->statisticsUrlGroupChannelDoManager = $statisticsUrlGroupChannelDoManager;
         parent::__construct($id, $module, $config);
@@ -51,45 +56,36 @@ class StatisticsUrlGroupChannelController extends AdminBaseController
         ];
     }
 
-
     /**
      * 实体转化
      * @param string $actionName
      * @return Model
-     * @throws Exception
      * @author: qzr
      */
     public function dtoMap(string $actionName): Model
     {
         switch ($actionName) {
             case 'actionIndex':
-                return $this->statisticsUrlGroupChannelQuery;
+                return $this->statisticsUrlGroupChannelQuery->setScenario(statisticsUrlGroupChannelQuery::SEARCH);
             case 'actionCreate':
-                return $this->statisticsUrlGroupChannelForm;
+                return $this->statisticsUrlGroupChannelForm->setScenario(statisticsUrlGroupChannelForm::CREATE);
             case 'actionUpdate':
-                return $this->statisticsUrlGroupChannelForm;
+                return $this->statisticsUrlGroupChannelForm->setScenario(statisticsUrlGroupChannelForm::UPDATE);
             case 'actionDelete':
-                return $this->statisticsUrlGroupChannelForm;
+                return $this->statisticsUrlGroupChannelForm->setScenario(statisticsUrlGroupChannelForm::DELETE);
             default:
-                throw new RuntimeException('UnKnow ActionName ');
+                throw new RuntimeException('UnKnow ActionName', 500);
         }
     }
 
     /**
-     * 查询渠道详情
      * @return array
      * @author: qzr
      */
     public function actionIndex(): array
     {
-        try {
-            $list = $this->statisticsUrlGroupChannelDoManager->listDataProvider($this->statisticsUrlGroupChannelQuery)->getModels();
-            $data['list'] = $list;
-            $data['totalCount'] = $this->statisticsUrlGroupChannelDoManager->listDataProvider($this->statisticsUrlGroupChannelQuery)->getTotalCount();
-            return ['成功返回数据', 200, $data];
-        } catch (Exception $exception) {
-            return ['查询失败', 500, $exception->getMessage()];
-        }
+        $data = $this->statisticsUrlGroupChannelAggregate->listChannelData();
+        return ['success', 200, $data];
     }
 
     /**
@@ -100,57 +96,39 @@ class StatisticsUrlGroupChannelController extends AdminBaseController
     public function actionCreate(): array
     {
         try {
-            $data = [];
-            $res = $this->statisticsUrlGroupChannelEntity->createEntity($this->statisticsUrlGroupChannelForm);
-            if ($res === true) {
-                $data['id'] = Yii::$app->db->getLastInsertID();
-                $data['channel_name'] = $this->statisticsUrlGroupChannelForm->channel_name;
-            }
-            return ['新增成功', 200, $data];
+            $data = $this->statisticsUrlGroupChannelAggregate->createChannel($this->statisticsUrlGroupChannelForm);
+            return ['success', 200, $data];
         } catch (Exception $exception) {
-            return ['新增失败', 500, $exception->getMessage()];
+            return ['fail', 500, $exception->getMessage()];
         }
     }
 
-    /**
-     * 修改实体
+    /**修改渠道
      * @return array
      * @author: qzr
      */
     public function actionUpdate(): array
     {
         try {
-            $res = $this->statisticsUrlGroupChannelEntity->updateEntity($this->statisticsUrlGroupChannelForm);
-
-            if ($res === false) {
-                throw new \yii\db\Exception('修改渠道失败');
-            }
-            $data['id'] = $this->statisticsUrlGroupChannelForm->id;
-            $data['channel_name'] = $this->statisticsUrlGroupChannelForm->channel_name;
-            return ['修改成功', 200, $data];
+            $data = $this->statisticsUrlGroupChannelAggregate->updateChannel($this->statisticsUrlGroupChannelForm);
+            return ['success', 200, $data];
         } catch (Exception $exception) {
-            return ['修改失败', 500, $exception->getMessage()];
+            return ['fail', 500, $exception->getMessage()];
         }
     }
 
     /**
-     * 删除实体
+     * 删除渠道
      * @return array
      * @author: qzr
      */
     public function actionDelete(): array
     {
         try {
-            $id = $this->statisticsUrlGroupChannelEntity->deleteEntity($this->statisticsUrlGroupChannelForm);
-            if ($id === false) {
-                throw new \yii\db\Exception('删除渠道失败');
-            }
-            $data['id'] = $this->statisticsUrlGroupChannelForm->id;
-            return ['删除成功', 200, $data];
+            $data = $this->statisticsUrlGroupChannelAggregate->deleteChannel($this->statisticsUrlGroupChannelForm);
+            return ['success', 200, $data];
         } catch (Exception $exception) {
-            return ['删除失败', 500, $exception->getMessage()];
+            return ['fail', 500, $exception->getMessage()];
         }
     }
-
-
 }

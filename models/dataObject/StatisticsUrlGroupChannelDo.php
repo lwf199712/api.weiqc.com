@@ -3,6 +3,10 @@
 namespace app\models\dataObject;
 
 use yii\db\ActiveRecord;
+use Yii;
+use yii\behaviors\AttributeBehavior;
+use yii\behaviors\TimestampBehavior;
+use app\models\User;
 
 
 /**
@@ -33,9 +37,7 @@ class StatisticsUrlGroupChannelDo extends ActiveRecord
     {
         return [
             [['id', 'create_time', 'update_time', 'is_delete'], 'integer'],
-            [['channel_name', 'updater', 'creator'], 'string', 'max' => 64],
-            [['channel_name', 'creator', 'create_time', 'updater', 'update_time', 'is_delete'], 'required']
-
+            [['channel_name', 'updater', 'creator'], 'string', 'max' => 64]
         ];
     }
 
@@ -49,6 +51,32 @@ class StatisticsUrlGroupChannelDo extends ActiveRecord
             'create_time' => '创建时间',
             'updater' => '更新者',
             'update_time' => '更新时间',
+        ];
+    }
+
+
+    public function behaviors(): array
+    {
+        return [
+            'time' => [
+                'class' => TimestampBehavior::class,
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['create_time'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['update_time'],
+                ],
+            ],
+            'author' => [
+                'class' => AttributeBehavior::class,
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['creator'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updater'],
+                ],
+                'value' => static function () {
+                    /** @var User $user */
+                    $user = Yii::$app->user->identity;
+                    return $user->username;
+                },
+            ],
         ];
     }
 

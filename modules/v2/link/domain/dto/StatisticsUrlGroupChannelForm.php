@@ -16,15 +16,12 @@ class StatisticsUrlGroupChannelForm extends Model
     public $channel_name;
     /** @var int */
     public $is_delete = 0;
-    /** @var string */
-    public $creator;
-    /** @var int */
-    public $create_time;
-    /** @var string */
-    public $updater;
-    /** @var int */
-    public $update_time;
 
+    public const CREATE = 'create';
+
+    public const UPDATE = 'update';
+
+    public const DELETE = 'delete';
     /**
      * @return array
      * @author: qzr
@@ -32,9 +29,18 @@ class StatisticsUrlGroupChannelForm extends Model
     public function rules(): array
     {
         return [
-            [['id', 'create_time', 'update_time', 'is_delete'], 'integer'],
-            [['channel_name', 'updater', 'creator'], 'string'],
+            [['id', 'is_delete'], 'integer'],
+            [['channel_name'], 'string'],
+            [['channel_name'], 'required','on' => self::CREATE],
+            [['id','channel_name'], 'required','on' => self::UPDATE],
+            [['id'], 'required','on' => self::DELETE]
         ];
+    }
+
+    public function setScenario($value)
+    {
+        parent::setScenario($value);
+        return $this;
     }
 
     /**
@@ -47,10 +53,7 @@ class StatisticsUrlGroupChannelForm extends Model
             'id' => 'ID',
             'channel_name' => '渠道名称',
             'is_delete' => '是否删除',
-            'creator' => '创建人',
-            'create_time' => '创建时间',
-            'updater' => '更新者',
-            'update_time' => '更新时间',
         ];
     }
 }
+

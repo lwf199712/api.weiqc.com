@@ -10,20 +10,13 @@ use yii\base\Model;
  */
 class StatisticsUrlGroupChannelQuery extends Model
 {
+    public const SEARCH = 'search';
     /** @var int */
     public $id;
     /** @var int */
-    private $page;
+    public $page;
     /** @var int */
-    private $perPage;
-    /** @var int */
-    public $is_delete = 0;
-    /** @var string */
-    public $creator;
-    /** @var int */
-    public $create_time;
-    /** @var int */
-    public $update_time;
+    public $perPage;
     /** @var string */
     public $channel_name;
 
@@ -34,9 +27,19 @@ class StatisticsUrlGroupChannelQuery extends Model
     public function rules(): array
     {
         return [
+            [['page', 'perPage'], 'required', 'on' => self::SEARCH],
+            [['page', 'perPage'], 'integer', 'integerOnly' => true],
+
             [['id', 'perPage', 'page'], 'integer'],
             [['channel_name'], 'string'],
         ];
+    }
+
+
+    public function setScenario($value)
+    {
+        parent::setScenario($value);
+        return $this;
     }
 
     /**
@@ -49,10 +52,6 @@ class StatisticsUrlGroupChannelQuery extends Model
             'id' => 'ID',
             'channel_name' => '渠道名称',
             'is_delete' => '是否删除',
-            'creator' => '创建人',
-            'create_time' => '创建时间',
-            'updater' => '更新者',
-            'update_time' => '更新时间',
         ];
     }
 
@@ -61,7 +60,7 @@ class StatisticsUrlGroupChannelQuery extends Model
      */
     public function getPage(): int
     {
-        return $this->page;
+        return (int)$this->page;
     }
 
     /**
@@ -77,7 +76,7 @@ class StatisticsUrlGroupChannelQuery extends Model
      */
     public function getPerPage(): int
     {
-        return $this->perPage;
+        return (int)$this->perPage;
     }
 
     /**
@@ -87,5 +86,5 @@ class StatisticsUrlGroupChannelQuery extends Model
     {
         $this->perPage = $perPage;
     }
-
 }
+
