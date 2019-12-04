@@ -8,6 +8,7 @@ use app\modules\v2\link\domain\dto\StatisticsServiceDto;
 use app\modules\v2\link\domain\dto\StatisticsServiceForm;
 use app\modules\v2\link\domain\entity\StatisticsServiceEntity;
 use mdm\admin\BaseObject;
+use yii\base\Exception;
 
 class StatisticsServiceAggregate extends BaseObject
 {
@@ -52,7 +53,7 @@ class StatisticsServiceAggregate extends BaseObject
      * 更新公众号
      * @param StatisticsServiceForm $staticServiceForm
      * @return bool
-     * @throws \yii\base\Exception
+     * @throws Exception
      */
     public function updateService(StatisticsServiceForm $staticServiceForm):bool
     {
@@ -63,7 +64,7 @@ class StatisticsServiceAggregate extends BaseObject
      * 软删除公众号
      * @param StatisticsServiceDto $staticServiceDto
      * @return bool
-     * @throws \yii\base\Exception
+     * @throws Exception
      */
     public function deleteService(StatisticsServiceDto $staticServiceDto):bool
     {

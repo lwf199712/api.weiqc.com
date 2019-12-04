@@ -3,14 +3,14 @@
 
 namespace app\modules\v2\link\domain\entity;
 
-use app\models\dataObject\StaticServiceDo;
+use app\models\dataObject\StatisticsServiceDo;
 use app\modules\v2\link\domain\dto\StatisticsServiceDto;
 use app\modules\v2\link\domain\dto\StatisticsServiceForm;
 use yii\base\Exception;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 
-class StatisticsServiceEntity extends StaticServiceDo
+class StatisticsServiceEntity extends StatisticsServiceDo
 {
     /**
      * 公众号查询信息
