@@ -6,7 +6,7 @@ namespace app\modules\v2\link\domain\dto;
 use yii\base\Model;
 
 
-class StaticServiceDto extends Model
+class StatisticsServiceDto extends Model
 {
     public const DELETE = 'delete';
     public const READ = 'read';

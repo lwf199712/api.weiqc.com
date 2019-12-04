@@ -5,23 +5,23 @@ namespace app\modules\v2\link\rest;
 
 
 use app\common\rest\AdminBaseController;
-use app\modules\v2\link\domain\aggregate\StaticServiceAggregate;
-use app\modules\v2\link\domain\dto\StaticServiceDto;
-use app\modules\v2\link\domain\dto\StaticServiceForm;
+use app\modules\v2\link\domain\aggregate\StatisticsServiceAggregate;
+use app\modules\v2\link\domain\dto\StatisticsServiceDto;
+use app\modules\v2\link\domain\dto\StatisticsServiceForm;
 use RuntimeException;
 use yii\base\Exception;
 use yii\base\Model;
 
-class StaticServiceController extends AdminBaseController
+class StatisticsServiceController extends AdminBaseController
 {
     private $staticServiceAggregate;
     private $staticServiceDto;
     private $staticServiceForm;
 
     public function __construct($id, $module,
-                                StaticServiceAggregate $staticServiceAggregate,
-                                StaticServiceDto $staticServiceDto,
-                                StaticServiceForm $staticServiceForm,
+                                StatisticsServiceAggregate $staticServiceAggregate,
+                                StatisticsServiceDto $staticServiceDto,
+                                StatisticsServiceForm $staticServiceForm,
                                 $config = [])
     {
         $this->staticServiceAggregate = $staticServiceAggregate;
@@ -44,7 +44,7 @@ class StaticServiceController extends AdminBaseController
     {
         switch ($actionName) {
             case 'actionUpdate':
-                return $this->staticServiceForm->setScenario(StaticServiceForm::UPDATE);
+                return $this->staticServiceForm->setScenario(StatisticsServiceForm::UPDATE);
             case 'actionCreate':
                 return $this->staticServiceForm;
             case 'actionIndex':

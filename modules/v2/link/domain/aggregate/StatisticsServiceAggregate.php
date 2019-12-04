@@ -4,17 +4,17 @@
 namespace app\modules\v2\link\domain\aggregate;
 
 
-use app\modules\v2\link\domain\dto\StaticServiceDto;
-use app\modules\v2\link\domain\dto\StaticServiceForm;
-use app\modules\v2\link\domain\entity\StaticServiceEntity;
+use app\modules\v2\link\domain\dto\StatisticsServiceDto;
+use app\modules\v2\link\domain\dto\StatisticsServiceForm;
+use app\modules\v2\link\domain\entity\StatisticsServiceEntity;
 use mdm\admin\BaseObject;
 
-class StaticServiceAggregate extends BaseObject
+class StatisticsServiceAggregate extends BaseObject
 {
     public $staticServiceEntity;
 
     public function __construct(
-        StaticServiceEntity $staticServiceEntity,
+        StatisticsServiceEntity $staticServiceEntity,
         $config = [])
     {
         $this->staticServiceEntity = $staticServiceEntity;
@@ -23,10 +23,10 @@ class StaticServiceAggregate extends BaseObject
 
     /**
      * 得到首页信息
-     * @param StaticServiceDto $staticServiceDto
+     * @param StatisticsServiceDto $staticServiceDto
      * @return array
      */
-    public function getServiceList(StaticServiceDto $staticServiceDto):array
+    public function getServiceList(StatisticsServiceDto $staticServiceDto):array
     {
 
         $query = $this->staticServiceEntity->getStaticServiceData($staticServiceDto);
@@ -40,32 +40,32 @@ class StaticServiceAggregate extends BaseObject
 
     /**
      * 创建服务号
-     * @param StaticServiceForm $staticServiceForm
+     * @param StatisticsServiceForm $staticServiceForm
      * @return bool
      */
-    public function createService(StaticServiceForm $staticServiceForm): bool
+    public function createService(StatisticsServiceForm $staticServiceForm): bool
     {
         return $this->staticServiceEntity->createEntity($staticServiceForm);
     }
 
     /**
      * 更新公众号
-     * @param StaticServiceForm $staticServiceForm
+     * @param StatisticsServiceForm $staticServiceForm
      * @return bool
      * @throws \yii\base\Exception
      */
-    public function updateService(StaticServiceForm $staticServiceForm):bool
+    public function updateService(StatisticsServiceForm $staticServiceForm):bool
     {
         return $this->staticServiceEntity->updateEntity($staticServiceForm);
     }
 
     /**
      * 软删除公众号
-     * @param StaticServiceDto $staticServiceDto
+     * @param StatisticsServiceDto $staticServiceDto
      * @return bool
      * @throws \yii\base\Exception
      */
-    public function deleteService(StaticServiceDto $staticServiceDto):bool
+    public function deleteService(StatisticsServiceDto $staticServiceDto):bool
     {
         return $this->staticServiceEntity->deleteEntity($staticServiceDto);
     }

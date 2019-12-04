@@ -4,20 +4,20 @@
 namespace app\modules\v2\link\domain\entity;
 
 use app\models\dataObject\StaticServiceDo;
-use app\modules\v2\link\domain\dto\StaticServiceDto;
-use app\modules\v2\link\domain\dto\StaticServiceForm;
+use app\modules\v2\link\domain\dto\StatisticsServiceDto;
+use app\modules\v2\link\domain\dto\StatisticsServiceForm;
 use yii\base\Exception;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 
-class StaticServiceEntity extends StaticServiceDo
+class StatisticsServiceEntity extends StaticServiceDo
 {
     /**
      * 公众号查询信息
-     * @param StaticServiceDto $staticServiceDto
+     * @param StatisticsServiceDto $staticServiceDto
      * @return ActiveQuery
      */
-    public function getStaticServiceData(StaticServiceDto $staticServiceDto):ActiveQuery
+    public function getStaticServiceData(StatisticsServiceDto $staticServiceDto):ActiveQuery
     {
         $query = self::find()
             ->select(['id', 'account', 'name'])
@@ -37,11 +37,11 @@ class StaticServiceEntity extends StaticServiceDo
     /**
      * 数据提供器
      * @param ActiveQuery $query
-     * @param StaticServiceDto $staticServiceDto
+     * @param StatisticsServiceDto $staticServiceDto
      * @param array $sort
      * @return ActiveDataProvider
      */
-    public function getActiveDataProvider(ActiveQuery $query, StaticServiceDto $staticServiceDto, array $sort = []): ActiveDataProvider
+    public function getActiveDataProvider(ActiveQuery $query, StatisticsServiceDto $staticServiceDto, array $sort = []): ActiveDataProvider
     {
         $parameter = [
             'query'      => $query,
@@ -57,10 +57,10 @@ class StaticServiceEntity extends StaticServiceDo
 
     /**
      * 新建公众号
-     * @param StaticServiceForm $staticServiceForm
+     * @param StatisticsServiceForm $staticServiceForm
      * @return bool
      */
-    public function createEntity(StaticServiceForm $staticServiceForm): bool
+    public function createEntity(StatisticsServiceForm $staticServiceForm): bool
     {
         $model = new self();
         $model->setAttributes($staticServiceForm->getAttributes());
@@ -70,11 +70,11 @@ class StaticServiceEntity extends StaticServiceDo
 
     /**
      * 更新公众号
-     * @param StaticServiceForm $staticServiceForm
+     * @param StatisticsServiceForm $staticServiceForm
      * @return bool
      * @throws Exception
      */
-    public function updateEntity(StaticServiceForm $staticServiceForm): bool
+    public function updateEntity(StatisticsServiceForm $staticServiceForm): bool
     {
         $model = self::findOne($staticServiceForm->id);
         if ($model === null) {
@@ -88,15 +88,15 @@ class StaticServiceEntity extends StaticServiceDo
 
     /**
      * 软删除公众号
-     * @param StaticServiceDto $staticServiceDto
+     * @param StatisticsServiceDto $staticServiceDto
      * @return bool
      * @throws Exception
      */
-   public function deleteEntity(StaticServiceDto $staticServiceDto)
+   public function deleteEntity(StatisticsServiceDto $staticServiceDto): bool
    {
        $model = self::findOne($staticServiceDto->id);
        if ($model === null) {
-           throw new Exception('找不到这一条记录，不能更新');
+           throw new Exception('找不到这一条记录，不能删除');
        }
        $model->is_delete = 1;
        return $model->save();

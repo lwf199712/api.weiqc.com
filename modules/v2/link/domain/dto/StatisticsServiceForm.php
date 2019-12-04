@@ -5,7 +5,7 @@ namespace app\modules\v2\link\domain\dto;
 
 use yii\base\Model;
 
-class StaticServiceForm extends Model
+class StatisticsServiceForm extends Model
 {
     public const UPDATE = 'update';
     /** @var string */
