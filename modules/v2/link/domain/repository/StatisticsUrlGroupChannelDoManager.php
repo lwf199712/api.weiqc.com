@@ -27,7 +27,7 @@ class StatisticsUrlGroupChannelDoManager extends BaseRepository
             ->andFilterWhere(['=', 'channel_name', $statisticsUrlGroupChannelQuery->channel_name])
             ->andFilterWhere(['like', 'channel_name', $statisticsUrlGroupChannelQuery->channel_name]);
 
-        $perPage = $statisticsUrlGroupChannelQuery->getPerPage();
+        $perPage = $statisticsUrlGroupChannelQuery->perPage;
 
         return new ActiveDataProvider([
             'query' => $this->query->asArray(),

@@ -66,7 +66,7 @@ class StatisticsUrlGroupChannelController extends AdminBaseController
     {
         switch ($actionName) {
             case 'actionIndex':
-                return $this->statisticsUrlGroupChannelQuery->setScenario(statisticsUrlGroupChannelQuery::SEARCH);
+                return $this->statisticsUrlGroupChannelQuery;
             case 'actionCreate':
                 return $this->statisticsUrlGroupChannelForm->setScenario(statisticsUrlGroupChannelForm::CREATE);
             case 'actionUpdate':

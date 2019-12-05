@@ -20,10 +20,8 @@ class StatisticsUrlGroupChannelEntity extends StatisticsUrlGroupChannelDo
      */
     public function createEntity(StatisticsUrlGroupChannelForm $statisticsUrlGroupChannelForm): bool
     {
-        $model = new self;
-        $model->setAttributes($statisticsUrlGroupChannelForm->getAttributes());
-        $model->is_delete = 0;
-        return $model->save();
+        $this->setAttributes($statisticsUrlGroupChannelForm->getAttributes());
+        return $this->save();
     }
 
     /**

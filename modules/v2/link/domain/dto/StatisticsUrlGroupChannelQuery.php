@@ -27,7 +27,7 @@ class StatisticsUrlGroupChannelQuery extends Model
     public function rules(): array
     {
         return [
-            [['page', 'perPage'], 'required', 'on' => self::SEARCH],
+            [['page', 'perPage'], 'required'],
             [['page', 'perPage'], 'integer', 'integerOnly' => true],
 
             [['id', 'perPage', 'page'], 'integer'],
@@ -53,38 +53,6 @@ class StatisticsUrlGroupChannelQuery extends Model
             'channel_name' => '渠道名称',
             'is_delete' => '是否删除',
         ];
-    }
-
-    /**
-     * @return int
-     */
-    public function getPage(): int
-    {
-        return (int)$this->page;
-    }
-
-    /**
-     * @param int $page
-     */
-    public function setPage(int $page): void
-    {
-        $this->page = $page;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPerPage(): int
-    {
-        return (int)$this->perPage;
-    }
-
-    /**
-     * @param int $perPage
-     */
-    public function setPerPage(int $perPage): void
-    {
-        $this->perPage = $perPage;
     }
 }
 
