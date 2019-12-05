@@ -13,6 +13,7 @@ CTIME=$(date +"%H-%M-%S")
 
 #项目及本地目录
 deploy_name=api.weiqc.com
+fix_name=apifixbug.weiqc.com
 local_dir=/var/lib/jenkins/workspace/api-weiqc
 
 #需要部署的远程主句
@@ -31,6 +32,12 @@ source200(){
     leave="www@192.168.1.200"
     sourcefunction
 }
+fixsource(){
+    code_dir=/data/www/$fix_name/back-end
+    release_dir=/data/www/$fix_name/back-end/releases
+    release=/data/www/$fix_name/back-end/releases/$fix_name-$LOG_DATE-$LOG_TIME
+    sourcefunction
+}
 main(){
     DEPLOY_METHOD=$1 # 避免出错误将脚本的第一个参数作为变量
     ROLLBACK_VER=$2
@@ -45,7 +52,17 @@ main(){
              deploy_queen; # 部署远程主机后保留十个版本
              hell_unlock; # 删除锁
             ;;
-        betadeploy) # 如果第一个参数是deploy就执行以下操作
+        fixdeploy) 
+             fixsource;
+             shell_lock;# 建立锁
+             composer; # 获取代码
+             deploy_front; # 同步主机之前的操作
+             deploy;   # 同步到服务器
+             ford;
+             deploy_queen; # 部署远程主机后保留十个版本
+             hell_unlock; # 删除锁
+            ;;
+        betadeploy) 
              source200;
              shell_lock;# 建立锁
              composer; # 获取代码
@@ -59,10 +76,13 @@ main(){
             sourcefunction;
             rollback;
             ;;
-        betarollback) # 如果第一个参数是rollback就执行以下操作
+        betarollback) 
             source200;
             rollback;
             ;;
+        firrollback)
+            fixsource;
+            rollback;
         *)
             sourcefunction;
             usage;
