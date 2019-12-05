@@ -9,14 +9,16 @@ use yii\db\Exception;
 /**
  * Class StatisticsUrlGroupChannelEntity
  * @package app\modules\v2\link\domain\entity
+ * @author: qzr
  */
 class StatisticsUrlGroupChannelEntity extends StatisticsUrlGroupChannelDo
 {
+
     /**
-     * 创建渠道实体
      * @param StatisticsUrlGroupChannelForm $statisticsUrlGroupChannelForm
      * @return bool
      * @author: qzr
+     * Date: 2019/12/5
      */
     public function createEntity(StatisticsUrlGroupChannelForm $statisticsUrlGroupChannelForm): bool
     {
@@ -29,6 +31,7 @@ class StatisticsUrlGroupChannelEntity extends StatisticsUrlGroupChannelDo
      * @return bool
      * @throws Exception
      * @author: qzr
+     * Date: 2019/12/5
      */
     public function updateEntity(StatisticsUrlGroupChannelForm $statisticsUrlGroupChannelForm): bool
     {
@@ -45,6 +48,7 @@ class StatisticsUrlGroupChannelEntity extends StatisticsUrlGroupChannelDo
      * @return bool
      * @throws Exception
      * @author: qzr
+     * Date: 2019/12/5
      */
     public function deleteEntity(StatisticsUrlGroupChannelForm $statisticsUrlGroupChannelForm): bool
     {

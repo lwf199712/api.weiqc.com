@@ -25,6 +25,7 @@ class StatisticsUrlGroupChannelForm extends Model
     /**
      * @return array
      * @author: qzr
+     * Date: 2019/12/5
      */
     public function rules(): array
     {
@@ -46,6 +47,7 @@ class StatisticsUrlGroupChannelForm extends Model
     /**
      * @return array
      * @author: qzr
+     * Date: 2019/12/5
      */
     public function attributeLabels(): array
     {

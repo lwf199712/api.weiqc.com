@@ -46,6 +46,7 @@ class StatisticsUrlGroupChannelAggregate extends BaseObject
      * 获取渠道数据
      * @return array
      * @author: qzr
+     * Date: 2019/12/5
      */
     public function listChannelData(): array
     {
@@ -61,6 +62,7 @@ class StatisticsUrlGroupChannelAggregate extends BaseObject
      * @return bool
      * @throws Exception
      * @author: qzr
+     * Date: 2019/12/5
      */
     public function createChannel(StatisticsUrlGroupChannelForm $statisticsUrlGroupChannelForm): bool
     {

@@ -8,7 +8,6 @@ use yii\behaviors\AttributeBehavior;
 use yii\behaviors\TimestampBehavior;
 use app\models\User;
 
-
 /**
  * Class StatisticsUrlGroupChannelDo
  * @package app\models\dataObject
@@ -16,9 +15,9 @@ use app\models\User;
  * @property string $channel_name
  * @property int $is_delete
  * @property string $creator
- * @property int $create_time
+ * @property int $created_at
  * @property string $updater
- * @property int $update_time
+ * @property int $updated_at
  */
 class StatisticsUrlGroupChannelDo extends ActiveRecord
 {
@@ -36,7 +35,7 @@ class StatisticsUrlGroupChannelDo extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['id', 'create_time', 'update_time', 'is_delete'], 'integer'],
+            [['id', 'created_at', 'updated_at', 'is_delete'], 'integer'],
             [['channel_name', 'updater', 'creator'], 'string', 'max' => 64]
         ];
     }
@@ -48,9 +47,9 @@ class StatisticsUrlGroupChannelDo extends ActiveRecord
             'channel_name' => '渠道名称',
             'is_delete' => '是否删除',
             'creator' => '创建人',
-            'create_time' => '创建时间',
+            'created_at' => '创建时间',
             'updater' => '更新者',
-            'update_time' => '更新时间',
+            'updated_at' => '更新时间',
         ];
     }
 
@@ -61,8 +60,8 @@ class StatisticsUrlGroupChannelDo extends ActiveRecord
             'time' => [
                 'class' => TimestampBehavior::class,
                 'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => ['create_time'],
-                    ActiveRecord::EVENT_BEFORE_UPDATE => ['update_time'],
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
                 ],
             ],
             'author' => [

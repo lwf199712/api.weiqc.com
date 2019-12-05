@@ -61,6 +61,7 @@ class StatisticsUrlGroupChannelController extends AdminBaseController
      * @param string $actionName
      * @return Model
      * @author: qzr
+     * Date: 2019/12/5
      */
     public function dtoMap(string $actionName): Model
     {
@@ -79,8 +80,10 @@ class StatisticsUrlGroupChannelController extends AdminBaseController
     }
 
     /**
+     * 渠道首页查询
      * @return array
      * @author: qzr
+     * Date: 2019/12/5
      */
     public function actionIndex(): array
     {
@@ -92,6 +95,7 @@ class StatisticsUrlGroupChannelController extends AdminBaseController
      * 创建渠道
      * @return array
      * @author: qzr
+     * Date: 2019/12/5
      */
     public function actionCreate(): array
     {
@@ -106,6 +110,7 @@ class StatisticsUrlGroupChannelController extends AdminBaseController
     /**修改渠道
      * @return array
      * @author: qzr
+     * Date: 2019/12/5
      */
     public function actionUpdate(): array
     {
@@ -121,6 +126,7 @@ class StatisticsUrlGroupChannelController extends AdminBaseController
      * 删除渠道
      * @return array
      * @author: qzr
+     * Date: 2019/12/5
      */
     public function actionDelete(): array
     {
