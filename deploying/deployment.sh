@@ -10,7 +10,9 @@ ford(){
 }
 data_migration(){ # yii和yii2数据迁移
      
-   #ssh $leave "/usr/bin/php $release/protected/yiic.php migrate up --interactive=0"
+   ssh $leave "/usr/bin/php $release/protected/yiic.php migrate up --interactive=0"
+   #php yii migrate --migrationPath=@mdm/admin/migrations
+   #php yii migrate --migrationPath=@yii/rbac/migrations
    ssh $leave "/usr/bin/php $release/yii migrate --migrationPath=@mdm/admin/migrations up --interactive=0"
    ssh $leave "/usr/bin/php $release/yii migrate --migrationPath=@yii/rbac/migrations up --interactive=0"
 }
@@ -19,7 +21,7 @@ deploy_queen(){ # 同步远程主机后(保留十个版本)
    data_migration
    if [ $? -ne 0 ]
    then
-     #ssh $leave "rm -rf $release"
+      ssh $leave "rm -rf $release"
       hell_unlock
       exit 123
    fi
