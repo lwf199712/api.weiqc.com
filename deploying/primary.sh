@@ -86,9 +86,10 @@ main(){
             source200;
             rollback;
             ;;
-        firrollback)
+        fixrollback)
             fixsource;
             rollback;
+            ;;
         *)
             sourcefunction;
             usage;
