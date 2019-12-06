@@ -85,11 +85,19 @@ class StatisticsServiceEntity extends StatisticsServiceDo
     public function updateEntity(StatisticsServiceForm $statisticsServiceForm): bool
     {
         $model = self::findOne($statisticsServiceForm->id);
-        if ($model !== null && !self::findOne(['account' => $statisticsServiceForm->account])) {
-            $model->setAttributes($statisticsServiceForm->getAttributes());
-            return $model->save();
+        //帐号存在并
+        if ($model !== null){
+            if ($model->account === $statisticsServiceForm->account){
+                $model->setAttributes($statisticsServiceForm->getAttributes());
+                return $model->save();
+            }
+            if (!self::findOne(['account' => $statisticsServiceForm->account])) {
+                $model->setAttributes($statisticsServiceForm->getAttributes());
+                return $model->save();
+            }
+            throw new RuntimeException('帐号已存在，请重新修改');
         }
-        throw new RuntimeException('请修改新的账号');
+        throw new RuntimeException('帐号不存在');
     }
 
     /**

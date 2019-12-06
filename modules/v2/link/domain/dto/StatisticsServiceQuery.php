@@ -27,7 +27,7 @@ class StatisticsServiceQuery extends Model
 
             [['account', 'name'],'string'],
             [['account', 'name'], 'trim'],
-            [['prePage','page', 'id'], 'integer'],
+            [['prePage','page', 'id'], 'integer', 'integerOnly' => true, 'min' => 1],
             [['prePage','page'], 'required', 'on' => self::READ],
 
         ];
@@ -38,8 +38,8 @@ class StatisticsServiceQuery extends Model
         return [
             'account' => '公众号账号',
             'name'    => '公众号名称',
-            'prePage'        => '页数',
-            'page'           => '第几页',
+            'prePage' => '页数',
+            'page'    => '第几页',
         ];
     }
 
