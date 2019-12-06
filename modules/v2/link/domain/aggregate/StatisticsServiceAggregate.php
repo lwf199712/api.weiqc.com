@@ -4,71 +4,72 @@
 namespace app\modules\v2\link\domain\aggregate;
 
 
-use app\modules\v2\link\domain\dto\StatisticsServiceDto;
+use app\modules\v2\link\domain\dto\StatisticsServiceQuery;
 use app\modules\v2\link\domain\dto\StatisticsServiceForm;
 use app\modules\v2\link\domain\entity\StatisticsServiceEntity;
 use mdm\admin\BaseObject;
-use yii\base\Exception;
 
 class StatisticsServiceAggregate extends BaseObject
 {
-    public $staticServiceEntity;
+    public $statisticsServiceEntity;
 
     public function __construct(
-        StatisticsServiceEntity $staticServiceEntity,
+        StatisticsServiceEntity $statisticsServiceEntity,
         $config = [])
     {
-        $this->staticServiceEntity = $staticServiceEntity;
+        $this->statisticsServiceEntity = $statisticsServiceEntity;
         parent::__construct($config);
     }
 
     /**
-     * 得到首页信息
-     * @param StatisticsServiceDto $staticServiceDto
+     * @param StatisticsServiceQuery $statisticsServiceQuery
      * @return array
+     * @author wenxiaomei
+     * @date 2019/12/6
      */
-    public function getServiceList(StatisticsServiceDto $staticServiceDto):array
+    public function getServiceList(StatisticsServiceQuery $statisticsServiceQuery):array
     {
 
-        $query = $this->staticServiceEntity->getStaticServiceData($staticServiceDto);
+        $query = $this->statisticsServiceEntity->getStaticServiceData($statisticsServiceQuery);
 
-        $provider = $this->staticServiceEntity->getActiveDataProvider($query->asArray(), $staticServiceDto);
+        $provider = $this->statisticsServiceEntity->getActiveDataProvider($query->asArray(), $statisticsServiceQuery);
         $data = $provider->getModels();
         $count = $provider->getTotalCount();
-        return ['list' => $data, 'count' => $count, 'page' => $staticServiceDto->page, 'prePage' => $staticServiceDto->prePage];
+        return ['list' => $data, 'count' => $count, 'page' => $statisticsServiceQuery->page, 'prePage' => $statisticsServiceQuery->prePage];
 
     }
 
     /**
-     * 创建服务号
-     * @param StatisticsServiceForm $staticServiceForm
+     * @param StatisticsServiceForm $statisticsServiceForm
      * @return bool
+     * @author wenxiaomei
+     * @date 2019/12/6
      */
-    public function createService(StatisticsServiceForm $staticServiceForm): bool
+    public function createService(StatisticsServiceForm $statisticsServiceForm): bool
     {
-        return $this->staticServiceEntity->createEntity($staticServiceForm);
+        return $this->statisticsServiceEntity->createEntity($statisticsServiceForm);
     }
 
     /**
-     * 更新公众号
-     * @param StatisticsServiceForm $staticServiceForm
+     * @param StatisticsServiceForm $statisticsServiceForm
      * @return bool
-     * @throws Exception
+     * @author wenxiaomei
+     * @date 2019/12/6
      */
-    public function updateService(StatisticsServiceForm $staticServiceForm):bool
+    public function updateService(StatisticsServiceForm $statisticsServiceForm): bool
     {
-        return $this->staticServiceEntity->updateEntity($staticServiceForm);
+        return $this->statisticsServiceEntity->updateEntity($statisticsServiceForm);
     }
 
     /**
-     * 软删除公众号
-     * @param StatisticsServiceDto $staticServiceDto
+     * @param StatisticsServiceForm $statisticsServiceForm
      * @return bool
-     * @throws Exception
+     * @author wenxiaomei
+     * @date 2019/12/6
      */
-    public function deleteService(StatisticsServiceDto $staticServiceDto):bool
+    public function deleteService(StatisticsServiceForm$statisticsServiceForm): bool
     {
-        return $this->staticServiceEntity->deleteEntity($staticServiceDto);
+        return $this->statisticsServiceEntity->deleteEntity($statisticsServiceForm);
     }
 
 

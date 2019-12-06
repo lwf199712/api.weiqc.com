@@ -4,48 +4,49 @@
 namespace app\modules\v2\link\domain\entity;
 
 use app\models\dataObject\StatisticsServiceDo;
-use app\modules\v2\link\domain\dto\StatisticsServiceDto;
+use app\modules\v2\link\domain\dto\StatisticsServiceQuery;
 use app\modules\v2\link\domain\dto\StatisticsServiceForm;
-use yii\base\Exception;
+use RuntimeException;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 
 class StatisticsServiceEntity extends StatisticsServiceDo
 {
+
     /**
-     * 公众号查询信息
-     * @param StatisticsServiceDto $staticServiceDto
+     * @param StatisticsServiceQuery $statisticsServiceQuery
      * @return ActiveQuery
+     * @author wenxiaomei
+     * @date 2019/12/6
      */
-    public function getStaticServiceData(StatisticsServiceDto $staticServiceDto):ActiveQuery
+    public function getStaticServiceData(StatisticsServiceQuery $statisticsServiceQuery):ActiveQuery
     {
         $query = self::find()
             ->select(['id', 'account', 'name'])
             ->andFilterWhere(
                 ['and',
-                    ['like', 'account', $staticServiceDto->account],
-                    ['like', 'name', $staticServiceDto->name],
+                    ['like', 'account', $statisticsServiceQuery->account],
+                    ['like', 'name', $statisticsServiceQuery->name],
                 ]
             );
-
-
-
         return $query;
     }
 
 
     /**
-     * 数据提供器
      * @param ActiveQuery $query
-     * @param StatisticsServiceDto $staticServiceDto
+     * @param StatisticsServiceQuery $statisticsServiceQuery
      * @param array $sort
      * @return ActiveDataProvider
+     * @author wenxiaomei
+     * @date 2019/12/6
      */
-    public function getActiveDataProvider(ActiveQuery $query, StatisticsServiceDto $staticServiceDto, array $sort = []): ActiveDataProvider
+    public function getActiveDataProvider(ActiveQuery $query, StatisticsServiceQuery $statisticsServiceQuery, array $sort = []): ActiveDataProvider
     {
         $parameter = [
             'query'      => $query,
-            'pagination' => ['pageSize' => $staticServiceDto->prePage]
+            'pagination' => ['pageSize' => $statisticsServiceQuery->prePage]
         ];
 
         if (!empty($sort)) {
@@ -56,49 +57,59 @@ class StatisticsServiceEntity extends StatisticsServiceDo
     }
 
     /**
-     * 新建公众号
-     * @param StatisticsServiceForm $staticServiceForm
+     * 创建
+     * @param StatisticsServiceForm $statisticsServiceForm
      * @return bool
+     * @author wenxiaomei
+     * @date 2019/12/6
      */
-    public function createEntity(StatisticsServiceForm $staticServiceForm): bool
+    public function createEntity(StatisticsServiceForm $statisticsServiceForm): bool
     {
-        $model = new self();
-        $model->setAttributes($staticServiceForm->getAttributes());
-        $model->create_time = time();
-        return $model->save();
-    }
 
-    /**
-     * 更新公众号
-     * @param StatisticsServiceForm $staticServiceForm
-     * @return bool
-     * @throws Exception
-     */
-    public function updateEntity(StatisticsServiceForm $staticServiceForm): bool
-    {
-        $model = self::findOne($staticServiceForm->id);
-        if ($model === null) {
-            throw new Exception('找不到这一条记录，不能更新');
+        $account = self::findOne(['account' => $statisticsServiceForm->account]);
+        if ($account) {
+            throw new RuntimeException('帐号已存在,请重新添加');
         }
+        $this->setAttributes($statisticsServiceForm->getAttributes());
 
-        $model->setAttributes($staticServiceForm->getAttributes());
-        $model->create_time = time();
-        return $model->save();
+        return $this->save();
     }
 
     /**
-     * 软删除公众号
-     * @param StatisticsServiceDto $staticServiceDto
+     * 更新
+     * @param StatisticsServiceForm $statisticsServiceForm
      * @return bool
-     * @throws Exception
+     * @author wenxiaomei
+     * @date 2019/12/6
      */
-   public function deleteEntity(StatisticsServiceDto $staticServiceDto): bool
+    public function updateEntity(StatisticsServiceForm $statisticsServiceForm): bool
+    {
+        $model = self::findOne($statisticsServiceForm->id);
+        if ($model !== null && !self::findOne(['account' => $statisticsServiceForm->account])) {
+            $model->setAttributes($statisticsServiceForm->getAttributes());
+            return $model->save();
+        }
+        throw new RuntimeException('请修改新的账号');
+    }
+
+    /**
+     * 删除
+     * @param StatisticsServiceForm $statisticsServiceForm
+     * @return bool
+     * @author wenxiaomei
+     * @date 2019/12/6
+     */
+   public function deleteEntity(StatisticsServiceForm $statisticsServiceForm): bool
    {
-       $model = self::findOne($staticServiceDto->id);
+       $model = self::findOne($statisticsServiceForm->id);
        if ($model === null) {
-           throw new Exception('找不到这一条记录，不能删除');
+           throw new RuntimeException('找不到这条记录');
        }
-       $model->is_delete = 1;
+       if ($model->deleted_at !== 0) {
+           throw new RuntimeException('您已经删除了，请不要重复操作');
+       }
+       $model->deleted_at = time();
+       $model->deleter    = Yii::$app->user->identity->username;
        return $model->save();
    }
 

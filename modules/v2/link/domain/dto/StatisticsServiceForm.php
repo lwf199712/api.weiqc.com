@@ -5,9 +5,12 @@ namespace app\modules\v2\link\domain\dto;
 
 use yii\base\Model;
 
+
 class StatisticsServiceForm extends Model
 {
     public const UPDATE = 'update';
+    public const CREATE = 'create';
+    public const DELETE = 'delete';
     /** @var string */
     public $account;
     /** @var string */
@@ -19,9 +22,10 @@ class StatisticsServiceForm extends Model
     public function rules(): array
     {
         return [
-            [['name', 'account'], 'required'],
+            [['name', 'account'], 'required', 'on' => self::CREATE],
+            [['name', 'account'], 'trim'],
             [['name', 'account'], 'string', 'max' => 64],
-            ['id', 'required', 'on' => self::UPDATE]
+            ['id', 'required', 'on' => [self::UPDATE, self::DELETE]],
 
         ];
     }

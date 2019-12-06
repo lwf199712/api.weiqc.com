@@ -6,9 +6,9 @@ namespace app\modules\v2\link\domain\dto;
 use yii\base\Model;
 
 
-class StatisticsServiceDto extends Model
+class StatisticsServiceQuery extends Model
 {
-    public const DELETE = 'delete';
+
     public const READ = 'read';
     /** @var string */
     public $account;
@@ -24,8 +24,9 @@ class StatisticsServiceDto extends Model
     public function rules(): array
     {
         return [
-            ['id','required', 'on' => self::DELETE],
+
             [['account', 'name'],'string'],
+            [['account', 'name'], 'trim'],
             [['prePage','page', 'id'], 'integer'],
             [['prePage','page'], 'required', 'on' => self::READ],
 
