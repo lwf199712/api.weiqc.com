@@ -80,14 +80,13 @@ class StatisticsUrlGroupChannelController extends AdminBaseController
     }
 
     /**
-     * 渠道首页查询
      * @return array
      * @author: qzr
      * Date: 2019/12/5
      */
     public function actionIndex(): array
     {
-        $data = $this->statisticsUrlGroupChannelAggregate->listChannelData();
+        $data = $this->statisticsUrlGroupChannelAggregate->listChannelData($this->statisticsUrlGroupChannelQuery);
         return ['success', 200, $data];
     }
 

@@ -43,16 +43,16 @@ class StatisticsUrlGroupChannelAggregate extends BaseObject
     }
 
     /**
-     * 获取渠道数据
+     * @param StatisticsUrlGroupChannelQuery $statisticsUrlGroupChannelQuery
      * @return array
      * @author: qzr
      * Date: 2019/12/5
      */
-    public function listChannelData(): array
+    public function listChannelData(StatisticsUrlGroupChannelQuery  $statisticsUrlGroupChannelQuery): array
     {
-        $list = $this->statisticsUrlGroupChannelDoManager->listDataProvider($this->statisticsUrlGroupChannelQuery)->getModels();
+        $list = $this->statisticsUrlGroupChannelDoManager->listDataProvider($statisticsUrlGroupChannelQuery)->getModels();
         $data['list'] = $list;
-        $data['totalCount'] = $this->statisticsUrlGroupChannelDoManager->listDataProvider($this->statisticsUrlGroupChannelQuery)->getTotalCount();
+        $data['totalCount'] = $this->statisticsUrlGroupChannelDoManager->listDataProvider($statisticsUrlGroupChannelQuery)->getTotalCount();
         return ['成功返回数据', 200, $data];
     }
 
