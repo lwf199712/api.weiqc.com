@@ -14,7 +14,6 @@ use RuntimeException;
  */
 class StatisticsUrlGroupChannelEntity extends StatisticsUrlGroupChannelDo
 {
-
     /**
      * @param StatisticsUrlGroupChannelForm $statisticsUrlGroupChannelForm
      * @return bool
