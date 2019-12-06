@@ -1,6 +1,6 @@
 #!/bin/bash
 ford(){
-  ssh -tt $leave "echo "开始进行共享文件的判断" && cd $release && sudo chmod +x ./deploying/judge.sh && ./deploying/judge.sh"
+  ssh -tt $leave "echo "开始进行共享文件的判断" && cd $release && sudo chmod +x ./deploying/judge.sh && ./deploying/judge.sh ${sharedir}"
    if [ $? -ne 0 ]
      then
         echo "更新有错误"
@@ -10,7 +10,7 @@ ford(){
 }
 data_migration(){ # yii和yii2数据迁移
      
-   ssh $leave "/usr/bin/php $release/protected/yiic.php migrate up --interactive=0"
+   #ssh $leave "/usr/bin/php $release/protected/yiic.php migrate up --interactive=0"
    ssh $leave "/usr/bin/php $release/yii migrate --migrationPath=@mdm/admin/migrations up --interactive=0"
    ssh $leave "/usr/bin/php $release/yii migrate --migrationPath=@yii/rbac/migrations up --interactive=0"
 }

@@ -11,7 +11,7 @@ runtime
 web/uploads
 web/temp
 )
-sharedir=/data/www/api.weiqc.com/back-end/shared/
+sharedir=$1
 
 for i in ${file[*]}
 do
