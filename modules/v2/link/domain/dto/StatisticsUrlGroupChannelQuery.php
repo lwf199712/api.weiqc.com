@@ -29,8 +29,7 @@ class StatisticsUrlGroupChannelQuery extends Model
     {
         return [
             [['page', 'perPage'], 'required'],
-            [['page', 'perPage'], 'integer', 'integerOnly' => true],
-
+            [['page', 'perPage'], 'integer', 'integerOnly' => true, 'min' => 0],
             [['id', 'perPage', 'page'], 'integer'],
             [['channel_name'], 'string'],
         ];

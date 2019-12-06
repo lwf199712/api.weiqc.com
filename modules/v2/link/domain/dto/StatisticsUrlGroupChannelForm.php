@@ -33,6 +33,7 @@ class StatisticsUrlGroupChannelForm extends Model
         return [
             [['id', 'is_delete'], 'integer'],
             [['channel_name'], 'string', 'max' => 32],
+            [['channel_name'], 'trim'],
             [['channel_name'], 'required', 'on' => self::CREATE],
             [['id', 'channel_name'], 'required', 'on' => self::UPDATE],
             [['id'], 'required', 'on' => self::DELETE]
