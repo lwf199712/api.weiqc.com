@@ -1,6 +1,6 @@
 #!/bin/bash
 ford(){
-  ssh -tt $leave "echo "开始进行共享文件的判断" && cd $release && sudo chmod +x ./deploying/judge.sh && ./deploying/judge.sh"
+  ssh -tt $leave "echo "开始进行共享文件的判断" && cd $release && sudo chmod +x ./deploying/judge.sh && ./deploying/judge.sh ${sharedir}"
    if [ $? -ne 0 ]
      then
         echo "更新有错误"
