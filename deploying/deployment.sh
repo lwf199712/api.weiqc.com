@@ -19,7 +19,7 @@ deploy_queen(){ # 同步远程主机后(保留十个版本)
    data_migration
    if [ $? -ne 0 ]
    then
-     ssh $leave "rm -rf $release"
+     #ssh $leave "rm -rf $release"
       hell_unlock
       exit 123
    fi

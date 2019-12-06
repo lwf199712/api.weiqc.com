@@ -12,6 +12,7 @@ web/uploads
 web/temp
 )
 sharedir=$1
+echo ${sharedir}
 
 for i in ${file[*]}
 do
