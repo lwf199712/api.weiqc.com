@@ -8,6 +8,7 @@ use app\models\dataObject\CategoryManagementDo;
 use app\modules\v2\operateDept\domain\dto\DesignCenterCategoryManagementQuery;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
+use yii\db\Exception;
 
 
 class DesignCenterCategoryManagementDoManager extends BaseRepository
@@ -33,5 +34,23 @@ class DesignCenterCategoryManagementDoManager extends BaseRepository
                 'defaultOrder' => ['id' => SORT_DESC],
             ]
         ]);
+    }
+
+    /**
+     * 模糊查询
+     * Date: 2019/12/7
+     * Author: ctl
+     * @param DesignCenterCategoryManagementQuery $designCenterCategoryManagementQuery
+     * @return array
+     * @throws Exception
+     */
+    public function vagueCheck(DesignCenterCategoryManagementQuery $designCenterCategoryManagementQuery):array
+    {
+        $res = $this->model::find()->where(['type' => $designCenterCategoryManagementQuery->type])->andFilterWhere(['like','category',$designCenterCategoryManagementQuery->category])->asArray()->all();
+        if (!$res){
+            throw new Exception('查询数组为空');
+        }else{
+            return $res;
+        }
     }
 }
