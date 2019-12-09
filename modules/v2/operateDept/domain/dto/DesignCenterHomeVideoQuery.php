@@ -17,7 +17,7 @@ class DesignCenterHomeVideoQuery extends Model
     public $video;
     /** @var int */
     public $audit_status;
-    /** @var string */
+    /** @var  */
     public $category;
     /** @var int */
     private $page;
