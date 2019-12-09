@@ -53,6 +53,7 @@ class DesignCenterCategoryManagementController extends AdminBaseController
             'delete'    => ['DELETE', 'OPTIONS'],
             'upload'    => ['POST', 'OPTIONS'],
             'detail'    => ['GET', 'OPTIONS'],
+            'check'     => ['GET', 'OPTIONS'],
         ];
     }
 
@@ -67,7 +68,7 @@ class DesignCenterCategoryManagementController extends AdminBaseController
     {
         switch ($actionName) {
             case 'actionIndex':
-                return $this->designCenterCategoryManagementQuery;
+                return $this->designCenterCategoryManagementQuery->setScenario('index');
             case 'actionCreate':
                 return $this->designCenterCategoryManagementForm;
             case 'actionUpdate':
@@ -78,6 +79,8 @@ class DesignCenterCategoryManagementController extends AdminBaseController
                 return $this->designCenterCategoryManagementForm;
             case 'actionDetail':
                 return $this->designCenterCategoryManagementForm;
+            case 'actionCheck':
+                return $this->designCenterCategoryManagementQuery;
             default:
                 throw new HttpException('UnKnow ActionName ');
         }
@@ -181,6 +184,21 @@ class DesignCenterCategoryManagementController extends AdminBaseController
             }
         }catch (Exception $exception){
             return ['查看失败',500,$exception->getMessage()];
+        }
+    }
+
+    /**
+     * 模糊查询接口
+     * Date: 2019/12/7
+     * Author: ctl
+     */
+    public function actionCheck()
+    {
+        try{
+            $data = $this->designCenterCategoryManagementDoManager->vagueCheck($this->designCenterCategoryManagementQuery);
+            return ['查看成功',200,$data];
+        }catch (Exception $exception){
+            return [$exception->getMessage(),500];
         }
     }
 

@@ -96,7 +96,7 @@ class PhysicalReplaceOrderController extends AdminBaseController
      * @author weifeng
      */
 
-    public function actionIndex()
+    public function actionIndex(): ?array
     {
         try {
             $data = $this->physicalReplaceOrderService->listData($this->physicalReplaceOrderQuery);
@@ -112,7 +112,7 @@ class PhysicalReplaceOrderController extends AdminBaseController
      * @author weifeng
      */
 
-    public function actionImport()
+    public function actionImport(): ?array
     {
         try {
             $data = $this->physicalReplaceOrderService->importReplaceOrder($this->physicalReplaceOrderImport);
@@ -131,7 +131,7 @@ class PhysicalReplaceOrderController extends AdminBaseController
      * @author weifeng
      */
 
-    public function actionExport()
+    public function actionExport(): ?array
     {
         try {
             $data = $this->physicalReplaceOrderService->exportReplaceOrder($this->physicalReplaceOrderQuery);
@@ -146,7 +146,7 @@ class PhysicalReplaceOrderController extends AdminBaseController
      * @author weifeng
      */
 
-    public function actionUpdate()
+    public function actionUpdate(): ?array
     {
         try {
             $data = $this->physicalReplaceOrderService->update($this->physicalReplaceOrderForm);
@@ -162,7 +162,7 @@ class PhysicalReplaceOrderController extends AdminBaseController
      * @author weifeng
      */
 
-    public function actionDelete()
+    public function actionDelete(): array
     {
         $num = $this->physicalReplaceOrderService->delete($this->physicalReplaceOrderDto);
         return ['删除成功', 200, $num];
@@ -172,7 +172,7 @@ class PhysicalReplaceOrderController extends AdminBaseController
      * 实物置换订单审核
      * @author weifeng
      */
-    public function actionAudit()
+    public function actionAudit(): ?array
     {
         try {
             $res = $this->physicalReplaceOrderService->audit($this->physicalReplaceOrderDto);
@@ -186,7 +186,7 @@ class PhysicalReplaceOrderController extends AdminBaseController
      * 实物置换订单更新导入
      * @author weifeng
      */
-    public function actionUpdateImport()
+    public function actionUpdateImport(): ?array
     {
         try {
             $data = $this->physicalReplaceOrderService->updateReplaceOrder($this->physicalReplaceOrderImport);
@@ -204,7 +204,7 @@ class PhysicalReplaceOrderController extends AdminBaseController
      * @author weifeng
      */
 
-    public function actionUpdateStatus()
+    public function actionUpdateStatus(): ?array
     {
         try {
             $data = $this->physicalReplaceOrderService->updatePrizeSendStatus($this->physicalReplaceOrderImport);
