@@ -22,10 +22,12 @@ class StatisticsUrlGroupChannelEntity extends StatisticsUrlGroupChannelDo
      */
     public function createEntity(StatisticsUrlGroupChannelForm $statisticsUrlGroupChannelForm): bool
     {
-        $account = self::findOne(['channel_name' => $statisticsUrlGroupChannelForm->channel_name]);
+
+        $account = self::findOne(['channel_name' => $statisticsUrlGroupChannelForm->channel_name, 'deleted_at' => 0]);
         if ($account) {
             throw new RuntimeException('渠道名已存在,请重新输入');
         }
+        $this->created_at = date('Y-m-d H:i:s');
         $this->setAttributes($statisticsUrlGroupChannelForm->getAttributes());
         return $this->save();
     }
@@ -40,11 +42,12 @@ class StatisticsUrlGroupChannelEntity extends StatisticsUrlGroupChannelDo
     public function updateEntity(StatisticsUrlGroupChannelForm $statisticsUrlGroupChannelForm): bool
     {
         $model = self::findOne($statisticsUrlGroupChannelForm->id);
-        $account = self::findOne(['channel_name' => $statisticsUrlGroupChannelForm->channel_name]);
+        $account = self::findOne(['channel_name' => $statisticsUrlGroupChannelForm->channel_name, 'deleted_at' => 0]);
         if ($model === null) {
             throw new Exception('找不到要修改的内容');
         }
         $model->channel_name = $statisticsUrlGroupChannelForm->channel_name;
+        $model->updated_at = date('Y-m-d H:i:s');
         if ($account) {
             throw new RuntimeException('渠道名已存在,请重新输入');
         }
@@ -64,7 +67,7 @@ class StatisticsUrlGroupChannelEntity extends StatisticsUrlGroupChannelDo
         if ($model === null) {
             throw new Exception('找不到删除内容');
         }
-        $model->is_delete = 1;
+        $model->deleted_at = date('Y-m-d H:i:s');
         return $model->save();
     }
 }

@@ -52,7 +52,6 @@ class StatisticsUrlGroupChannelQuery extends Model
         return [
             'id' => 'ID',
             'channel_name' => '渠道名称',
-            'is_delete' => '是否删除',
         ];
     }
 }

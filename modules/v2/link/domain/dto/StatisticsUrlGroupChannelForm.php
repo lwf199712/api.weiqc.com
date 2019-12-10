@@ -14,8 +14,6 @@ class StatisticsUrlGroupChannelForm extends Model
     public $id;
     /** @var string */
     public $channel_name;
-    /** @var int */
-    public $is_delete = 0;
 
     public const CREATE = 'create';
 
@@ -31,7 +29,7 @@ class StatisticsUrlGroupChannelForm extends Model
     public function rules(): array
     {
         return [
-            [['id', 'is_delete'], 'integer'],
+            [['id'], 'integer'],
             [['channel_name'], 'string', 'max' => 32],
             [['channel_name'], 'trim'],
             [['channel_name'], 'required', 'on' => self::CREATE],
@@ -56,7 +54,7 @@ class StatisticsUrlGroupChannelForm extends Model
         return [
             'id' => 'ID',
             'channel_name' => '渠道名称',
-            'is_delete' => '是否删除',
+            'deleted_at' => '删除时间',
         ];
     }
 }

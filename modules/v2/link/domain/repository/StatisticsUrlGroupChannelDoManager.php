@@ -22,7 +22,7 @@ class StatisticsUrlGroupChannelDoManager extends BaseRepository
     {
         $this->query
             ->select('id, channel_name, creator, created_at')
-            ->andWhere(['=', 'is_delete', 0])
+            ->andWhere(['=', 'deleted_at', 0])
             ->andFilterWhere(['=', 'id', $statisticsUrlGroupChannelQuery->id])
             ->andFilterWhere(['=', 'channel_name', $statisticsUrlGroupChannelQuery->channel_name])
             ->andFilterWhere(['like', 'channel_name', $statisticsUrlGroupChannelQuery->channel_name]);
@@ -33,6 +33,7 @@ class StatisticsUrlGroupChannelDoManager extends BaseRepository
             'query' => $this->query->asArray(),
             'pagination' => [
                 'pageSize' => $perPage ?? 10,
+                'validatePage' => false,
             ],
             'sort' => [
                 'attributes' => ['id'],

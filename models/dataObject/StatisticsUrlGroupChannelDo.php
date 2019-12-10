@@ -13,7 +13,7 @@ use app\models\User;
  * @package app\models\dataObject
  * @property int $id
  * @property string $channel_name
- * @property int $is_delete
+ * @property int $deleted_at
  * @property string $creator
  * @property int $created_at
  * @property string $updater
@@ -35,8 +35,8 @@ class StatisticsUrlGroupChannelDo extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['id', 'created_at', 'updated_at', 'is_delete'], 'integer'],
-            [['channel_name', 'updater', 'creator'], 'string', 'max' => 64]
+            [['id'], 'integer'],
+            [['channel_name', 'updater', 'creator','created_at', 'updated_at', 'deleted_at'], 'string', 'max' => 64]
         ];
     }
 
@@ -45,7 +45,7 @@ class StatisticsUrlGroupChannelDo extends ActiveRecord
         return [
             'id' => 'ID',
             'channel_name' => '渠道名称',
-            'is_delete' => '是否删除',
+            'deleted_at' => '删除时间',
             'creator' => '创建人',
             'created_at' => '创建时间',
             'updater' => '更新者',
@@ -57,13 +57,6 @@ class StatisticsUrlGroupChannelDo extends ActiveRecord
     public function behaviors(): array
     {
         return [
-            'time' => [
-                'class' => TimestampBehavior::class,
-                'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
-                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
-                ],
-            ],
             'author' => [
                 'class' => AttributeBehavior::class,
                 'attributes' => [
