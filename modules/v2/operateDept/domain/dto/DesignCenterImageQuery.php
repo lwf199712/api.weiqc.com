@@ -25,6 +25,7 @@ class DesignCenterImageQuery extends Model
     public $size;
     /** @var string */
     public $type;
+    /** @var string */
     public $category;
     /** @var int */
     private $page;
@@ -35,7 +36,7 @@ class DesignCenterImageQuery extends Model
     {
         return [
             [['beginTime', 'endTime', 'audit_status','perPage','page'], 'integer'],
-            [['name', 'stylist', 'size','type', 'picture_address'], 'string'],
+            [['name', 'stylist', 'size','type', 'category', 'picture_address'], 'string'],
         ];
     }
 
