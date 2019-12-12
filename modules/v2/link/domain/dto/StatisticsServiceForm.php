@@ -18,7 +18,11 @@ class StatisticsServiceForm extends Model
     /** @var integer */
     public $id;
 
-
+    /**
+     * @return array
+     * @author wenxiaomei
+     * @date 2019/12/12
+     */
     public function rules(): array
     {
         return [
@@ -30,6 +34,11 @@ class StatisticsServiceForm extends Model
         ];
     }
 
+    /**
+     * @return array
+     * @author wenxiaomei
+     * @date 2019/12/12
+     */
     public function attributeLabels(): array
     {
         return [
@@ -39,6 +48,12 @@ class StatisticsServiceForm extends Model
         ];
     }
 
+    /**
+     * @param string $value
+     * @return $this|void
+     * @author wenxiaomei
+     * @date 2019/12/12
+     */
     public function setScenario($value)
     {
         parent::setScenario($value);

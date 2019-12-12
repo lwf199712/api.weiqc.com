@@ -1,8 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 
 
 namespace app\modules\v2\link\domain\aggregate;
-
 
 use app\modules\v2\link\domain\dto\StatisticsServiceQuery;
 use app\modules\v2\link\domain\dto\StatisticsServiceForm;
@@ -11,8 +10,14 @@ use mdm\admin\BaseObject;
 
 class StatisticsServiceAggregate extends BaseObject
 {
+    /** @var StatisticsServiceEntity  */
     public $statisticsServiceEntity;
 
+    /**
+     * StatisticsServiceAggregate constructor.
+     * @param StatisticsServiceEntity $statisticsServiceEntity
+     * @param array $config
+     */
     public function __construct(
         StatisticsServiceEntity $statisticsServiceEntity,
         $config = [])

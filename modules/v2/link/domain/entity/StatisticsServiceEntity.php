@@ -46,7 +46,7 @@ class StatisticsServiceEntity extends StatisticsServiceDo
     {
         $parameter = [
             'query'      => $query,
-            'pagination' => ['pageSize' => $statisticsServiceQuery->prePage]
+            'pagination' => ['pageSize' => $statisticsServiceQuery->prePage, 'validatePage' => false]
         ];
 
         if (!empty($sort)) {

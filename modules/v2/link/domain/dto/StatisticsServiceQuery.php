@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 namespace app\modules\v2\link\domain\dto;
 
 use yii\base\Model;
@@ -8,7 +7,7 @@ use yii\base\Model;
 
 class StatisticsServiceQuery extends Model
 {
-
+    /** @var string  */
     public const READ = 'read';
     /** @var string */
     public $account;
@@ -33,6 +32,11 @@ class StatisticsServiceQuery extends Model
         ];
     }
 
+    /**
+     * @return array
+     * @author wenxiaomei
+     * @date 2019/12/12
+     */
     public function attributeLabels(): array
     {
         return [
@@ -43,6 +47,12 @@ class StatisticsServiceQuery extends Model
         ];
     }
 
+    /**
+     * @param string $value
+     * @return $this|void
+     * @author wenxiaomei
+     * @date 2019/12/12
+     */
     public function setScenario($value)
     {
         parent::setScenario($value);

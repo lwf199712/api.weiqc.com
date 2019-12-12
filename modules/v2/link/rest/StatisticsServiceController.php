@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 
 namespace app\modules\v2\link\rest;
@@ -11,12 +11,29 @@ use app\modules\v2\link\domain\dto\StatisticsServiceForm;
 use RuntimeException;
 use yii\base\Model;
 
+/**
+ *
+ * Class StatisticsServiceController
+ * @package app\modules\v2\link\rest
+ */
 class StatisticsServiceController extends AdminBaseController
 {
+    /** @var StatisticsServiceAggregate  */
     private $staticServiceAggregate;
+    /** @var StatisticsServiceQuery  */
     private $statisticsServiceQuery;
+    /** @var StatisticsServiceForm  */
     private $statisticsServiceForm;
 
+    /**
+     * StatisticsServiceController constructor.
+     * @param $id
+     * @param $module
+     * @param StatisticsServiceAggregate $staticServiceAggregate
+     * @param StatisticsServiceQuery $statisticsServiceQuery
+     * @param StatisticsServiceForm $statisticsServiceForm
+     * @param array $config
+     */
     public function __construct($id, $module,
                                 StatisticsServiceAggregate $staticServiceAggregate,
                                 StatisticsServiceQuery $statisticsServiceQuery,
@@ -29,6 +46,11 @@ class StatisticsServiceController extends AdminBaseController
         parent::__construct($id, $module, $config);
     }
 
+    /**
+     * @return array
+     * @author wenxiaomei
+     * @date 2019/12/12
+     */
     public function verbs(): array
     {
         return [
@@ -39,6 +61,12 @@ class StatisticsServiceController extends AdminBaseController
         ];
     }
 
+    /**
+     * @param string $actionName
+     * @return Model
+     * @author wenxiaomei
+     * @date 2019/12/12
+     */
     public function dtoMap(string $actionName): Model
     {
         switch ($actionName) {
