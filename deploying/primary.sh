@@ -25,7 +25,7 @@ release_dir=/data/www/$deploy_name/back-end/releases
 release=/data/www/$deploy_name/back-end/releases/$deploy_name-$LOG_DATE-$LOG_TIME
 
 #远程主机的共享文件夹
-sharedir=${code_dir}/shared
+sharedir=${code_dir}/shared/
 
 sourcefunction(){
     source ./deploying/deploying.sh
@@ -40,7 +40,7 @@ fixsource(){
     code_dir=/data/www/$fix_name/back-end
     release_dir=/data/www/$fix_name/back-end/releases
     release=/data/www/$fix_name/back-end/releases/$fix_name-$LOG_DATE-$LOG_TIME
-    sharedir=${code_dir}/shared
+    sharedir=${code_dir}/shared/
     #生效fix环境方法
     sourcefunction
 }
