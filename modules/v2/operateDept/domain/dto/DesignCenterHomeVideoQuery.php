@@ -27,7 +27,8 @@ class DesignCenterHomeVideoQuery extends Model
     public function rules(): array
     {
         return [
-            [['beginTime', 'endTime', 'audit_status','perPage','page'], 'integer'],
+            [['beginTime', 'endTime', 'audit_status'], 'integer'],
+            [['perPage','page'], 'integer', 'min' => 1],
             [['name','video', 'category'], 'string'],
         ];
     }

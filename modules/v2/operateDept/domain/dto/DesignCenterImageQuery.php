@@ -35,7 +35,8 @@ class DesignCenterImageQuery extends Model
     public function rules(): array
     {
         return [
-            [['beginTime', 'endTime', 'audit_status','perPage','page'], 'integer'],
+            [['beginTime', 'endTime', 'audit_status'], 'integer'],
+            [['perPage','page'], 'integer', 'min' => 1],
             [['name', 'stylist', 'size','type', 'category', 'picture_address'], 'string'],
         ];
     }
