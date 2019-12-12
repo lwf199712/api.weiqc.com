@@ -3,9 +3,6 @@
 namespace app\models\dataObject;
 
 use Yii;
-use yii\behaviors\AttributeBehavior;
-use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "bm_statistics_service".
@@ -21,12 +18,12 @@ use yii\db\ActiveRecord;
  * @property string $updater 创建人
  * @property string $deleter 删除人
  */
-class StatisticsServiceDo extends ActiveRecord
+class StatisticsServiceDo extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName(): string
+    public static function tableName()
     {
         return 'bm_statistics_service';
     }
@@ -34,7 +31,7 @@ class StatisticsServiceDo extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules():array
+    public function rules()
     {
         return [
             [['created_at', 'updated_time', 'updated_at', 'deleted_at'], 'integer'],
@@ -46,7 +43,7 @@ class StatisticsServiceDo extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
             'id' => 'ID',
@@ -61,32 +58,4 @@ class StatisticsServiceDo extends ActiveRecord
             'deleter' => 'Deleter',
         ];
     }
-
-    public function behaviors(): array
-    {
-        return [
-            'time'   => [
-                'class'      => TimestampBehavior::class,
-                'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
-                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
-
-                ],
-            ],
-            'creator' => [
-                'class'      => AttributeBehavior::class,
-                'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => ['creator'],
-                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updater'],
-                ],
-                'value' => static function(){
-                    return Yii::$app->user->identity->username;
-                }
-            ],
-
-
-
-        ];
-    }
-
 }
