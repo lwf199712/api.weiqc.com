@@ -17,6 +17,8 @@ class DesignCenterHomeVideoQuery extends Model
     public $video;
     /** @var int */
     public $audit_status;
+    /** @var string */
+    public $category;
     /** @var int */
     private $page;
     /** @var int */
@@ -25,8 +27,9 @@ class DesignCenterHomeVideoQuery extends Model
     public function rules(): array
     {
         return [
-            [['beginTime', 'endTime', 'audit_status','perPage','page'], 'integer'],
-            [['name','video'], 'string'],
+            [['beginTime', 'endTime', 'audit_status'], 'integer'],
+            [['perPage','page'], 'integer', 'min' => 1],
+            [['name','video', 'category'], 'string'],
         ];
     }
 

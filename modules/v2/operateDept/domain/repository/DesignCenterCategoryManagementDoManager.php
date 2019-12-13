@@ -46,11 +46,6 @@ class DesignCenterCategoryManagementDoManager extends BaseRepository
      */
     public function vagueCheck(DesignCenterCategoryManagementQuery $designCenterCategoryManagementQuery):array
     {
-        $res = $this->model::find()->where(['type' => $designCenterCategoryManagementQuery->type])->andFilterWhere(['like','category',$designCenterCategoryManagementQuery->category])->asArray()->all();
-        if (!$res){
-            throw new Exception('查询数组为空');
-        }else{
-            return $res;
-        }
+        return $this->model::find()->where(['type' => $designCenterCategoryManagementQuery->type])->andFilterWhere(['like','category',$designCenterCategoryManagementQuery->category])->asArray()->all();
     }
 }
