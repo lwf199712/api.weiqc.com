@@ -53,7 +53,7 @@ class StatisticsUrlGroupChannelAggregate extends BaseObject
         $list = $this->statisticsUrlGroupChannelDoManager->listDataProvider($statisticsUrlGroupChannelQuery)->getModels();
         $data['list'] = $list;
         $data['totalCount'] = $this->statisticsUrlGroupChannelDoManager->listDataProvider($statisticsUrlGroupChannelQuery)->getTotalCount();
-        return ['成功返回数据', 200, $data];
+        return $data;
     }
 
     /**
