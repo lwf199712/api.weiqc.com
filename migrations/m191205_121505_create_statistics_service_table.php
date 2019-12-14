@@ -23,7 +23,6 @@ class m191205_121505_create_statistics_service_table extends Migration
             'name'        => $this->string(64)->notNull()->defaultValue('')->comment('服务号名称'),
             'account'     => $this->string(64)->notNull()->defaultValue('')->comment('服务账号'),
             'created_at' => $this->integer()->unsigned()->notNull()->defaultValue(0)->comment('创建时间'),
-            'updated_time' => $this->integer()->unsigned()->notNull()->defaultValue(0)->comment('更新时间'),
             'creator'     => $this->string(16)->notNull()->defaultValue('')->comment('创建人'),
             'updated_at'  => $this->integer()->unsigned()->notNull()->defaultValue(0)->comment('修改时间'),
             'deleted_at'  => $this->integer()->unsigned()->notNull()->defaultValue(0)->comment('删除时间'),

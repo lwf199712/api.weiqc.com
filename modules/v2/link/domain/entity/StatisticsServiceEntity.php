@@ -24,6 +24,7 @@ class StatisticsServiceEntity extends StatisticsServiceDo
     {
         $query = self::find()
             ->select(['id', 'account', 'name'])
+            ->where(['deleted_at'=> 0])
             ->andFilterWhere(
                 ['and',
                     ['like', 'account', $statisticsServiceQuery->account],
@@ -66,12 +67,11 @@ class StatisticsServiceEntity extends StatisticsServiceDo
     public function createEntity(StatisticsServiceForm $statisticsServiceForm): bool
     {
 
-        $account = self::findOne(['account' => $statisticsServiceForm->account]);
+        $account = self::findOne(['account' => $statisticsServiceForm->account,'deleted_at' => 0]);
         if ($account) {
             throw new RuntimeException('帐号已存在,请重新添加');
         }
         $this->setAttributes($statisticsServiceForm->getAttributes());
-
         return $this->save();
     }
 
@@ -85,7 +85,7 @@ class StatisticsServiceEntity extends StatisticsServiceDo
     public function updateEntity(StatisticsServiceForm $statisticsServiceForm): bool
     {
         $model = self::findOne($statisticsServiceForm->id);
-        //帐号存在并
+        //帐号存在
         if ($model !== null){
             if ($model->account === $statisticsServiceForm->account){
                 $model->setAttributes($statisticsServiceForm->getAttributes());
