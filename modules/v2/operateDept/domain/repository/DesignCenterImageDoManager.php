@@ -25,6 +25,13 @@ class DesignCenterImageDoManager extends BaseRepository
             ->andFilterWhere(['=', 'size',           $designCenterImageQuery->size])
             ->andFilterWhere(['=', 'type',           $designCenterImageQuery->type]);
 
+        if (isset($designCenterImageQuery->category) && $designCenterImageQuery->category !== '') {
+            $ids = array_filter(explode(',', $designCenterImageQuery->category));
+            foreach ($ids as $key => $value) {
+                $this->query->andWhere(['or', ['LIKE', 'category', "%,$value", false], ['LIKE', 'category', "$value,%", false], ['LIKE', 'category', ",$value,"], ['=', 'category', $value]]);
+            }
+        }
+
         $perPage = $designCenterImageQuery->getPerPage();
         return new ActiveDataProvider([
             'query' => $this->query->asArray(),
