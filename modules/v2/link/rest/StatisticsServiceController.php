@@ -4,11 +4,11 @@
 namespace app\modules\v2\link\rest;
 
 
+use app\common\exception\ApiException;
 use app\common\rest\AdminBaseController;
 use app\modules\v2\link\domain\aggregate\StatisticsServiceAggregate;
 use app\modules\v2\link\domain\dto\StatisticsServiceQuery;
 use app\modules\v2\link\domain\dto\StatisticsServiceForm;
-use RuntimeException;
 use yii\base\Model;
 
 /**
@@ -64,8 +64,9 @@ class StatisticsServiceController extends AdminBaseController
     /**
      * @param string $actionName
      * @return Model
+     * @throws ApiException
      * @author wenxiaomei
-     * @date 2019/12/12
+     * @date 2019/12/17
      */
     public function dtoMap(string $actionName): Model
     {
@@ -79,7 +80,7 @@ class StatisticsServiceController extends AdminBaseController
             case 'actionDelete':
                 return $this->statisticsServiceForm->setScenario($this->statisticsServiceForm::DELETE);
             default:
-                throw new RuntimeException('unKnow actionName', 500);
+                throw new ApiException('unKnow actionName', 500);
         }
     }
 
@@ -97,8 +98,9 @@ class StatisticsServiceController extends AdminBaseController
 
     /**
      * @return array
+     * @throws ApiException
      * @author wenxiaomei
-     * @date 2019/12/6
+     * @date 2019/12/17
      */
     public function actionCreate(): array
     {
@@ -107,10 +109,12 @@ class StatisticsServiceController extends AdminBaseController
 
     }
 
+
     /**
      * @return array
+     * @throws ApiException
      * @author wenxiaomei
-     * @date 2019/12/6
+     * @date 2019/12/17
      */
     public function actionUpdate(): array
     {
@@ -120,8 +124,9 @@ class StatisticsServiceController extends AdminBaseController
 
     /**
      * @return array
+     * @throws ApiException
      * @author wenxiaomei
-     * @date 2019/12/6
+     * @date 2019/12/17
      */
     public function actionDelete(): array
     {

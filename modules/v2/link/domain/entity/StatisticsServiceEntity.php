@@ -3,10 +3,10 @@
 
 namespace app\modules\v2\link\domain\entity;
 
+use app\common\exception\ApiException;
 use app\models\dataObject\StatisticsServiceDo;
 use app\modules\v2\link\domain\dto\StatisticsServiceQuery;
 use app\modules\v2\link\domain\dto\StatisticsServiceForm;
-use RuntimeException;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
@@ -58,36 +58,36 @@ class StatisticsServiceEntity extends StatisticsServiceDo
     }
 
     /**
-     * 创建
      * @param StatisticsServiceForm $statisticsServiceForm
      * @return bool
+     * @throws ApiException
      * @author wenxiaomei
-     * @date 2019/12/6
+     * @date 2019/12/17
      */
     public function createEntity(StatisticsServiceForm $statisticsServiceForm): bool
     {
 
         $account = self::findOne(['account' => $statisticsServiceForm->account,'deleted_at' => 0]);
         if ($account) {
-            throw new RuntimeException('帐号已存在,请重新添加');
+            throw new ApiException('帐号已存在,请重新添加',40002);
         }
         $this->setAttributes($statisticsServiceForm->getAttributes());
         return $this->save();
     }
 
     /**
-     * 更新
      * @param StatisticsServiceForm $statisticsServiceForm
      * @return bool
+     * @throws ApiException
      * @author wenxiaomei
-     * @date 2019/12/6
+     * @date 2019/12/17
      */
     public function updateEntity(StatisticsServiceForm $statisticsServiceForm): bool
     {
         $model = self::findOne($statisticsServiceForm->id);
-        //帐号存在
-        if ($model !== null){
-            if ($model->account === $statisticsServiceForm->account){
+            //帐号存在
+        if ($model !== null) {
+            if ($model->account === $statisticsServiceForm->account) {
                 $model->setAttributes($statisticsServiceForm->getAttributes());
                 return $model->save();
             }
@@ -95,26 +95,27 @@ class StatisticsServiceEntity extends StatisticsServiceDo
                 $model->setAttributes($statisticsServiceForm->getAttributes());
                 return $model->save();
             }
-            throw new RuntimeException('帐号已存在，请重新修改');
+            throw new ApiException('帐号已存在,请重新修改', 40002);
         }
-        throw new RuntimeException('帐号不存在');
+        throw new ApiException('帐号不存在', 40003);
+
     }
 
     /**
-     * 删除
      * @param StatisticsServiceForm $statisticsServiceForm
      * @return bool
+     * @throws ApiException
      * @author wenxiaomei
-     * @date 2019/12/6
+     * @date 2019/12/17
      */
    public function deleteEntity(StatisticsServiceForm $statisticsServiceForm): bool
    {
        $model = self::findOne($statisticsServiceForm->id);
        if ($model === null) {
-           throw new RuntimeException('找不到这条记录');
+           throw new ApiException('找不到这条记录',40003);
        }
        if ($model->deleted_at !== 0) {
-           throw new RuntimeException('您已经删除了，请不要重复操作');
+           throw new ApiException('您已经删除了，请不要重复操作', 40004);
        }
        $model->deleted_at = time();
        $model->deleter    = Yii::$app->user->identity->username;

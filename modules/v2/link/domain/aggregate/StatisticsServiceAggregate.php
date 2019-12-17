@@ -7,6 +7,7 @@ use app\modules\v2\link\domain\dto\StatisticsServiceQuery;
 use app\modules\v2\link\domain\dto\StatisticsServiceForm;
 use app\modules\v2\link\domain\entity\StatisticsServiceEntity;
 use mdm\admin\BaseObject;
+use app\common\exception\ApiException;
 
 class StatisticsServiceAggregate extends BaseObject
 {
@@ -34,9 +35,7 @@ class StatisticsServiceAggregate extends BaseObject
      */
     public function getServiceList(StatisticsServiceQuery $statisticsServiceQuery):array
     {
-
         $query = $this->statisticsServiceEntity->getStaticServiceData($statisticsServiceQuery);
-
         $provider = $this->statisticsServiceEntity->getActiveDataProvider($query->asArray(), $statisticsServiceQuery);
         $data = $provider->getModels();
         $count = $provider->getTotalCount();
@@ -47,8 +46,9 @@ class StatisticsServiceAggregate extends BaseObject
     /**
      * @param StatisticsServiceForm $statisticsServiceForm
      * @return bool
+     * @throws ApiException
      * @author wenxiaomei
-     * @date 2019/12/6
+     * @date 2019/12/17
      */
     public function createService(StatisticsServiceForm $statisticsServiceForm): bool
     {
@@ -58,8 +58,9 @@ class StatisticsServiceAggregate extends BaseObject
     /**
      * @param StatisticsServiceForm $statisticsServiceForm
      * @return bool
+     * @throws ApiException
      * @author wenxiaomei
-     * @date 2019/12/6
+     * @date 2019/12/17
      */
     public function updateService(StatisticsServiceForm $statisticsServiceForm): bool
     {
@@ -69,8 +70,9 @@ class StatisticsServiceAggregate extends BaseObject
     /**
      * @param StatisticsServiceForm $statisticsServiceForm
      * @return bool
+     * @throws ApiException
      * @author wenxiaomei
-     * @date 2019/12/6
+     * @date 2019/12/17
      */
     public function deleteService(StatisticsServiceForm$statisticsServiceForm): bool
     {
