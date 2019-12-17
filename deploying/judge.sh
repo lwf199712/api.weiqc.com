@@ -4,6 +4,7 @@
 file=(
 config/db.php
 config/dbOA.php
+config/db_dc.php
 )
 #共享目录列表
 dir=(
