@@ -24,8 +24,7 @@ class DesignCenterProviderInfoDoManager extends BaseRepository
         $fields = ['id', 'name', 'quoted_price', 'site', 'recommended_reason', 'contact_way', 'remark', 'reference_case', 'flag'];
         $this->query->select($fields)
                     ->andFilterWhere(['like', 'name', $designCenterProviderInfoQuery->name])
-                    ->andFilterWhere(['=', 'flag', $designCenterProviderInfoQuery->flag])
-                    ->andWhere(['=', 'deleted_at', 0]);
+                    ->andFilterWhere(['=', 'flag', $designCenterProviderInfoQuery->flag]);
 
         return new ActiveDataProvider([
             'query'        => $this->query->asArray(),
