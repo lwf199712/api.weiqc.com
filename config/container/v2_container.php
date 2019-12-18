@@ -26,8 +26,10 @@ use app\modules\v2\marketDept\service\PhysicalReplaceOrderService;
 use app\modules\v2\marketDept\service\PhysicalSendStatusService;
 use app\modules\v2\operateDept\service\DesignCenterImageService;
 use app\modules\v2\operateDept\service\DesignCenterImageStatisticsService;
+use app\modules\v2\operateDept\service\DesignCenterProviderInfoService;
 use app\modules\v2\operateDept\service\impl\DesignCenterImageImpl;
 use app\modules\v2\operateDept\service\impl\DesignCenterImageStatisticsImpl;
+use app\modules\v2\operateDept\service\impl\DesignCenterProviderInfoImpl;
 
 $containerList = [
 
@@ -40,6 +42,7 @@ $containerList = [
     StaticUrlDeliveryVolumeService::class       => StaticUrlDeliveryVolumeImpl::class,
     DesignCenterImageService::class             => DesignCenterImageImpl::class,
     DesignCenterImageStatisticsService::class   => DesignCenterImageStatisticsImpl::class,
+    DesignCenterProviderInfoService::class      => DesignCenterProviderInfoImpl::class,
     PhysicalReplaceOrderService::class          => PhysicalReplaceOrderImpl::class,
     PhysicalSendStatusService::class            => PhysicalSendStatusImpl::class,
 
