@@ -35,7 +35,7 @@ return [
      * UAC－api地址
      */
     'uac_api'               => [
-        'base_url'      => 'http://provider-uac.oa.fandow.com/',
+        'base_url'      => '10.29.191.229:18206',
         'client_id'     => '91052cff6f461272a7c298079a235e84',
         'client_secret' => '1b64f0e6c9ae1e80c8282b5e6d3d8a92',
         'api'           => [
