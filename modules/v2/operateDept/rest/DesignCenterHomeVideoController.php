@@ -116,7 +116,9 @@ class DesignCenterHomeVideoController extends AdminBaseController
                 return  ['插入失败,属性不能为空',500];
             }
             $data = [];
+            $imageUrl = $this->designCenterHomeVideoForm->uploadImage();
             $this->designCenterHomeVideoForm->video = Yii::$app->request->getHostInfo().$url;
+            $this->designCenterHomeVideoForm->thumbnail = Yii::$app->request->getHostInfo().$imageUrl;
             $res = $this->designCenterHomeVideoEntity->createEntity($this->designCenterHomeVideoForm);
             if ($res){
                 $id = Yii::$app->db->getLastInsertID();
@@ -156,15 +158,20 @@ class DesignCenterHomeVideoController extends AdminBaseController
     {
         $data = [];
         try{
-            if ($this->designCenterHomeVideoForm->videoFile){
+            if ($this->designCenterHomeVideoForm->videoFile) {
                 // 上传视频 并返回视频的地址
-                $url = Yii::$app->request->getHostInfo().$this->designCenterHomeVideoForm->uploadVideo();
+                $url = Yii::$app->request->getHostInfo() . $this->designCenterHomeVideoForm->uploadVideo();
                 // 获取旧的视频地址
                 $old_url = $this->designCenterHomeVideoDoManager->detailData((int)$this->designCenterHomeVideoForm->id)->attributes['video'];
                 // 删除旧视频
                 $this->designCenterHomeVideoForm->video = $url;
-                $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm,$old_url);
-            }else{
+                $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm, $old_url);
+            } elseif ($this->designCenterHomeVideoForm->imageFile) {
+                $imageUrl = Yii::$app->request->getHostInfo() . $this->designCenterHomeVideoForm->uploadImage();
+                $oldImageUrl = $this->designCenterHomeVideoDoManager->detailData((int)$this->designCenterHomeVideoForm->id)->attributes['thumbnail'];
+                $this->designCenterHomeVideoForm->video = $imageUrl;
+                $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm, $oldImageUrl);
+            } else {
                 $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm);
             }
             $data['list'] = $this->designCenterHomeVideoDoManager->detailData((int)$this->designCenterHomeVideoForm->id)->attributes;

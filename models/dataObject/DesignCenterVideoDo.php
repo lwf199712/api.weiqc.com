@@ -18,6 +18,7 @@ use yii\db\ActiveRecord;
  * @property int $audit_time 审核时间
  * @property string $category 属性类别
  * @property string $url 图片链接
+ * @property string $thumbnail 缩略图
  */
 class DesignCenterVideoDo extends ActiveRecord
 {
@@ -38,7 +39,7 @@ class DesignCenterVideoDo extends ActiveRecord
             [['design_finish_time', 'upload_time', 'audit_status', 'audit_time'], 'integer'],
             [['name'], 'required'],
             [['name', 'audit_opinion', 'auditor'], 'string', 'max' => 255],
-            [['video', 'url'], 'string', 'max' => 1024],
+            [['video', 'url', 'thumbnail'], 'string', 'max' => 1024],
             [['category'], 'string', 'max' => 150],
         ];
     }
@@ -60,6 +61,7 @@ class DesignCenterVideoDo extends ActiveRecord
             'audit_time' => 'Audit Time',
             'category' => 'Category',
             'url' => 'Url',
+            'thumbnail' => 'Thumbnail',
         ];
     }
 }

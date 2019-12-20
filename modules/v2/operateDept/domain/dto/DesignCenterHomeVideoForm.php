@@ -20,6 +20,8 @@ class DesignCenterHomeVideoForm extends Model
     public $name;
     /** @var UploadedFile */
     public $videoFile;
+    /** @var UploadedFile */
+    public $imageFile;
     /** @var string */
     public $video;
     /** @var string */
@@ -30,12 +32,14 @@ class DesignCenterHomeVideoForm extends Model
     public $url;
     /** @var string*/
     public $category;
+    /** @var string*/
+    public $thumbnail;
 
     public function rules() :array
     {
         return [
             [['id', 'design_finish_time','audit_status'], 'integer'],
-            [['name', 'audit_opinion','url','category'], 'string'],
+            [['name', 'audit_opinion','url','category', 'thumbnail'], 'string'],
         ];
     }
 
@@ -51,6 +55,7 @@ class DesignCenterHomeVideoForm extends Model
             'audit_time'        => '审核时间',
             'url'               => '视频链接',
             'category'          => '属性',
+            'thumbnail'         => '缩略图',
         ];
     }
 
@@ -86,6 +91,20 @@ class DesignCenterHomeVideoForm extends Model
     }
 
     /**
+     * 删除本地图片
+     * Date: 2019/11/14
+     * Author: ctl
+     * @param $address
+     * @return bool
+     */
+    public function deleteImage($address):bool
+    {
+        $filePath = explode('/uploads/designCenter/thumbnail/',$address)[1];
+        $address = Yii::$app->basePath.'/web/uploads/designCenter/thumbnail/'.$filePath;
+        return unlink($address);
+    }
+
+    /**
      * 视频上传到本地
      * Date: 2019/11/13
      * Author: ctl
@@ -113,6 +132,32 @@ class DesignCenterHomeVideoForm extends Model
             if ($res) {
                 return '/uploads/' . $dirName . '/' . $randName;
             }
+        }
+        return false;
+    }
+
+    /**
+     * 上传图片
+     * @return bool|string
+     * @throws Exception
+     * @author weifeng
+     */
+    public function uploadImage()
+    {
+        $this->imageFile = UploadedFile::getInstanceByName('imageFile');
+        if ($this->validate()) {
+            $basePath = Yii::$app->basePath . '/web/uploads/designCenter/thumbnail';
+            $ext = $this->imageFile->extension;
+            $randName = $this->imageFile->baseName . '_' . time() . random_int(1000, 9999) . '.' . $ext;
+            $rootPath = $basePath . '/';
+            //判断该目录是否存在
+            if (!is_dir($rootPath) && !mkdir($rootPath) && !is_dir($rootPath)) {
+                throw new RuntimeException(sprintf('Directory "%s" was not created', $rootPath));
+            }
+            if ($this->imageFile->saveAs($rootPath . $randName)) {
+                return '/' . $randName;
+            }
+            return false;
         }
         return false;
     }

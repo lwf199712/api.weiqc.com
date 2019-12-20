@@ -122,6 +122,9 @@ class DesignCenterHomeVideoEntity extends DesignCenterVideoDo
             $address = self::findOne(['id' => $designCenterHomeVideoForm->id])->video;
             $designCenterHomeVideoForm->deletelocal($old_url);
         }
+        if ($designCenterHomeVideoForm->thumbnail){
+            $designCenterHomeVideoForm->deleteImage($old_url);
+        }
         $model = $model::findOne(['id'=>$designCenterHomeVideoForm->id]);
         $arr  = $designCenterHomeVideoForm->getAttributes();
         // 如果为空就删除 不执行更新

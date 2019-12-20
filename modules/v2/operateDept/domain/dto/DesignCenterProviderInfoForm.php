@@ -35,6 +35,7 @@ class DesignCenterProviderInfoForm extends Model
         return [
             ['id', 'integer'],
             [['name', 'quoted_price', 'site', 'recommended_reason', 'contact_way', 'remark', 'reference_case', 'flag'], 'string'],
+            [['name', 'quoted_price', 'site', 'recommended_reason', 'contact_way'], 'required'],
         ];
     }
 
