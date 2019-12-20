@@ -6,6 +6,7 @@
  * @author lirong
  */
 
+use app\common\exception\handler\ApiExceptionHandler;
 use app\common\rest\AdminBaseController;
 use app\common\rest\RestBaseController;
 use mdm\admin\components\AccessControl;
@@ -21,6 +22,7 @@ use yii\log\FileTarget;
 use yii\swiftmailer\Mailer;
 use app\models\User;
 use yii\caching\FileCache;
+
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
@@ -101,7 +103,7 @@ $config = [
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
-            'errorAction' => 'site/error',
+            'class' => ApiExceptionHandler::class
         ],
         'mailer'       => [
             'class'            => Mailer::class,
@@ -169,6 +171,7 @@ $config = [
         ],
         'db'           => $db,
         'dbToDc'       => $dbToDc
+
     ],
 
     'as access' => [

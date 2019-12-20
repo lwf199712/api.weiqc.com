@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace app\common\rest;
 
+use app\common\exception\ApiException;
 use app\components\Auth;
 use stdClass;
 use Yii;
@@ -116,15 +117,25 @@ abstract class AdminBaseController extends ActiveController
     }
 
 
+//    /**
+//     * This method is invoked right before an action is executed.
+//     * Set request parameters in advance and transaction
+//     *
+//     * @param yii\base\InlineAction $action
+//     * @return bool
+//     * @throws BadRequestHttpException
+//     * @throws \yii\base\Exception
+//     * @author: zhuozhen
+//     */
     /**
-     * This method is invoked right before an action is executed.
-     * Set request parameters in advance and transaction
-     *
-     * @param yii\base\InlineAction $action
+     * @param $action
      * @return bool
+     * @throws ApiException
      * @throws BadRequestHttpException
+     * @throws ForbiddenHttpException
      * @throws \yii\base\Exception
-     * @author: zhuozhen
+     * @author wenxiaomei
+     * @date 2019/12/17
      */
     public function beforeAction($action): bool
     {
@@ -151,7 +162,10 @@ abstract class AdminBaseController extends ActiveController
             $this->dto->setAttributes($this->request->post());
         }
         if ($this->dto->validate() === false) {
-            throw new IntegrityException('输入数据验证错误', $this->dto->getErrors());
+            //throw new IntegrityException('输入数据验证错误', $this->dto->getErrors());
+            $data = $this->dto->getFirstErrors();
+            $data = implode('', $data);
+            throw new ApiException($data, 40001);
         }
         $this->transaction = Yii::$app->db->beginTransaction();
         return true;
