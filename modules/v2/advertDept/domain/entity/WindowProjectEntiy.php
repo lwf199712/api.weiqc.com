@@ -13,6 +13,7 @@ use app\models\dataObject\WindowProjectDo;
 use app\modules\v2\advertDept\domain\dto\WindowProjectDto;
 use app\modules\v2\advertDept\domain\dto\WindowProjectForm;
 use app\modules\v2\advertDept\domain\factory\WindowProjectFactory;
+use app\modules\v2\advertDept\domain\repository\WindowProjectDoManager;
 use Exception;
 
 class WindowProjectEntiy extends WindowProjectDo
@@ -30,7 +31,22 @@ class WindowProjectEntiy extends WindowProjectDo
     {
         $windowProjectFactory = new WindowProjectFactory();
         $msg = true;
-        foreach (json_decode($windowProjectForm->getAttributes(['voArr'])['voArr'], true) as $value){
+        //录入之前查看是否有冲突的
+        $voArr = json_decode($windowProjectForm->getAttributes(['voArr'])['voArr'], true);
+        $windowProjectDoManager = new WindowProjectDoManager();
+        try {
+            $windowProjectData = $windowProjectDoManager->queryDataIsHave($windowProjectForm, array_column($voArr, 'period'));
+            if ($windowProjectData) {
+                $msg = false;
+                throw new Exception('已存在相同的产品：' . $windowProjectData[0]['product_name'] .
+                    '、时间段：' . $windowProjectData[0]['period'] . '~' . ($windowProjectData[0]['period']+1) . '、账号的数据：' .
+                    $windowProjectData[0]['account_and_id'] . '、日期：'. date('Y-m-d', (int)$windowProjectData[0]['data_time']) . '，请检查好后再重新录入');
+            }
+        }catch (Exception $exception) {
+            throw new Exception($exception->getMessage());
+        }
+
+        foreach ($voArr as $value){
             $model = new self;
             $model->setAttributes($windowProjectForm->getAttributes());
             try {
@@ -86,6 +102,18 @@ class WindowProjectEntiy extends WindowProjectDo
         $model = self::findOne($windowProjectForm->id);
         if ($model === null) {
             throw new Exception('找不到这一条记录，不能更新');
+        }
+        //更新之前查看是否有冲突的
+        $windowProjectDoManager = new WindowProjectDoManager();
+        try {
+            $windowProjectData = $windowProjectDoManager->queryDataIsHave($windowProjectForm, [$windowProjectForm->period]);
+            if ($windowProjectData) {
+                throw new Exception('已存在相同的产品了：' . $windowProjectData[0]['product_name'] .
+                    '、时间段：' . $windowProjectData[0]['period'] . '~' . ($windowProjectData[0]['period']+1) . '、账号的数据：' .
+                    $windowProjectData[0]['account_and_id'] . '、日期：'. date('Y-m-d', (int)$windowProjectData[0]['data_time']) . '，请检查好后再重新录入');
+            }
+        }catch (Exception $exception) {
+            throw new Exception($exception->getMessage());
         }
         try {
             $model->setAttributes($windowProjectForm->getAttributes());
