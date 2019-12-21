@@ -55,7 +55,7 @@ class DesignCenterProviderInfoEntity extends DesignCenterProviderInfoDo
         }
         $model = self::findOne($designCenterProviderInfoForm->id);
         if ($model === null) {
-            throw new RuntimeException('找不到修改的数据');
+            throw new ApiException('找不到修改的数据');
         }
         $model->setAttributes($designCenterProviderInfoForm->getAttributes());
         return $model->save();

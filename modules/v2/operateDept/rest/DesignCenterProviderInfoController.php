@@ -66,11 +66,7 @@ class DesignCenterProviderInfoController extends AdminBaseController
      */
     public function actionIndex(): ?array
     {
-        try {
-            return ['成功返回数据', 200, $this->designCenterProviderInfoService->listInfo($this->designCenterProviderInfoQuery)];
-        } catch (Exception $exception) {
-            return ['查询失败', 500, $exception->getMessage()];
-        }
+        return ['成功返回数据', 200, $this->designCenterProviderInfoService->listInfo($this->designCenterProviderInfoQuery)];
     }
 
     /**
@@ -80,11 +76,7 @@ class DesignCenterProviderInfoController extends AdminBaseController
      */
     public function actionCreate(): ?array
     {
-        try {
-            return ['新增成功', 200, $this->designCenterProviderInfoService->createInfo($this->designCenterProviderInfoForm)];
-        } catch (Exception $exception) {
-            return ['新增失败', 500, $exception->getMessage()];
-        }
+        return ['新增成功', 200, $this->designCenterProviderInfoService->createInfo($this->designCenterProviderInfoForm)];
     }
 
     /**
@@ -94,11 +86,7 @@ class DesignCenterProviderInfoController extends AdminBaseController
      */
     public function actionUpdate(): ?array
     {
-        try {
-            return ['修改成功', 200, $this->designCenterProviderInfoService->updateInfo($this->designCenterProviderInfoForm)];
-        } catch (Exception $exception) {
-            return ['修改失败', 500, $exception->getMessage()];
-        }
+        return ['修改成功', 200, $this->designCenterProviderInfoService->updateInfo($this->designCenterProviderInfoForm)];
     }
 
     /**
@@ -108,10 +96,6 @@ class DesignCenterProviderInfoController extends AdminBaseController
      */
     public function actionDelete(): ?array
     {
-        try {
-            return ['删除成功', 200, $this->designCenterProviderInfoService->deleteInfo($this->designCenterProviderInfoForm)];
-        } catch (Exception $exception) {
-            return ['删除失败', 500, $exception->getMessage()];
-        }
+        return ['删除成功', 200, $this->designCenterProviderInfoService->deleteInfo($this->designCenterProviderInfoForm)];
     }
 }

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace app\modules\v2\operateDept\service\impl;
 
+use app\common\exception\ApiException;
 use app\modules\v2\operateDept\domain\dto\DesignCenterProviderInfoForm;
 use app\modules\v2\operateDept\domain\dto\DesignCenterProviderInfoQuery;
 use app\modules\v2\operateDept\domain\repository\DesignCenterProviderInfoDoManager;
@@ -58,7 +59,7 @@ class DesignCenterProviderInfoImpl extends BaseObject implements DesignCenterPro
     {
         $result = $this->model->createEntity($designCenterProviderInfoForm);
         if ($result === false) {
-            throw new RuntimeException('新增设计中心供应商信息失败');
+            throw new ApiException('新增设计中心供应商信息失败');
         }
         return $result;
     }
@@ -67,13 +68,14 @@ class DesignCenterProviderInfoImpl extends BaseObject implements DesignCenterPro
      * 设计中心供应商信息-编辑
      * @param DesignCenterProviderInfoForm $designCenterProviderInfoForm
      * @return bool
+     * @throws ApiException
      * @author: weifeng
      */
     public function updateInfo(DesignCenterProviderInfoForm $designCenterProviderInfoForm): bool
     {
         $result = $this->model->updateEntity($designCenterProviderInfoForm);
         if ($result === false) {
-            throw new RuntimeException('编辑设计中心供应商信息失败');
+            throw new ApiException('编辑设计中心供应商信息失败');
         }
         return $result;
     }
@@ -82,13 +84,14 @@ class DesignCenterProviderInfoImpl extends BaseObject implements DesignCenterPro
      * 设计中心供应商信息-删除
      * @param DesignCenterProviderInfoForm $designCenterProviderInfoForm
      * @return int
+     * @throws ApiException
      * @author: weifeng
      */
     public function deleteInfo(DesignCenterProviderInfoForm $designCenterProviderInfoForm): int
     {
         $result = $this->model->deleteEntity($designCenterProviderInfoForm);
         if ($result === false) {
-            throw new RuntimeException('删除设计中心供应商信息失败');
+            throw new ApiException('删除设计中心供应商信息失败');
         }
         return $result;
     }
