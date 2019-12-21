@@ -12,6 +12,7 @@ namespace app\modules\v2\advertDept\domain\repository;
 use app\common\repository\BaseRepository;
 use app\models\dataObject\WindowProjectDo;
 use app\modules\v2\advertDept\domain\dto\WindowProjectDto;
+use app\modules\v2\advertDept\domain\dto\WindowProjectForm;
 use yii\data\ActiveDataProvider;
 
 class WindowProjectDoManager extends BaseRepository
@@ -57,6 +58,28 @@ class WindowProjectDoManager extends BaseRepository
             ->andWhere(['data_time' => $windowProjectDto->data_time])
             ->andWhere(['delivery_platform' => $windowProjectDto->delivery_platform])
             ->orderBy('period ASC')
+            ->asArray()
+            ->all();
+    }
+
+    /**
+     *查询数据是否存在
+     * @param WindowProjectForm $windowProjectForm
+     * @param array $period
+     * @return array|\yii\db\ActiveRecord[]
+     * @author: guochao
+     * Date: 2019/12/21
+     * Time: 上午9:45
+     */
+    public function queryDataIsHave(WindowProjectForm $windowProjectForm, array $period): array
+    {
+        return $this->query
+            ->select(['product_name', 'account_and_id', 'data_time', 'period'])
+            ->where(['product_name' => $windowProjectForm->product_name])
+            ->andFilterWhere(['<>', 'id', $windowProjectForm->id])
+            ->andWhere(['account_and_id' => $windowProjectForm->account_and_id])
+            ->andWhere(['data_time' => $windowProjectForm->data_time])
+            ->andWhere(['in', 'period', $period])
             ->asArray()
             ->all();
     }
