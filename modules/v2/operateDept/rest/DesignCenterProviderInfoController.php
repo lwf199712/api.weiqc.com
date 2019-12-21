@@ -39,6 +39,7 @@ class DesignCenterProviderInfoController extends AdminBaseController
             'create' => ['POST', 'OPTIONS'],
             'update' => ['PUT', 'PATCH', 'OPTIONS'],
             'delete' => ['DELETE', 'OPTIONS'],
+            'info'   => ['GET', 'HEAD', 'OPTIONS'],
         ];
     }
 
@@ -56,6 +57,7 @@ class DesignCenterProviderInfoController extends AdminBaseController
             'actionCreate' => $this->designCenterProviderInfoForm,
             'actionUpdate' => $this->designCenterProviderInfoForm,
             'actionDelete' => $this->designCenterProviderInfoForm,
+            'actionInfo'   => $this->designCenterProviderInfoForm,
         ][$actionName];
     }
 
@@ -97,5 +99,14 @@ class DesignCenterProviderInfoController extends AdminBaseController
     public function actionDelete(): ?array
     {
         return ['删除成功', 200, $this->designCenterProviderInfoService->deleteInfo($this->designCenterProviderInfoForm)];
+    }
+
+    /**
+     * 设计中心供应商信息-单查询
+     */
+
+    public function actionInfo(): array
+    {
+        return ['返回成功', 200, $this->designCenterProviderInfoService->getInfo((int)$this->designCenterProviderInfoForm->id)];
     }
 }

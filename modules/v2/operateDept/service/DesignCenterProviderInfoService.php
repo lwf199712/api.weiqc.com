@@ -36,4 +36,11 @@ interface DesignCenterProviderInfoService
      * @return int
      */
     public function deleteInfo(DesignCenterProviderInfoForm $designCenterProviderInfoForm): int;
+
+    /**
+     * 设计中心-查询单条数据
+     * @param $id
+     * @return array
+     */
+    public function getInfo(int $id): array;
 }

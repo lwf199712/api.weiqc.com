@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace app\modules\v2\operateDept\domain\repository;
 
+use app\common\exception\ApiException;
 use app\common\repository\BaseRepository;
 use app\models\dataObject\DesignCenterProviderInfoDo;
 use app\modules\v2\operateDept\domain\dto\DesignCenterProviderInfoQuery;
@@ -36,5 +37,19 @@ class DesignCenterProviderInfoDoManager extends BaseRepository
                 'defaultOrder' => ['id' => SORT_DESC],
             ]
         ]);
+    }
+
+    /**
+     * @param $id
+     * @return array
+     * @throws ApiException
+     */
+    public function find($id): array
+    {
+        $model = $this->model::findOne(['id'=>$id]);
+        if ($model === null) {
+            throw new ApiException('找不到数据');
+        }
+        return $model->attributes;
     }
 }

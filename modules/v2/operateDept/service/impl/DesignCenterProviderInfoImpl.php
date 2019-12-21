@@ -95,4 +95,15 @@ class DesignCenterProviderInfoImpl extends BaseObject implements DesignCenterPro
         }
         return $result;
     }
+
+    /**
+     * @param $id
+     * @return array
+     * @throws ApiException
+     */
+    public function getInfo(int $id): array
+    {
+        /** @var DesignCenterProviderInfoDoManager $model */
+        return $this->designCenterProviderInfoDoManager->find($id);
+    }
 }
