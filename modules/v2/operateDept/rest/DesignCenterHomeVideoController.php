@@ -12,6 +12,7 @@ use Exception;
 use Yii;
 use yii\base\Model;
 use yii\web\HttpException;
+use yii\web\UploadedFile;
 
 /**
  * Class DesignCenterHomeVideoController
@@ -167,9 +168,12 @@ class DesignCenterHomeVideoController extends AdminBaseController
                 $this->designCenterHomeVideoForm->video = $url;
                 $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm, $old_url);
             }
-            $imageUrl = Yii::$app->request->getHostInfo() . $this->designCenterHomeVideoForm->uploadImage();
+            $imageObj = UploadedFile::getInstanceByName('imageFile');
             $oldImageUrl = $this->designCenterHomeVideoDoManager->detailData((int)$this->designCenterHomeVideoForm->id)->attributes['thumbnail'];
-            $this->designCenterHomeVideoForm->thumbnail = $imageUrl;
+            if ($imageObj) {
+                $imageUrl = Yii::$app->request->getHostInfo() . $this->designCenterHomeVideoForm->uploadImage();
+                $this->designCenterHomeVideoForm->thumbnail = $imageUrl;
+            }
             if ($oldImageUrl) {
                 $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm, $oldImageUrl);
             } else {
