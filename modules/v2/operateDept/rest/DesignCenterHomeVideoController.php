@@ -117,9 +117,12 @@ class DesignCenterHomeVideoController extends AdminBaseController
                 return  ['插入失败,属性不能为空',500];
             }
             $data = [];
-            $imageUrl = $this->designCenterHomeVideoForm->uploadImage();
             $this->designCenterHomeVideoForm->video = Yii::$app->request->getHostInfo().$url;
-            $this->designCenterHomeVideoForm->thumbnail = Yii::$app->request->getHostInfo().$imageUrl;
+            $imageObj = UploadedFile::getInstanceByName('imageFile');
+            if ($imageObj) {
+                $imageUrl = $this->designCenterHomeVideoForm->uploadImage();
+                $this->designCenterHomeVideoForm->thumbnail = Yii::$app->request->getHostInfo().$imageUrl;
+            }
             $res = $this->designCenterHomeVideoEntity->createEntity($this->designCenterHomeVideoForm);
             if ($res){
                 $id = Yii::$app->db->getLastInsertID();
