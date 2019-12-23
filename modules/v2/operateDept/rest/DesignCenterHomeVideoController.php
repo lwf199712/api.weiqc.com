@@ -166,10 +166,11 @@ class DesignCenterHomeVideoController extends AdminBaseController
                 // 删除旧视频
                 $this->designCenterHomeVideoForm->video = $url;
                 $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm, $old_url);
-            } elseif ($this->designCenterHomeVideoForm->imageFile) {
-                $imageUrl = Yii::$app->request->getHostInfo() . $this->designCenterHomeVideoForm->uploadImage();
-                $oldImageUrl = $this->designCenterHomeVideoDoManager->detailData((int)$this->designCenterHomeVideoForm->id)->attributes['thumbnail'];
-                $this->designCenterHomeVideoForm->video = $imageUrl;
+            }
+            $imageUrl = Yii::$app->request->getHostInfo() . $this->designCenterHomeVideoForm->uploadImage();
+            $oldImageUrl = $this->designCenterHomeVideoDoManager->detailData((int)$this->designCenterHomeVideoForm->id)->attributes['thumbnail'];
+            $this->designCenterHomeVideoForm->thumbnail = $imageUrl;
+            if ($oldImageUrl) {
                 $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm, $oldImageUrl);
             } else {
                 $res = $this->designCenterHomeVideoEntity->updateEntity($this->designCenterHomeVideoForm);
