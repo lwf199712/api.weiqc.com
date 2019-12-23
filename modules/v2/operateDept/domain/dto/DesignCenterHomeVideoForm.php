@@ -138,11 +138,12 @@ class DesignCenterHomeVideoForm extends Model
 
     /**
      * 上传图片
+     * @param string $dirName
      * @return bool|string
      * @throws Exception
      * @author weifeng
      */
-    public function uploadImage()
+    public function uploadImage(string $dirName = 'thumbnail')
     {
         $this->imageFile = UploadedFile::getInstanceByName('imageFile');
         if ($this->validate()) {
@@ -155,7 +156,7 @@ class DesignCenterHomeVideoForm extends Model
                 throw new RuntimeException(sprintf('Directory "%s" was not created', $rootPath));
             }
             if ($this->imageFile->saveAs($rootPath . $randName)) {
-                return '/' . $randName;
+                return '/uploads/designCenter/'.$dirName.'/' . $randName;
             }
             return false;
         }
