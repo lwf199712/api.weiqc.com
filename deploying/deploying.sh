@@ -52,7 +52,7 @@ if [ $? -ne 0 ]
 }
 deploy(){ # 同步远程主机
    echo "开始远程同步"
-   rsync -azvtruP --delete ./* $leave:$release 1> /dev/null #2> /dev/null
+   rsync -azvtrP --delete ./* $leave:$release 1> /dev/null #2> /dev/null
    if [ $? -ne 0 ]
    then
       ssh $leave "rm -rf $release"
