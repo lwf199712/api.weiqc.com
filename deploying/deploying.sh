@@ -32,13 +32,6 @@ composer(){ # composer代码更新依赖
 }
 
 deploy_front(){ # 同步到远程主机前的操作
-
-# 修改测试环境的入口文件
-#pwd
-#cd $local_dir/web
-# cp index-test.php index.php
-#cd $local_dir
-
 ssh $leave "cd $release_dir && ls -t | head -1 | xargs -i cp -rf {} $release"
 
 if [ $? -ne 0 ]
