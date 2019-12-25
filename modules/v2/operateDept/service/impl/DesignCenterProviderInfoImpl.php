@@ -9,7 +9,6 @@ use app\modules\v2\operateDept\domain\repository\DesignCenterProviderInfoDoManag
 use app\modules\v2\operateDept\service\DesignCenterProviderInfoService;
 use app\modules\v2\operateDept\domain\entity\DesignCenterProviderInfoEntity;
 use Exception;
-use RuntimeException;
 use yii\base\BaseObject;
 use yii\db\ActiveRecord;
 

@@ -4,7 +4,6 @@ namespace app\modules\v2\operateDept\service;
 
 use app\modules\v2\operateDept\domain\dto\DesignCenterProviderInfoForm;
 use app\modules\v2\operateDept\domain\dto\DesignCenterProviderInfoQuery;
-use phpDocumentor\Reflection\Types\Boolean;
 
 interface DesignCenterProviderInfoService
 {

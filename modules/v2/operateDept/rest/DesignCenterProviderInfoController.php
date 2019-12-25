@@ -102,7 +102,7 @@ class DesignCenterProviderInfoController extends AdminBaseController
     }
 
     /**
-     * 设计中心供应商信息-单查询
+     * 设计中心供应商信息-单条查询
      */
 
     public function actionInfo(): array

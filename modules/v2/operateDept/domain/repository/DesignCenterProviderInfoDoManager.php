@@ -43,10 +43,11 @@ class DesignCenterProviderInfoDoManager extends BaseRepository
      * @param $id
      * @return array
      * @throws ApiException
+     * @author weifeng
      */
     public function find($id): array
     {
-        $model = $this->model::findOne(['id'=>$id]);
+        $model = $this->model::findOne(['id' => $id]);
         if ($model === null) {
             throw new ApiException('找不到数据');
         }
