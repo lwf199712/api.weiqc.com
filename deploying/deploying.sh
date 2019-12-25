@@ -32,13 +32,6 @@ composer(){ # composer代码更新依赖
 }
 
 deploy_front(){ # 同步到远程主机前的操作
-
-# 修改测试环境的入口文件
-#pwd
-#cd $local_dir/web
-# cp index-test.php index.php
-#cd $local_dir
-
 ssh $leave "cd $release_dir && ls -t | head -1 | xargs -i cp -rf {} $release"
 
 if [ $? -ne 0 ]
@@ -52,7 +45,7 @@ if [ $? -ne 0 ]
 }
 deploy(){ # 同步远程主机
    echo "开始远程同步"
-   rsync -azvtruP --delete ./* $leave:$release 1> /dev/null #2> /dev/null
+   rsync -azvtrP --delete ./* $leave:$release 1> /dev/null #2> /dev/null
    if [ $? -ne 0 ]
    then
       ssh $leave "rm -rf $release"

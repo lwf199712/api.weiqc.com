@@ -1,7 +1,7 @@
 #!/bin/bash
 # shell env 脚本位置等变量
 SHELL_NAME="apitest.sh"    # 脚本名称
-SHELL_DIR="/test"  # 脚本路径
+SHELL_DIR="./deployig"  # 脚本路径
 SHELL_LOG="${SHELL_DIR}/${SHELL_NAME}.log" # 脚本执行日志文件路径
 # 日志日期和时间变量
 LOG_DATE=`date "+%Y-%m-%d"` # 如果执行的话后面执行的时间，此时间是不固定的，这是记录日志使用的时间
